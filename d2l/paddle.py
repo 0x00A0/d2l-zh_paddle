@@ -23,13 +23,10 @@ from matplotlib import pyplot as plt
 d2l = sys.modules[__name__]
 
 import numpy as np
-import torch
-import torchvision
+import paddle
 from PIL import Image
-from torch import nn
-from torch.nn import functional as F
-from torch.utils import data
-from torchvision import transforms
+from paddle import nn
+from paddle.nn import functional as F
 
 def use_svg_display():
     """使用svg格式在Jupyter中显示绘图
@@ -118,6 +115,9 @@ class Timer:
     def cumsum(self):
         """返回累计时间"""
         return np.array(self.times).cumsum().tolist()
+
+
+'''
 
 def synthetic_data(w, b, num_examples):
     """生成y=Xw+b+噪声
@@ -2635,3 +2635,4 @@ astype = lambda x, *args, **kwargs: x.type(*args, **kwargs)
 transpose = lambda x, *args, **kwargs: x.t(*args, **kwargs)
 reduce_mean = lambda x, *args, **kwargs: x.mean(*args, **kwargs)
 
+'''
