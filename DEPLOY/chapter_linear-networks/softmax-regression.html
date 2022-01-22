@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>3.25. softmax回归 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.26. 读取数据集" href="image-classification-dataset.html" />
+    <link rel="prev" title="3.16. 生成数据集" href="linear-regression-concise.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">3. </span>线性神经网络</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">3.25. </span>softmax回归</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_linear-networks/softmax-regression.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  MXNet
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-pytorch.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  PyTorch
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-paddle.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  Paddle
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.zip">
+                  <i class="fas fa-download"></i>
+                  Jupyter 记事本
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://courses.d2l.ai/zh-v2/">
+                  <i class="fas fa-user-graduate"></i>
+                  课程
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/0x00A0/d2l-zh_paddle">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://d2l.ai">
+                  <i class="fas fa-external-link-alt"></i>
+                  English
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. 线性神经网络</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. 线性神经网络</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <div class="section" id="softmax">
+<span id="sec-softmax"></span><h1><span class="section-number">3.25. </span>softmax回归<a class="headerlink" href="#softmax" title="Permalink to this headline">¶</a></h1>
+<p>在 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_regression</span></code>中我们介绍了线性回归。 随后，在
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中我们从头实现线性回归。 然后，在
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_concise</span></code>中我们使用深度学习框架的高级API简洁实现线性回归。</p>
+<p>回归可以用于预测<em>多少</em>的问题。
+比如预测房屋被售出价格，或者棒球队可能获得的胜场数，又或者患者住院的天数。</p>
+<p>事实上，我们也对<em>分类</em>问题感兴趣：不是问“多少”，而是问“哪一个”：</p>
+<ul class="simple">
+<li><p>某个电子邮件是否属于垃圾邮件文件夹？</p></li>
+<li><p>某个用户可能<em>注册</em>或<em>不注册</em>订阅服务？</p></li>
+<li><p>某个图像描绘的是驴、狗、猫、还是鸡？</p></li>
+<li><p>某人接下来最有可能看哪部电影？</p></li>
+</ul>
+<p>通常，机器学习实践者用<em>分类</em>这个词来描述两个有微妙差别的问题： 1.
+我们只对样本的“硬性”类别感兴趣，即属于哪个类别； 2.
+我们希望得到“软性”类别，即得到属于每个类别的概率。
+这两者的界限往往很模糊。其中的一个原因是：即使我们只关心硬类别，我们仍然使用软类别的模型。</p>
+<div class="section" id="subsec-classification-problem">
+<span id="id1"></span><h2><span class="section-number">3.25.1. </span>分类问题<a class="headerlink" href="#subsec-classification-problem" title="Permalink to this headline">¶</a></h2>
+<p>我们从一个图像分类问题开始。
+假设每次输入是一个<span class="math notranslate nohighlight">\(2\times2\)</span>的灰度图像。
+我们可以用一个标量表示每个像素值，每个图像对应四个特征<span class="math notranslate nohighlight">\(x_1, x_2, x_3, x_4\)</span>。
+此外，假设每个图像属于类别“猫”，“鸡”和“狗”中的一个。</p>
+<p>接下来，我们要选择如何表示标签。
+我们有两个明显的选择：最直接的想法是选择<span class="math notranslate nohighlight">\(y \in \{1, 2, 3\}\)</span>，
+其中整数分别代表<span class="math notranslate nohighlight">\(\{\text{狗}, \text{猫}, \text{鸡}\}\)</span>。
+这是在计算机上存储此类信息的有效方法。 如果类别间有一些自然顺序，
+比如说我们试图预测<span class="math notranslate nohighlight">\(\{\text{婴儿}, \text{儿童}, \text{青少年}, \text{青年人}, \text{中年人}, \text{老年人}\}\)</span>，
+那么将这个问题转变为回归问题，并且保留这种格式是有意义的。</p>
+<p>但是一般的分类问题并不与类别之间的自然顺序有关。
+幸运的是，统计学家很早以前就发明了一种表示分类数据的简单方法：<em>独热编码</em>（one-hot
+encoding）。 独热编码是一个向量，它的分量和类别一样多。
+类别对应的分量设置为1，其他所有分量设置为0。
+在我们的例子中，标签<span class="math notranslate nohighlight">\(y\)</span>将是一个三维向量，
+其中<span class="math notranslate nohighlight">\((1, 0, 0)\)</span>对应于“猫”、<span class="math notranslate nohighlight">\((0, 1, 0)\)</span>对应于“鸡”、<span class="math notranslate nohighlight">\((0, 0, 1)\)</span>对应于“狗”：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-0">
+<span class="eqno">(3.25.1)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-0" title="Permalink to this equation">¶</a></span>\[y \in \{(1, 0, 0), (0, 1, 0), (0, 0, 1)\}.\]</div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">3.25.2. </span>网络架构<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>为了估计所有可能类别的条件概率，我们需要一个有多个输出的模型，每个类别对应一个输出。
+为了解决线性模型的分类问题，我们需要和输出一样多的<em>仿射函数</em>（affine
+function）。 每个输出对应于它自己的仿射函数。
+在我们的例子中，由于我们有4个特征和3个可能的输出类别，
+我们将需要12个标量来表示权重（带下标的<span class="math notranslate nohighlight">\(w\)</span>），
+3个标量来表示偏置（带下标的<span class="math notranslate nohighlight">\(b\)</span>）。
+下面我们为每个输入计算三个<em>未规范化的预测</em>（logit）：<span class="math notranslate nohighlight">\(o_1\)</span>、<span class="math notranslate nohighlight">\(o_2\)</span>和<span class="math notranslate nohighlight">\(o_3\)</span>。</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-1">
+<span class="eqno">(3.25.2)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-1" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+o_1 &amp;= x_1 w_{11} + x_2 w_{12} + x_3 w_{13} + x_4 w_{14} + b_1,\\
+o_2 &amp;= x_1 w_{21} + x_2 w_{22} + x_3 w_{23} + x_4 w_{24} + b_2,\\
+o_3 &amp;= x_1 w_{31} + x_2 w_{32} + x_3 w_{33} + x_4 w_{34} + b_3.
+\end{aligned}\end{split}\]</div>
+<p>我们可以用神经网络图 <a class="reference internal" href="#fig-softmaxreg"><span class="std std-numref">图3.25.1</span></a>来描述这个计算过程。
+与线性回归一样，softmax回归也是一个单层神经网络。
+由于计算每个输出<span class="math notranslate nohighlight">\(o_1\)</span>、<span class="math notranslate nohighlight">\(o_2\)</span>和<span class="math notranslate nohighlight">\(o_3\)</span>取决于
+所有输入<span class="math notranslate nohighlight">\(x_1\)</span>、<span class="math notranslate nohighlight">\(x_2\)</span>、<span class="math notranslate nohighlight">\(x_3\)</span>和<span class="math notranslate nohighlight">\(x_4\)</span>，
+所以softmax回归的输出层也是全连接层。</p>
+<div class="figure align-default" id="id18">
+<span id="fig-softmaxreg"></span><img alt="../_images/softmaxreg.svg" src="../_images/softmaxreg.svg" /><p class="caption"><span class="caption-number">图3.25.1 </span><span class="caption-text">softmax回归是一种单层神经网络</span><a class="headerlink" href="#id18" title="Permalink to this image">¶</a></p>
+</div>
+<p>为了更简洁地表达模型，我们仍然使用线性代数符号。
+通过向量形式表达为<span class="math notranslate nohighlight">\(\mathbf{o} = \mathbf{W} \mathbf{x} + \mathbf{b}\)</span>，
+这是一种更适合数学和编写代码的形式。
+由此，我们已经将所有权重放到一个<span class="math notranslate nohighlight">\(3 \times 4\)</span>矩阵中。
+对于给定数据样本的特征<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>，
+我们的输出是由权重与输入特征进行矩阵-向量乘法再加上偏置<span class="math notranslate nohighlight">\(\mathbf{b}\)</span>得到的。</p>
+</div>
+<div class="section" id="subsec-parameterization-cost-fc-layers">
+<span id="id3"></span><h2><span class="section-number">3.25.3. </span>全连接层的参数开销<a class="headerlink" href="#subsec-parameterization-cost-fc-layers" title="Permalink to this headline">¶</a></h2>
+<p>正如我们将在后续章节中看到的，在深度学习中，全连接层无处不在。
+然而，顾名思义，全连接层是“完全”连接的，可能有很多可学习的参数。
+具体来说，对于任何具有<span class="math notranslate nohighlight">\(d\)</span>个输入和<span class="math notranslate nohighlight">\(q\)</span>个输出的全连接层，
+参数开销为<span class="math notranslate nohighlight">\(\mathcal{O}(dq)\)</span>，这个数字在实践中可能高得令人望而却步。
+幸运的是，将<span class="math notranslate nohighlight">\(d\)</span>个输入转换为<span class="math notranslate nohighlight">\(q\)</span>个输出的成本可以减少到<span class="math notranslate nohighlight">\(\mathcal{O}(\frac{dq}{n})\)</span>，
+其中超参数<span class="math notranslate nohighlight">\(n\)</span>可以由我们灵活指定，以在实际应用中平衡参数节约和模型有效性
+<a class="bibtex reference internal" href="../chapter_references/zreferences.html#zhang-tay-zhang-ea-2021" id="id4">[Zhang et al., 2021]</a>。</p>
+</div>
+<div class="section" id="subsec-softmax-operation">
+<span id="id5"></span><h2><span class="section-number">3.25.4. </span>softmax运算<a class="headerlink" href="#subsec-softmax-operation" title="Permalink to this headline">¶</a></h2>
+<p>现在我们将优化参数以最大化观测数据的概率。
+为了得到预测结果，我们将设置一个阈值，如选择具有最大概率的标签。</p>
+<p>我们希望模型的输出<span class="math notranslate nohighlight">\(\hat{y}_j\)</span>可以视为属于类<span class="math notranslate nohighlight">\(j\)</span>的概率，
+然后选择具有最大输出值的类别<span class="math notranslate nohighlight">\(\operatorname*{argmax}_j y_j\)</span>作为我们的预测。
+例如，如果<span class="math notranslate nohighlight">\(\hat{y}_1\)</span>、<span class="math notranslate nohighlight">\(\hat{y}_2\)</span>和<span class="math notranslate nohighlight">\(\hat{y}_3\)</span>分别为0.1、0.8和0.1，
+那么我们预测的类别是2，在我们的例子中代表“鸡”。</p>
+<p>然而我们能否将未规范化的预测<span class="math notranslate nohighlight">\(o\)</span>直接视作我们感兴趣的输出呢？
+答案是否定的。 因为将线性层的输出直接视为概率时存在一些问题：
+一方面，我们没有限制这些输出数字的总和为1。
+另一方面，根据输入的不同，它们可以为负值。 这些违反了
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_prob</span></code>中所说的概率基本公理。</p>
+<p>要将输出视为概率，我们必须保证在任何数据上的输出都是非负的且总和为1。
+此外，我们需要一个训练目标，来鼓励模型精准地估计概率。
+在分类器输出0.5的所有样本中，我们希望这些样本有一半实际上属于预测的类。
+这个属性叫做<em>校准</em>（calibration）。</p>
+<p>社会科学家邓肯·卢斯于1959年在<em>选择模型</em>（choice model）的理论基础上
+发明的<em>softmax函数</em>正是这样做的：
+softmax函数将未规范化的预测变换为非负并且总和为1，同时要求模型保持可导。
+我们首先对每个未规范化的预测求幂，这样可以确保输出非负。
+为了确保最终输出的总和为1，我们再对每个求幂后的结果除以它们的总和。如下式：</p>
+<div class="math notranslate nohighlight" id="equation-eq-softmax-y-and-o">
+<span class="eqno">(3.25.3)<a class="headerlink" href="#equation-eq-softmax-y-and-o" title="Permalink to this equation">¶</a></span>\[\hat{\mathbf{y}} = \mathrm{softmax}(\mathbf{o})\quad \text{其中}\quad \hat{y}_j = \frac{\exp(o_j)}{\sum_k \exp(o_k)}\]</div>
+<p>这里，对于所有的<span class="math notranslate nohighlight">\(j\)</span>总有<span class="math notranslate nohighlight">\(0 \leq \hat{y}_j \leq 1\)</span>。
+因此，<span class="math notranslate nohighlight">\(\hat{\mathbf{y}}\)</span>可以视为一个正确的概率分布。
+softmax运算不会改变未规范化的预测<span class="math notranslate nohighlight">\(\mathbf{o}\)</span>之间的顺序，只会确定分配给每个类别的概率。
+因此，在预测过程中，我们仍然可以用下式来选择最有可能的类别。</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-2">
+<span class="eqno">(3.25.4)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-2" title="Permalink to this equation">¶</a></span>\[\operatorname*{argmax}_j \hat y_j = \operatorname*{argmax}_j o_j.\]</div>
+<p>尽管softmax是一个非线性函数，但softmax回归的输出仍然由输入特征的仿射变换决定。
+因此，softmax回归是一个<em>线性模型</em>（linear model）。</p>
+</div>
+<div class="section" id="subsec-softmax-vectorization">
+<span id="id6"></span><h2><span class="section-number">3.25.5. </span>小批量样本的矢量化<a class="headerlink" href="#subsec-softmax-vectorization" title="Permalink to this headline">¶</a></h2>
+<p>为了提高计算效率并且充分利用GPU，我们通常会针对小批量数据执行矢量计算。
+假设我们读取了一个批量的样本<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>，
+其中特征维度（输入数量）为<span class="math notranslate nohighlight">\(d\)</span>，批量大小为<span class="math notranslate nohighlight">\(n\)</span>。
+此外，假设我们在输出中有<span class="math notranslate nohighlight">\(q\)</span>个类别。
+那么小批量特征为<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{n \times d}\)</span>，
+权重为<span class="math notranslate nohighlight">\(\mathbf{W} \in \mathbb{R}^{d \times q}\)</span>，
+偏置为<span class="math notranslate nohighlight">\(\mathbf{b} \in \mathbb{R}^{1\times q}\)</span>。
+softmax回归的矢量计算表达式为：</p>
+<div class="math notranslate nohighlight" id="equation-eq-minibatch-softmax-reg">
+<span class="eqno">(3.25.5)<a class="headerlink" href="#equation-eq-minibatch-softmax-reg" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned} \mathbf{O} &amp;= \mathbf{X} \mathbf{W} + \mathbf{b}, \\ \hat{\mathbf{Y}} &amp; = \mathrm{softmax}(\mathbf{O}). \end{aligned}\end{split}\]</div>
+<p>相对于一次处理一个样本，
+小批量样本的矢量化加快了<span class="math notranslate nohighlight">\(\mathbf{X}和\mathbf{W}\)</span>的矩阵-向量乘法。
+由于<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>中的每一行代表一个数据样本，
+那么softmax运算可以<em>按行</em>（rowwise）执行：
+对于<span class="math notranslate nohighlight">\(\mathbf{O}\)</span>的每一行，我们先对所有项进行幂运算，然后通过求和对它们进行标准化。
+在 <a class="reference internal" href="#equation-eq-minibatch-softmax-reg">(3.25.5)</a>中，
+<span class="math notranslate nohighlight">\(\mathbf{X} \mathbf{W} + \mathbf{b}\)</span>的求和会使用广播，
+小批量的未规范化预测<span class="math notranslate nohighlight">\(\mathbf{O}\)</span>和输出概率<span class="math notranslate nohighlight">\(\hat{\mathbf{Y}}\)</span>
+都是形状为<span class="math notranslate nohighlight">\(n \times q\)</span>的矩阵。</p>
+</div>
+<div class="section" id="id7">
+<h2><span class="section-number">3.25.6. </span>损失函数<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>接下来，我们需要一个损失函数来度量预测的效果。
+我们将使用最大似然估计，这与在线性回归 （
+<a class="reference internal" href="linear-regression.html#subsec-normal-distribution-and-squared-loss"><span class="std std-numref">3.3节</span></a>）
+中的方法相同。</p>
+<div class="section" id="id8">
+<h3><span class="section-number">3.25.6.1. </span>对数似然<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>softmax函数给出了一个向量<span class="math notranslate nohighlight">\(\hat{\mathbf{y}}\)</span>，
+我们可以将其视为“对给定任意输入<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>的每个类的条件概率”。
+例如，<span class="math notranslate nohighlight">\(\hat{y}_1\)</span>=<span class="math notranslate nohighlight">\(P(y=\text{猫} \mid \mathbf{x})\)</span>。
+假设整个数据集<span class="math notranslate nohighlight">\(\{\mathbf{X}, \mathbf{Y}\}\)</span>具有<span class="math notranslate nohighlight">\(n\)</span>个样本，
+其中索引<span class="math notranslate nohighlight">\(i\)</span>的样本由特征向量<span class="math notranslate nohighlight">\(\mathbf{x}^{(i)}\)</span>和独热标签向量<span class="math notranslate nohighlight">\(\mathbf{y}^{(i)}\)</span>组成。
+我们可以将估计值与实际值进行比较：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-3">
+<span class="eqno">(3.25.6)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-3" title="Permalink to this equation">¶</a></span>\[P(\mathbf{Y} \mid \mathbf{X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)}).\]</div>
+<p>根据最大似然估计，我们最大化<span class="math notranslate nohighlight">\(P(\mathbf{Y} \mid \mathbf{X})\)</span>，相当于最小化负对数似然：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-4">
+<span class="eqno">(3.25.7)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-4" title="Permalink to this equation">¶</a></span>\[-\log P(\mathbf{Y} \mid \mathbf{X}) = \sum_{i=1}^n -\log P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)})
+= \sum_{i=1}^n l(\mathbf{y}^{(i)}, \hat{\mathbf{y}}^{(i)}),\]</div>
+<p>其中，对于任何标签<span class="math notranslate nohighlight">\(\mathbf{y}\)</span>和模型预测<span class="math notranslate nohighlight">\(\hat{\mathbf{y}}\)</span>，损失函数为：</p>
+<div class="math notranslate nohighlight" id="equation-eq-l-cross-entropy">
+<span class="eqno">(3.25.8)<a class="headerlink" href="#equation-eq-l-cross-entropy" title="Permalink to this equation">¶</a></span>\[l(\mathbf{y}, \hat{\mathbf{y}}) = - \sum_{j=1}^q y_j \log \hat{y}_j.\]</div>
+<p>在本节稍后的内容会讲到， <a class="reference internal" href="#equation-eq-l-cross-entropy">(3.25.8)</a>中的损失函数
+通常被称为<em>交叉熵损失</em>（cross-entropy loss）。
+由于<span class="math notranslate nohighlight">\(\mathbf{y}\)</span>是一个长度为<span class="math notranslate nohighlight">\(q\)</span>的独热编码向量，
+所以除了一个项以外的所有项<span class="math notranslate nohighlight">\(j\)</span>都消失了。
+由于所有<span class="math notranslate nohighlight">\(\hat{y}_j\)</span>都是预测的概率，所以它们的对数永远不会大于<span class="math notranslate nohighlight">\(0\)</span>。
+因此，如果正确地预测实际标签，即如果实际标签<span class="math notranslate nohighlight">\(P(\mathbf{y} \mid \mathbf{x})=1\)</span>，
+则损失函数不能进一步最小化。 注意，这往往是不可能的。
+例如，数据集中可能存在标签噪声（比如某些样本可能被误标），
+或输入特征没有足够的信息来完美地对每一个样本分类。</p>
+</div>
+<div class="section" id="subsec-softmax-and-derivatives">
+<span id="id9"></span><h3><span class="section-number">3.25.6.2. </span>softmax及其导数<a class="headerlink" href="#subsec-softmax-and-derivatives" title="Permalink to this headline">¶</a></h3>
+<p>由于softmax和相关的损失函数很常见， 因此我们需要更好地理解它的计算方式。
+将 <a class="reference internal" href="#equation-eq-softmax-y-and-o">(3.25.3)</a>代入损失
+<a class="reference internal" href="#equation-eq-l-cross-entropy">(3.25.8)</a>中。 利用softmax的定义，我们得到：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-5">
+<span class="eqno">(3.25.9)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-5" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+l(\mathbf{y}, \hat{\mathbf{y}}) &amp;=  - \sum_{j=1}^q y_j \log \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} \\
+&amp;= \sum_{j=1}^q y_j \log \sum_{k=1}^q \exp(o_k) - \sum_{j=1}^q y_j o_j\\
+&amp;= \log \sum_{k=1}^q \exp(o_k) - \sum_{j=1}^q y_j o_j.
+\end{aligned}\end{split}\]</div>
+<p>考虑相对于任何未规范化的预测<span class="math notranslate nohighlight">\(o_j\)</span>的导数，我们得到：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-softmax-regression-6">
+<span class="eqno">(3.25.10)<a class="headerlink" href="#equation-chapter-linear-networks-softmax-regression-6" title="Permalink to this equation">¶</a></span>\[\partial_{o_j} l(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\exp(o_j)}{\sum_{k=1}^q \exp(o_k)} - y_j = \mathrm{softmax}(\mathbf{o})_j - y_j.\]</div>
+<p>换句话说，导数是我们softmax模型分配的概率与实际发生的情况（由独热标签向量表示）之间的差异。
+从这个意义上讲，这与我们在回归中看到的非常相似，
+其中梯度是观测值<span class="math notranslate nohighlight">\(y\)</span>和估计值<span class="math notranslate nohighlight">\(\hat{y}\)</span>之间的差异。
+这不是巧合，在任何指数族分布模型中
+（参见<a class="reference external" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/distributions.html">本书附录中关于数学分布的一节</a>），
+对数似然的梯度正是由此得出的。 这使梯度计算在实践中变得容易很多。</p>
+</div>
+<div class="section" id="id10">
+<h3><span class="section-number">3.25.6.3. </span>交叉熵损失<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>现在让我们考虑整个结果分布的情况，即观察到的不仅仅是一个结果。
+对于标签<span class="math notranslate nohighlight">\(\mathbf{y}\)</span>，我们可以使用与以前相同的表示形式。
+唯一的区别是，我们现在用一个概率向量表示，如<span class="math notranslate nohighlight">\((0.1, 0.2, 0.7)\)</span>，
+而不是仅包含二元项的向量<span class="math notranslate nohighlight">\((0, 0, 1)\)</span>。 我们使用
+<a class="reference internal" href="#equation-eq-l-cross-entropy">(3.25.8)</a>来定义损失<span class="math notranslate nohighlight">\(l\)</span>，
+它是所有标签分布的预期损失值。 此损失称为<em>交叉熵损失</em>（cross-entropy
+loss），它是分类问题最常用的损失之一。
+本节我们将通过介绍信息论基础来理解交叉熵损失。
+如果你想了解更多信息论的细节，你可以进一步参考
+<a class="reference external" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/information-theory.html">本书附录中关于信息论的一节</a>。</p>
+</div>
+</div>
+<div class="section" id="subsec-info-theory-basics">
+<span id="id11"></span><h2><span class="section-number">3.25.7. </span>信息论基础<a class="headerlink" href="#subsec-info-theory-basics" title="Permalink to this headline">¶</a></h2>
+<p><em>信息论</em>（information
+theory）涉及编码、解码、发送以及尽可能简洁地处理信息或数据。</p>
+<div class="section" id="id12">
+<h3><span class="section-number">3.25.7.1. </span>熵<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>信息论的核心思想是量化数据中的信息内容。
+在信息论中，该数值被称为分布<span class="math notranslate nohighlight">\(P\)</span>的<em>熵</em>（entropy）。可以通过以下方程得到：</p>
+<div class="math notranslate nohighlight" id="equation-eq-softmax-reg-entropy">
+<span class="eqno">(3.25.11)<a class="headerlink" href="#equation-eq-softmax-reg-entropy" title="Permalink to this equation">¶</a></span>\[H[P] = \sum_j - P(j) \log P(j).\]</div>
+<p>信息论的基本定理之一指出，为了对从分布<span class="math notranslate nohighlight">\(p\)</span>中随机抽取的数据进行编码，
+我们至少需要<span class="math notranslate nohighlight">\(H[P]\)</span>“纳特（nat）”对其进行编码。
+“纳特”相当于<em>比特</em>（bit），但是对数底为<span class="math notranslate nohighlight">\(e\)</span>而不是2。因此，一个纳特是<span class="math notranslate nohighlight">\(\frac{1}{\log(2)} \approx 1.44\)</span>比特。</p>
+</div>
+<div class="section" id="id13">
+<h3><span class="section-number">3.25.7.2. </span>惊异<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>压缩与预测有什么关系呢？ 想象一下，我们有一个要压缩的数据流。
+如果我们很容易预测下一个数据，那么这个数据很容易压缩。 为什么呢？
+举一个极端的例子，假如数据流中的每个数据完全相同，这会是一个非常无聊的数据流。
+由于它们总是相同的，所以很容易被预测。
+所以，为了传递数据流的内容，我们不必传输任何信息。
+因此，当数据易于预测，也就易于压缩。</p>
+<p>但是，如果我们不能完全预测每一个事件，那么我们有时可能会感到“惊异”。
+克劳德·香农决定用<span class="math notranslate nohighlight">\(\log \frac{1}{P(j)} = -\log P(j)\)</span>来量化<em>惊异</em>（surprisal）。
+在观察一个事件<span class="math notranslate nohighlight">\(j\)</span>，并赋予它（主观）概率<span class="math notranslate nohighlight">\(P(j)\)</span>。
+当我们赋予一个事件较低的概率时，我们的惊异会更大。 在
+<a class="reference internal" href="#equation-eq-softmax-reg-entropy">(3.25.11)</a>中定义的熵，
+是当分配的概率真正匹配数据生成过程时的<em>预期惊异</em>（expected
+surprisal）。</p>
+</div>
+<div class="section" id="id14">
+<h3><span class="section-number">3.25.7.3. </span>重新审视交叉熵<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>如果把熵<span class="math notranslate nohighlight">\(H(P)\)</span>想象为“知道真实概率的人所经历的惊异程度”，那么什么是交叉熵？
+交叉熵<em>从</em><span class="math notranslate nohighlight">\(P\)</span><em>到</em><span class="math notranslate nohighlight">\(Q\)</span>，记为<span class="math notranslate nohighlight">\(H(P, Q)\)</span>。
+你可以把交叉熵想象为“主观概率为<span class="math notranslate nohighlight">\(Q\)</span>的观察者在看到根据概率<span class="math notranslate nohighlight">\(P\)</span>生成的数据时的预期惊异”。
+当<span class="math notranslate nohighlight">\(P=Q\)</span>时，交叉熵达到最低。
+在这种情况下，从<span class="math notranslate nohighlight">\(P\)</span>到<span class="math notranslate nohighlight">\(Q\)</span>的交叉熵是<span class="math notranslate nohighlight">\(H(P, P)= H(P)\)</span>。</p>
+<p>简而言之，我们可以从两方面来考虑交叉熵分类目标：
+（i）最大化观测数据的似然；（ii）最小化传达标签所需的惊异。</p>
+</div>
+</div>
+<div class="section" id="id15">
+<h2><span class="section-number">3.25.8. </span>模型预测和评估<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<p>在训练softmax回归模型后，给出任何样本特征，我们可以预测每个输出类别的概率。
+通常我们使用预测概率最高的类别作为输出类别。
+如果预测与实际类别（标签）一致，则预测是正确的。
+在接下来的实验中，我们将使用<em>精度</em>（accuracy）来评估模型的性能。
+精度等于正确预测数与预测总数之间的比率。</p>
+</div>
+<div class="section" id="id16">
+<h2><span class="section-number">3.25.9. </span>小结<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>softmax运算获取一个向量并将其映射为概率。</p></li>
+<li><p>softmax回归适用于分类问题，它使用了softmax运算中输出类别的概率分布。</p></li>
+<li><p>交叉熵是一个衡量两个概率分布之间差异的很好的度量，它测量给定模型编码数据所需的比特数。</p></li>
+</ul>
+</div>
+<div class="section" id="id17">
+<h2><span class="section-number">3.25.10. </span>练习<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>我们可以更深入地探讨指数族与softmax之间的联系。</p>
+<ol class="arabic simple">
+<li><p>计算softmax交叉熵损失<span class="math notranslate nohighlight">\(l(\mathbf{y},\hat{\mathbf{y}})\)</span>的二阶导数。</p></li>
+<li><p>计算<span class="math notranslate nohighlight">\(\mathrm{softmax}(\mathbf{o})\)</span>给出的分布方差，并与上面计算的二阶导数匹配。</p></li>
+</ol>
+</li>
+<li><p>假设我们有三个类发生的概率相等，即概率向量是<span class="math notranslate nohighlight">\((\frac{1}{3}, \frac{1}{3}, \frac{1}{3})\)</span>。</p>
+<ol class="arabic simple">
+<li><p>如果我们尝试为它设计二进制代码，有什么问题？</p></li>
+<li><p>你能设计一个更好的代码吗？提示：如果我们尝试编码两个独立的观察结果会发生什么？如果我们联合编码<span class="math notranslate nohighlight">\(n\)</span>个观测值怎么办？</p></li>
+</ol>
+</li>
+<li><p>softmax是对上面介绍的映射的误称（虽然深度学习领域中很多人都使用这个名字）。真正的softmax被定义为<span class="math notranslate nohighlight">\(\mathrm{RealSoftMax}(a, b) = \log (\exp(a) + \exp(b))\)</span>。</p>
+<ol class="arabic simple">
+<li><p>证明<span class="math notranslate nohighlight">\(\mathrm{RealSoftMax}(a, b) &gt; \mathrm{max}(a, b)\)</span>。</p></li>
+<li><p>证明<span class="math notranslate nohighlight">\(\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) &gt; \mathrm{max}(a, b)\)</span>成立，前提是<span class="math notranslate nohighlight">\(\lambda &gt; 0\)</span>。</p></li>
+<li><p>证明对于<span class="math notranslate nohighlight">\(\lambda \to \infty\)</span>，有<span class="math notranslate nohighlight">\(\lambda^{-1} \mathrm{RealSoftMax}(\lambda a, \lambda b) \to \mathrm{max}(a, b)\)</span>。</p></li>
+<li><p>soft-min会是什么样子？</p></li>
+<li><p>将其扩展到两个以上的数字。</p></li>
+</ol>
+</li>
+</ol>
+<p><a class="reference external" href="https://discuss.d2l.ai/t/1785">Discussions</a></p>
+</div>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">3.25. softmax回归</a><ul>
+<li><a class="reference internal" href="#subsec-classification-problem">3.25.1. 分类问题</a></li>
+<li><a class="reference internal" href="#id2">3.25.2. 网络架构</a></li>
+<li><a class="reference internal" href="#subsec-parameterization-cost-fc-layers">3.25.3. 全连接层的参数开销</a></li>
+<li><a class="reference internal" href="#subsec-softmax-operation">3.25.4. softmax运算</a></li>
+<li><a class="reference internal" href="#subsec-softmax-vectorization">3.25.5. 小批量样本的矢量化</a></li>
+<li><a class="reference internal" href="#id7">3.25.6. 损失函数</a><ul>
+<li><a class="reference internal" href="#id8">3.25.6.1. 对数似然</a></li>
+<li><a class="reference internal" href="#subsec-softmax-and-derivatives">3.25.6.2. softmax及其导数</a></li>
+<li><a class="reference internal" href="#id10">3.25.6.3. 交叉熵损失</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subsec-info-theory-basics">3.25.7. 信息论基础</a><ul>
+<li><a class="reference internal" href="#id12">3.25.7.1. 熵</a></li>
+<li><a class="reference internal" href="#id13">3.25.7.2. 惊异</a></li>
+<li><a class="reference internal" href="#id14">3.25.7.3. 重新审视交叉熵</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id15">3.25.8. 模型预测和评估</a></li>
+<li><a class="reference internal" href="#id16">3.25.9. 小结</a></li>
+<li><a class="reference internal" href="#id17">3.25.10. 练习</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="linear-regression-concise.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>3.16. 生成数据集</div>
+         </div>
+     </a>
+     <a id="button-next" href="image-classification-dataset.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>3.26. 读取数据集</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>

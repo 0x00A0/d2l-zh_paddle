@@ -3,43 +3,21 @@
 #    d2lbook build lib
 # Don't edit it directly
 
-import collections
-import hashlib
-import math
-import os
-import random
-import re
-import shutil
-import sys
-import tarfile
-import time
-import zipfile
-from collections import defaultdict
-import pandas as pd
-import requests
-from IPython import display
-from matplotlib import pyplot as plt
-
-d2l = sys.modules[__name__]
-
-import numpy as np
-import tensorflow as tf
-
 def use_svg_display():
-    """ä½¿ç”¨svgæ ¼å¼åœ¨Jupyterä¸­æ˜¾ç¤ºç»˜å›¾
+    """Ê¹ÓÃsvg¸ñÊ½ÔÚJupyterÖĞÏÔÊ¾»æÍ¼
 
     Defined in :numref:`sec_calculus`"""
     display.set_matplotlib_formats('svg')
 
 def set_figsize(figsize=(3.5, 2.5)):
-    """è®¾ç½®matplotlibçš„å›¾è¡¨å¤§å°
+    """ÉèÖÃmatplotlibµÄÍ¼±í´óĞ¡
 
     Defined in :numref:`sec_calculus`"""
     use_svg_display()
     d2l.plt.rcParams['figure.figsize'] = figsize
 
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
-    """è®¾ç½®matplotlibçš„è½´
+    """ÉèÖÃmatplotlibµÄÖá
 
     Defined in :numref:`sec_calculus`"""
     axes.set_xlabel(xlabel)
@@ -55,7 +33,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
          ylim=None, xscale='linear', yscale='linear',
          fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
-    """ç»˜åˆ¶æ•°æ®ç‚¹
+    """»æÖÆÊı¾İµã
 
     Defined in :numref:`sec_calculus`"""
     if legend is None:
@@ -64,7 +42,7 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_figsize(figsize)
     axes = axes if axes else d2l.plt.gca()
 
-    # å¦‚æœ`X`æœ‰ä¸€ä¸ªè½´ï¼Œè¾“å‡ºTrue
+    # Èç¹ûXÓĞÒ»¸öÖá£¬Êä³öTrue
     def has_one_axis(X):
         return (hasattr(X, "ndim") and X.ndim == 1 or isinstance(X, list)
                 and not hasattr(X[0], "__len__"))
@@ -86,35 +64,35 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
 
 class Timer:
-    """è®°å½•å¤šæ¬¡è¿è¡Œæ—¶é—´"""
+    """¼ÇÂ¼¶à´ÎÔËĞĞÊ±¼ä"""
     def __init__(self):
         """Defined in :numref:`subsec_linear_model`"""
         self.times = []
         self.start()
 
     def start(self):
-        """å¯åŠ¨è®¡æ—¶å™¨"""
+        """Æô¶¯¼ÆÊ±Æ÷"""
         self.tik = time.time()
 
     def stop(self):
-        """åœæ­¢è®¡æ—¶å™¨å¹¶å°†æ—¶é—´è®°å½•åœ¨åˆ—è¡¨ä¸­"""
+        """Í£Ö¹¼ÆÊ±Æ÷²¢½«Ê±¼ä¼ÇÂ¼ÔÚÁĞ±íÖĞ"""
         self.times.append(time.time() - self.tik)
         return self.times[-1]
 
     def avg(self):
-        """è¿”å›å¹³å‡æ—¶é—´"""
+        """·µ»ØÆ½¾ùÊ±¼ä"""
         return sum(self.times) / len(self.times)
 
     def sum(self):
-        """è¿”å›æ—¶é—´æ€»å’Œ"""
+        """·µ»ØÊ±¼ä×ÜºÍ"""
         return sum(self.times)
 
     def cumsum(self):
-        """è¿”å›ç´¯è®¡æ—¶é—´"""
+        """·µ»ØÀÛ¼ÆÊ±¼ä"""
         return np.array(self.times).cumsum().tolist()
 
 def synthetic_data(w, b, num_examples):
-    """ç”Ÿæˆy=Xw+b+å™ªå£°
+    """Éú³Éy=Xw+b+ÔëÉù
 
     Defined in :numref:`sec_linear_scratch`"""
     X = d2l.zeros((num_examples, w.shape[0]))
@@ -125,26 +103,26 @@ def synthetic_data(w, b, num_examples):
     return X, y
 
 def linreg(X, w, b):
-    """çº¿æ€§å›å½’æ¨¡å‹
+    """ÏßĞÔ»Ø¹éÄ£ĞÍ
 
     Defined in :numref:`sec_linear_scratch`"""
     return d2l.matmul(X, w) + b
 
 def squared_loss(y_hat, y):
-    """å‡æ–¹æŸå¤±
+    """¾ù·½ËğÊ§
 
     Defined in :numref:`sec_linear_scratch`"""
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 
 def sgd(params, grads, lr, batch_size):
-    """å°æ‰¹é‡éšæœºæ¢¯åº¦ä¸‹é™
+    """Ğ¡ÅúÁ¿Ëæ»úÌİ¶ÈÏÂ½µ
 
     Defined in :numref:`sec_linear_scratch`"""
     for param, grad in zip(params, grads):
         param.assign_sub(lr*grad/batch_size)
 
 def load_array(data_arrays, batch_size, is_train=True):
-    """æ„é€ ä¸€ä¸ªTensorFlowæ•°æ®è¿­ä»£å™¨
+    """¹¹ÔìÒ»¸öTensorFlowÊı¾İµü´úÆ÷
 
     Defined in :numref:`sec_linear_concise`"""
     dataset = tf.data.Dataset.from_tensor_slices(data_arrays)
@@ -154,7 +132,7 @@ def load_array(data_arrays, batch_size, is_train=True):
     return dataset
 
 def get_fashion_mnist_labels(labels):
-    """è¿”å›Fashion-MNISTæ•°æ®é›†çš„æ–‡æœ¬æ ‡ç­¾
+    """·µ»ØFashion-MNISTÊı¾İ¼¯µÄÎÄ±¾±êÇ©
 
     Defined in :numref:`sec_fashion_mnist`"""
     text_labels = ['t-shirt', 'trouser', 'pullover', 'dress', 'coat',
@@ -162,7 +140,7 @@ def get_fashion_mnist_labels(labels):
     return [text_labels[int(i)] for i in labels]
 
 def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
-    """ç»˜åˆ¶å›¾åƒåˆ—è¡¨
+    """»æÖÆÍ¼ÏñÁĞ±í
 
     Defined in :numref:`sec_fashion_mnist`"""
     figsize = (num_cols * scale, num_rows * scale)
@@ -177,12 +155,12 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     return axes
 
 def load_data_fashion_mnist(batch_size, resize=None):
-    """ä¸‹è½½Fashion-MNISTæ•°æ®é›†ï¼Œç„¶åå°†å…¶åŠ è½½åˆ°å†…å­˜ä¸­
+    """ÏÂÔØFashion-MNISTÊı¾İ¼¯£¬È»ºó½«Æä¼ÓÔØµ½ÄÚ´æÖĞ
 
     Defined in :numref:`sec_fashion_mnist`"""
     mnist_train, mnist_test = tf.keras.datasets.fashion_mnist.load_data()
-    # å°†æ‰€æœ‰æ•°å­—é™¤ä»¥255ï¼Œä½¿æ‰€æœ‰åƒç´ å€¼ä»‹äº0å’Œ1ä¹‹é—´ï¼Œåœ¨æœ€åæ·»åŠ ä¸€ä¸ªæ‰¹å¤„ç†ç»´åº¦ï¼Œ
-    # å¹¶å°†æ ‡ç­¾è½¬æ¢ä¸ºint32ã€‚
+    # ½«ËùÓĞÊı×Ö³ıÒÔ255£¬Ê¹ËùÓĞÏñËØÖµ½éÓÚ0ºÍ1Ö®¼ä£¬ÔÚ×îºóÌí¼ÓÒ»¸öÅú´¦ÀíÎ¬¶È£¬
+    # ²¢½«±êÇ©×ª»»Îªint32¡£
     process = lambda X, y: (tf.expand_dims(X, axis=3) / 255,
                             tf.cast(y, dtype='int32'))
     resize_fn = lambda X, y: (
@@ -194,7 +172,7 @@ def load_data_fashion_mnist(batch_size, resize=None):
             batch_size).map(resize_fn))
 
 def accuracy(y_hat, y):
-    """è®¡ç®—é¢„æµ‹æ­£ç¡®çš„æ•°é‡
+    """¼ÆËãÔ¤²âÕıÈ·µÄÊıÁ¿
 
     Defined in :numref:`sec_softmax_scratch`"""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
@@ -203,16 +181,16 @@ def accuracy(y_hat, y):
     return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 
 def evaluate_accuracy(net, data_iter):
-    """è®¡ç®—åœ¨æŒ‡å®šæ•°æ®é›†ä¸Šæ¨¡å‹çš„ç²¾åº¦
+    """¼ÆËãÔÚÖ¸¶¨Êı¾İ¼¯ÉÏÄ£ĞÍµÄ¾«¶È
 
     Defined in :numref:`sec_softmax_scratch`"""
-    metric = Accumulator(2)  # æ­£ç¡®é¢„æµ‹æ•°ã€é¢„æµ‹æ€»æ•°
+    metric = Accumulator(2)  # ÕıÈ·Ô¤²âÊı¡¢Ô¤²â×ÜÊı
     for X, y in data_iter:
         metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
 class Accumulator:
-    """åœ¨`n`ä¸ªå˜é‡ä¸Šç´¯åŠ """
+    """ÔÚn¸ö±äÁ¿ÉÏÀÛ¼Ó"""
     def __init__(self, n):
         """Defined in :numref:`sec_softmax_scratch`"""
         self.data = [0.0] * n
@@ -227,17 +205,17 @@ class Accumulator:
         return self.data[idx]
 
 def train_epoch_ch3(net, train_iter, loss, updater):
-    """è®­ç»ƒæ¨¡å‹ä¸€ä¸ªè¿­ä»£å‘¨æœŸï¼ˆå®šä¹‰è§ç¬¬3ç« ï¼‰
+    """ÑµÁ·Ä£ĞÍÒ»¸öµü´úÖÜÆÚ£¨¶¨Òå¼ûµÚ3ÕÂ£©
 
     Defined in :numref:`sec_softmax_scratch`"""
-    # è®­ç»ƒæŸå¤±æ€»å’Œã€è®­ç»ƒå‡†ç¡®åº¦æ€»å’Œã€æ ·æœ¬æ•°
+    # ÑµÁ·ËğÊ§×ÜºÍ¡¢ÑµÁ·×¼È·¶È×ÜºÍ¡¢Ñù±¾Êı
     metric = Accumulator(3)
     for X, y in train_iter:
-        # è®¡ç®—æ¢¯åº¦å¹¶æ›´æ–°å‚æ•°
+        # ¼ÆËãÌİ¶È²¢¸üĞÂ²ÎÊı
         with tf.GradientTape() as tape:
             y_hat = net(X)
-            # Keraså†…ç½®çš„æŸå¤±æ¥å—çš„æ˜¯ï¼ˆæ ‡ç­¾ï¼Œé¢„æµ‹ï¼‰ï¼Œè¿™ä¸åŒäºç”¨æˆ·åœ¨æœ¬ä¹¦ä¸­çš„å®ç°ã€‚
-            # æœ¬ä¹¦çš„å®ç°æ¥å—ï¼ˆé¢„æµ‹ï¼Œæ ‡ç­¾ï¼‰ï¼Œä¾‹å¦‚æˆ‘ä»¬ä¸Šé¢å®ç°çš„â€œäº¤å‰ç†µâ€
+            # KerasÄÚÖÃµÄËğÊ§½ÓÊÜµÄÊÇ£¨±êÇ©£¬Ô¤²â£©£¬Õâ²»Í¬ÓÚÓÃ»§ÔÚ±¾ÊéÖĞµÄÊµÏÖ¡£
+            # ±¾ÊéµÄÊµÏÖ½ÓÊÜ£¨Ô¤²â£¬±êÇ©£©£¬ÀıÈçÎÒÃÇÉÏÃæÊµÏÖµÄ¡°½»²æìØ¡±
             if isinstance(loss, tf.keras.losses.Loss):
                 l = loss(y, y_hat)
             else:
@@ -248,34 +226,34 @@ def train_epoch_ch3(net, train_iter, loss, updater):
             updater.apply_gradients(zip(grads, params))
         else:
             updater(X.shape[0], tape.gradient(l, updater.params))
-        # Kerasçš„`loss`é»˜è®¤è¿”å›ä¸€ä¸ªæ‰¹é‡çš„å¹³å‡æŸå¤±
+        # KerasµÄlossÄ¬ÈÏ·µ»ØÒ»¸öÅúÁ¿µÄÆ½¾ùËğÊ§
         l_sum = l * float(tf.size(y)) if isinstance(
             loss, tf.keras.losses.Loss) else tf.reduce_sum(l)
         metric.add(l_sum, accuracy(y_hat, y), tf.size(y))
-    # è¿”å›è®­ç»ƒæŸå¤±å’Œè®­ç»ƒç²¾åº¦
+    # ·µ»ØÑµÁ·ËğÊ§ºÍÑµÁ·¾«¶È
     return metric[0] / metric[2], metric[1] / metric[2]
 
 class Animator:
-    """åœ¨åŠ¨ç”»ä¸­ç»˜åˆ¶æ•°æ®"""
+    """ÔÚ¶¯»­ÖĞ»æÖÆÊı¾İ"""
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear',
                  fmts=('-', 'm--', 'g-.', 'r:'), nrows=1, ncols=1,
                  figsize=(3.5, 2.5)):
         """Defined in :numref:`sec_softmax_scratch`"""
-        # å¢é‡åœ°ç»˜åˆ¶å¤šæ¡çº¿
+        # ÔöÁ¿µØ»æÖÆ¶àÌõÏß
         if legend is None:
             legend = []
         d2l.use_svg_display()
         self.fig, self.axes = d2l.plt.subplots(nrows, ncols, figsize=figsize)
         if nrows * ncols == 1:
             self.axes = [self.axes, ]
-        # ä½¿ç”¨lambdaå‡½æ•°æ•è·å‚æ•°
+        # Ê¹ÓÃlambdaº¯Êı²¶»ñ²ÎÊı
         self.config_axes = lambda: d2l.set_axes(
             self.axes[0], xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
         self.X, self.Y, self.fmts = None, None, fmts
 
     def add(self, x, y):
-        # å‘å›¾è¡¨ä¸­æ·»åŠ å¤šä¸ªæ•°æ®ç‚¹
+        # ÏòÍ¼±íÖĞÌí¼Ó¶à¸öÊı¾İµã
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
@@ -297,7 +275,7 @@ class Animator:
         display.clear_output(wait=True)
 
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
-    """è®­ç»ƒæ¨¡å‹ï¼ˆå®šä¹‰è§ç¬¬3ç« ï¼‰
+    """ÑµÁ·Ä£ĞÍ£¨¶¨Òå¼ûµÚ3ÕÂ£©
 
     Defined in :numref:`sec_softmax_scratch`"""
     animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
@@ -312,7 +290,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     assert test_acc <= 1 and test_acc > 0.7, test_acc
 
 class Updater():
-    """ç”¨å°æ‰¹é‡éšæœºæ¢¯åº¦ä¸‹é™æ³•æ›´æ–°å‚æ•°
+    """ÓÃĞ¡ÅúÁ¿Ëæ»úÌİ¶ÈÏÂ½µ·¨¸üĞÂ²ÎÊı
 
     Defined in :numref:`sec_softmax_scratch`"""
     def __init__(self, params, lr):
@@ -323,7 +301,7 @@ class Updater():
         d2l.sgd(self.params, grads, self.lr, batch_size)
 
 def predict_ch3(net, test_iter, n=6):
-    """é¢„æµ‹æ ‡ç­¾ï¼ˆå®šä¹‰è§ç¬¬3ç« ï¼‰
+    """Ô¤²â±êÇ©£¨¶¨Òå¼ûµÚ3ÕÂ£©
 
     Defined in :numref:`sec_softmax_scratch`"""
     for X, y in test_iter:
@@ -335,10 +313,10 @@ def predict_ch3(net, test_iter, n=6):
         d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
 
 def evaluate_loss(net, data_iter, loss):
-    """è¯„ä¼°ç»™å®šæ•°æ®é›†ä¸Šæ¨¡å‹çš„æŸå¤±
+    """ÆÀ¹À¸ø¶¨Êı¾İ¼¯ÉÏÄ£ĞÍµÄËğÊ§
 
     Defined in :numref:`sec_model_selection`"""
-    metric = d2l.Accumulator(2)  # æŸå¤±çš„æ€»å’Œ,æ ·æœ¬æ•°é‡
+    metric = d2l.Accumulator(2)  # ËğÊ§µÄ×ÜºÍ,Ñù±¾ÊıÁ¿
     for X, y in data_iter:
         l = loss(net(X), y)
         metric.add(d2l.reduce_sum(l), d2l.size(l))
@@ -348,10 +326,10 @@ DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
 def download(name, cache_dir=os.path.join('..', 'data')):
-    """ä¸‹è½½ä¸€ä¸ªDATA_HUBä¸­çš„æ–‡ä»¶ï¼Œè¿”å›æœ¬åœ°æ–‡ä»¶å
+    """ÏÂÔØÒ»¸öDATA_HUBÖĞµÄÎÄ¼ş£¬·µ»Ø±¾µØÎÄ¼şÃû
 
     Defined in :numref:`sec_kaggle_house`"""
-    assert name in DATA_HUB, f"{name} ä¸å­˜åœ¨äº {DATA_HUB}"
+    assert name in DATA_HUB, f"{name} ²»´æÔÚÓÚ {DATA_HUB}"
     url, sha1_hash = DATA_HUB[name]
     os.makedirs(cache_dir, exist_ok=True)
     fname = os.path.join(cache_dir, url.split('/')[-1])
@@ -364,15 +342,15 @@ def download(name, cache_dir=os.path.join('..', 'data')):
                     break
                 sha1.update(data)
         if sha1.hexdigest() == sha1_hash:
-            return fname  # å‘½ä¸­ç¼“å­˜
-    print(f'æ­£åœ¨ä»{url}ä¸‹è½½{fname}...')
+            return fname  # ÃüÖĞ»º´æ
+    print(f'ÕıÔÚ´Ó{url}ÏÂÔØ{fname}...')
     r = requests.get(url, stream=True, verify=True)
     with open(fname, 'wb') as f:
         f.write(r.content)
     return fname
 
 def download_extract(name, folder=None):
-    """ä¸‹è½½å¹¶è§£å‹zip/taræ–‡ä»¶
+    """ÏÂÔØ²¢½âÑ¹zip/tarÎÄ¼ş
 
     Defined in :numref:`sec_kaggle_house`"""
     fname = download(name)
@@ -383,12 +361,12 @@ def download_extract(name, folder=None):
     elif ext in ('.tar', '.gz'):
         fp = tarfile.open(fname, 'r')
     else:
-        assert False, 'åªæœ‰zip/taræ–‡ä»¶å¯ä»¥è¢«è§£å‹ç¼©'
+        assert False, 'Ö»ÓĞzip/tarÎÄ¼ş¿ÉÒÔ±»½âÑ¹Ëõ'
     fp.extractall(base_dir)
     return os.path.join(base_dir, folder) if folder else data_dir
 
 def download_all():
-    """ä¸‹è½½DATA_HUBä¸­çš„æ‰€æœ‰æ–‡ä»¶
+    """ÏÂÔØDATA_HUBÖĞµÄËùÓĞÎÄ¼ş
 
     Defined in :numref:`sec_kaggle_house`"""
     for name in DATA_HUB:
@@ -403,7 +381,7 @@ DATA_HUB['kaggle_house_test'] = (
     'fa19780a7b011d9b009e8bff8e99922a8ee2eb90')
 
 def try_gpu(i=0):
-    """å¦‚æœå­˜åœ¨ï¼Œåˆ™è¿”å›gpu(i)ï¼Œå¦åˆ™è¿”å›cpu()
+    """Èç¹û´æÔÚ£¬Ôò·µ»Øgpu(i)£¬·ñÔò·µ»Øcpu()
 
     Defined in :numref:`sec_use_gpu`"""
     if len(tf.config.experimental.list_physical_devices('GPU')) >= i + 1:
@@ -411,7 +389,7 @@ def try_gpu(i=0):
     return tf.device('/CPU:0')
 
 def try_all_gpus():
-    """è¿”å›æ‰€æœ‰å¯ç”¨çš„GPUï¼Œå¦‚æœæ²¡æœ‰GPUï¼Œåˆ™è¿”å›[cpu(),]
+    """·µ»ØËùÓĞ¿ÉÓÃµÄGPU£¬Èç¹ûÃ»ÓĞGPU£¬Ôò·µ»Ø[cpu(),]
 
     Defined in :numref:`sec_use_gpu`"""
     num_gpus = len(tf.config.experimental.list_physical_devices('GPU'))
@@ -419,7 +397,7 @@ def try_all_gpus():
     return devices if devices else [tf.device('/CPU:0')]
 
 def corr2d(X, K):
-    """è®¡ç®—äºŒç»´äº’ç›¸å…³è¿ç®—"""
+    """¼ÆËã¶şÎ¬»¥Ïà¹ØÔËËã"""
     h, w = K.shape
     Y = tf.Variable(tf.zeros((X.shape[0] - h + 1, X.shape[1] - w + 1)))
     for i in range(Y.shape[0]):
@@ -429,7 +407,7 @@ def corr2d(X, K):
     return Y
 
 class TrainCallback(tf.keras.callbacks.Callback):
-    """ä¸€ä¸ªä»¥å¯è§†åŒ–çš„è®­ç»ƒè¿›å±•çš„å›è°ƒ
+    """Ò»¸öÒÔ¿ÉÊÓ»¯µÄÑµÁ·½øÕ¹µÄ»Øµ÷
 
     Defined in :numref:`sec_lenet`"""
     def __init__(self, net, train_iter, test_iter, num_epochs, device_name):
@@ -462,7 +440,7 @@ class TrainCallback(tf.keras.callbacks.Callback):
                   f'{str(self.device_name)}')
 
 def train_ch6(net_fn, train_iter, test_iter, num_epochs, lr, device):
-    """ç”¨GPUè®­ç»ƒæ¨¡å‹(åœ¨ç¬¬å…­ç« å®šä¹‰)
+    """ÓÃGPUÑµÁ·Ä£ĞÍ(ÔÚµÚÁùÕÂ¶¨Òå)
 
     Defined in :numref:`sec_lenet`"""
     device_name = device._device_name
@@ -503,7 +481,7 @@ d2l.DATA_HUB['time_machine'] = (d2l.DATA_URL + 'timemachine.txt',
                                 '090b5e7e70c295757f55df93cb0a180b9691891a')
 
 def read_time_machine():
-    """å°†æ—¶é—´æœºå™¨æ•°æ®é›†åŠ è½½åˆ°æ–‡æœ¬è¡Œçš„åˆ—è¡¨ä¸­
+    """½«Ê±¼ä»úÆ÷Êı¾İ¼¯¼ÓÔØµ½ÎÄ±¾ĞĞµÄÁĞ±íÖĞ
 
     Defined in :numref:`sec_text_preprocessing`"""
     with open(d2l.download('time_machine'), 'r') as f:
@@ -511,7 +489,7 @@ def read_time_machine():
     return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
 
 def tokenize(lines, token='word'):
-    """å°†æ–‡æœ¬è¡Œæ‹†åˆ†ä¸ºå•è¯æˆ–å­—ç¬¦è¯å…ƒ
+    """½«ÎÄ±¾ĞĞ²ğ·ÖÎªµ¥´Ê»ò×Ö·û´ÊÔª
 
     Defined in :numref:`sec_text_preprocessing`"""
     if token == 'word':
@@ -519,21 +497,21 @@ def tokenize(lines, token='word'):
     elif token == 'char':
         return [list(line) for line in lines]
     else:
-        print('é”™è¯¯ï¼šæœªçŸ¥è¯å…ƒç±»å‹ï¼š' + token)
+        print('´íÎó£ºÎ´Öª´ÊÔªÀàĞÍ£º' + token)
 
 class Vocab:
-    """æ–‡æœ¬è¯è¡¨"""
+    """ÎÄ±¾´Ê±í"""
     def __init__(self, tokens=None, min_freq=0, reserved_tokens=None):
         """Defined in :numref:`sec_text_preprocessing`"""
         if tokens is None:
             tokens = []
         if reserved_tokens is None:
             reserved_tokens = []
-        # æŒ‰å‡ºç°é¢‘ç‡æ’åº
+        # °´³öÏÖÆµÂÊÅÅĞò
         counter = count_corpus(tokens)
         self._token_freqs = sorted(counter.items(), key=lambda x: x[1],
                                    reverse=True)
-        # æœªçŸ¥è¯å…ƒçš„ç´¢å¼•ä¸º0
+        # Î´Öª´ÊÔªµÄË÷ÒıÎª0
         self.idx_to_token = ['<unk>'] + reserved_tokens
         self.token_to_idx = {token: idx
                              for idx, token in enumerate(self.idx_to_token)}
@@ -559,7 +537,7 @@ class Vocab:
         return [self.idx_to_token[index] for index in indices]
 
     @property
-    def unk(self):  # æœªçŸ¥è¯å…ƒçš„ç´¢å¼•ä¸º0
+    def unk(self):  # Î´Öª´ÊÔªµÄË÷ÒıÎª0
         return 0
 
     @property
@@ -567,60 +545,60 @@ class Vocab:
         return self._token_freqs
 
 def count_corpus(tokens):
-    """ç»Ÿè®¡è¯å…ƒçš„é¢‘ç‡
+    """Í³¼Æ´ÊÔªµÄÆµÂÊ
 
     Defined in :numref:`sec_text_preprocessing`"""
-    # è¿™é‡Œçš„`tokens`æ˜¯1Dåˆ—è¡¨æˆ–2Dåˆ—è¡¨
+    # ÕâÀïµÄtokensÊÇ1DÁĞ±í»ò2DÁĞ±í
     if len(tokens) == 0 or isinstance(tokens[0], list):
-        # å°†è¯å…ƒåˆ—è¡¨å±•å¹³æˆä¸€ä¸ªåˆ—è¡¨
+        # ½«´ÊÔªÁĞ±íÕ¹Æ½³ÉÒ»¸öÁĞ±í
         tokens = [token for line in tokens for token in line]
     return collections.Counter(tokens)
 
 def load_corpus_time_machine(max_tokens=-1):
-    """è¿”å›æ—¶å…‰æœºå™¨æ•°æ®é›†çš„è¯å…ƒç´¢å¼•åˆ—è¡¨å’Œè¯è¡¨
+    """·µ»ØÊ±¹â»úÆ÷Êı¾İ¼¯µÄ´ÊÔªË÷ÒıÁĞ±íºÍ´Ê±í
 
     Defined in :numref:`sec_text_preprocessing`"""
     lines = read_time_machine()
     tokens = tokenize(lines, 'char')
     vocab = Vocab(tokens)
-    # å› ä¸ºæ—¶å…‰æœºå™¨æ•°æ®é›†ä¸­çš„æ¯ä¸ªæ–‡æœ¬è¡Œä¸ä¸€å®šæ˜¯ä¸€ä¸ªå¥å­æˆ–ä¸€ä¸ªæ®µè½ï¼Œ
-    # æ‰€ä»¥å°†æ‰€æœ‰æ–‡æœ¬è¡Œå±•å¹³åˆ°ä¸€ä¸ªåˆ—è¡¨ä¸­
+    # ÒòÎªÊ±¹â»úÆ÷Êı¾İ¼¯ÖĞµÄÃ¿¸öÎÄ±¾ĞĞ²»Ò»¶¨ÊÇÒ»¸ö¾ä×Ó»òÒ»¸ö¶ÎÂä£¬
+    # ËùÒÔ½«ËùÓĞÎÄ±¾ĞĞÕ¹Æ½µ½Ò»¸öÁĞ±íÖĞ
     corpus = [vocab[token] for line in tokens for token in line]
     if max_tokens > 0:
         corpus = corpus[:max_tokens]
     return corpus, vocab
 
 def seq_data_iter_random(corpus, batch_size, num_steps):
-    """ä½¿ç”¨éšæœºæŠ½æ ·ç”Ÿæˆä¸€ä¸ªå°æ‰¹é‡å­åºåˆ—
+    """Ê¹ÓÃËæ»ú³éÑùÉú³ÉÒ»¸öĞ¡ÅúÁ¿×ÓĞòÁĞ
 
     Defined in :numref:`sec_language_model`"""
-    # ä»éšæœºåç§»é‡å¼€å§‹å¯¹åºåˆ—è¿›è¡Œåˆ†åŒºï¼ŒéšæœºèŒƒå›´åŒ…æ‹¬`num_steps-1`
+    # ´ÓËæ»úÆ«ÒÆÁ¿¿ªÊ¼¶ÔĞòÁĞ½øĞĞ·ÖÇø£¬Ëæ»ú·¶Î§°üÀ¨num_steps-1
     corpus = corpus[random.randint(0, num_steps - 1):]
-    # å‡å»1ï¼Œæ˜¯å› ä¸ºæˆ‘ä»¬éœ€è¦è€ƒè™‘æ ‡ç­¾
+    # ¼õÈ¥1£¬ÊÇÒòÎªÎÒÃÇĞèÒª¿¼ÂÇ±êÇ©
     num_subseqs = (len(corpus) - 1) // num_steps
-    # é•¿åº¦ä¸º`num_steps`çš„å­åºåˆ—çš„èµ·å§‹ç´¢å¼•
+    # ³¤¶ÈÎªnum_stepsµÄ×ÓĞòÁĞµÄÆğÊ¼Ë÷Òı
     initial_indices = list(range(0, num_subseqs * num_steps, num_steps))
-    # åœ¨éšæœºæŠ½æ ·çš„è¿­ä»£è¿‡ç¨‹ä¸­ï¼Œ
-    # æ¥è‡ªä¸¤ä¸ªç›¸é‚»çš„ã€éšæœºçš„ã€å°æ‰¹é‡ä¸­çš„å­åºåˆ—ä¸ä¸€å®šåœ¨åŸå§‹åºåˆ—ä¸Šç›¸é‚»
+    # ÔÚËæ»ú³éÑùµÄµü´ú¹ı³ÌÖĞ£¬
+    # À´×ÔÁ½¸öÏàÁÚµÄ¡¢Ëæ»úµÄ¡¢Ğ¡ÅúÁ¿ÖĞµÄ×ÓĞòÁĞ²»Ò»¶¨ÔÚÔ­Ê¼ĞòÁĞÉÏÏàÁÚ
     random.shuffle(initial_indices)
 
     def data(pos):
-        # è¿”å›ä»`pos`ä½ç½®å¼€å§‹çš„é•¿åº¦ä¸º`num_steps`çš„åºåˆ—
+        # ·µ»Ø´ÓposÎ»ÖÃ¿ªÊ¼µÄ³¤¶ÈÎªnum_stepsµÄĞòÁĞ
         return corpus[pos: pos + num_steps]
 
     num_batches = num_subseqs // batch_size
     for i in range(0, batch_size * num_batches, batch_size):
-        # åœ¨è¿™é‡Œï¼Œ`initial_indices`åŒ…å«å­åºåˆ—çš„éšæœºèµ·å§‹ç´¢å¼•
+        # ÔÚÕâÀï£¬initial_indices°üº¬×ÓĞòÁĞµÄËæ»úÆğÊ¼Ë÷Òı
         initial_indices_per_batch = initial_indices[i: i + batch_size]
         X = [data(j) for j in initial_indices_per_batch]
         Y = [data(j + 1) for j in initial_indices_per_batch]
         yield d2l.tensor(X), d2l.tensor(Y)
 
 def seq_data_iter_sequential(corpus, batch_size, num_steps):
-    """ä½¿ç”¨é¡ºåºåˆ†åŒºç”Ÿæˆä¸€ä¸ªå°æ‰¹é‡å­åºåˆ—
+    """Ê¹ÓÃË³Ğò·ÖÇøÉú³ÉÒ»¸öĞ¡ÅúÁ¿×ÓĞòÁĞ
 
     Defined in :numref:`sec_language_model`"""
-    # ä»éšæœºåç§»é‡å¼€å§‹åˆ’åˆ†åºåˆ—
+    # ´ÓËæ»úÆ«ÒÆÁ¿¿ªÊ¼»®·ÖĞòÁĞ
     offset = random.randint(0, num_steps)
     num_tokens = ((len(corpus) - offset - 1) // batch_size) * batch_size
     Xs = d2l.tensor(corpus[offset: offset + num_tokens])
@@ -634,7 +612,7 @@ def seq_data_iter_sequential(corpus, batch_size, num_steps):
         yield X, Y
 
 class SeqDataLoader:
-    """åŠ è½½åºåˆ—æ•°æ®çš„è¿­ä»£å™¨"""
+    """¼ÓÔØĞòÁĞÊı¾İµÄµü´úÆ÷"""
     def __init__(self, batch_size, num_steps, use_random_iter, max_tokens):
         """Defined in :numref:`sec_language_model`"""
         if use_random_iter:
@@ -649,7 +627,7 @@ class SeqDataLoader:
 
 def load_data_time_machine(batch_size, num_steps,
                            use_random_iter=False, max_tokens=10000):
-    """è¿”å›æ—¶å…‰æœºå™¨æ•°æ®é›†çš„è¿­ä»£å™¨å’Œè¯è¡¨
+    """·µ»ØÊ±¹â»úÆ÷Êı¾İ¼¯µÄµü´úÆ÷ºÍ´Ê±í
 
     Defined in :numref:`sec_language_model`"""
     data_iter = SeqDataLoader(
@@ -657,7 +635,7 @@ def load_data_time_machine(batch_size, num_steps,
     return data_iter, data_iter.vocab
 
 class RNNModelScratch:
-    """ä»é›¶å¼€å§‹å®ç°çš„å¾ªç¯ç¥ç»ç½‘ç»œæ¨¡å‹"""
+    """´ÓÁã¿ªÊ¼ÊµÏÖµÄÑ­»·Éñ¾­ÍøÂçÄ£ĞÍ"""
     def __init__(self, vocab_size, num_hiddens,
                  init_state, forward_fn, get_params):
         """Defined in :numref:`sec_rnn_scratch`"""
@@ -674,23 +652,23 @@ class RNNModelScratch:
         return self.init_state(batch_size, self.num_hiddens)
 
 def predict_ch8(prefix, num_preds, net, vocab):
-    """åœ¨`prefix`åé¢ç”Ÿæˆæ–°å­—ç¬¦
+    """ÔÚprefixºóÃæÉú³ÉĞÂ×Ö·û
 
     Defined in :numref:`sec_rnn_scratch`"""
     state = net.begin_state(batch_size=1, dtype=tf.float32)
     outputs = [vocab[prefix[0]]]
     get_input = lambda: d2l.reshape(d2l.tensor([outputs[-1]]),
                                     (1, 1)).numpy()
-    for y in prefix[1:]:  # é¢„çƒ­æœŸ
+    for y in prefix[1:]:  # Ô¤ÈÈÆÚ
         _, state = net(get_input(), state)
         outputs.append(vocab[y])
-    for _ in range(num_preds):  # é¢„æµ‹`num_preds`æ­¥
+    for _ in range(num_preds):  # Ô¤²ânum_preds²½
         y, state = net(get_input(), state)
         outputs.append(int(y.numpy().argmax(axis=1).reshape(1)))
     return ''.join([vocab.idx_to_token[i] for i in outputs])
 
 def grad_clipping(grads, theta):
-    """è£å‰ªæ¢¯åº¦
+    """²Ã¼ôÌİ¶È
 
     Defined in :numref:`sec_rnn_scratch`"""
     theta = tf.constant(theta, dtype=tf.float32)
@@ -711,14 +689,14 @@ def grad_clipping(grads, theta):
     return new_grad
 
 def train_epoch_ch8(net, train_iter, loss, updater, use_random_iter):
-    """è®­ç»ƒæ¨¡å‹ä¸€ä¸ªè¿­ä»£å‘¨æœŸï¼ˆå®šä¹‰è§ç¬¬8ç« ï¼‰
+    """ÑµÁ·Ä£ĞÍÒ»¸öµü´úÖÜÆÚ£¨¶¨Òå¼ûµÚ8ÕÂ£©
 
     Defined in :numref:`sec_rnn_scratch`"""
     state, timer = None, d2l.Timer()
-    metric = d2l.Accumulator(2)  # è®­ç»ƒæŸå¤±ä¹‹å’Œ,è¯å…ƒæ•°é‡
+    metric = d2l.Accumulator(2)  # ÑµÁ·ËğÊ§Ö®ºÍ,´ÊÔªÊıÁ¿
     for X, Y in train_iter:
         if state is None or use_random_iter:
-            # åœ¨ç¬¬ä¸€æ¬¡è¿­ä»£æˆ–ä½¿ç”¨éšæœºæŠ½æ ·æ—¶åˆå§‹åŒ–`state`
+            # ÔÚµÚÒ»´Îµü´ú»òÊ¹ÓÃËæ»ú³éÑùÊ±³õÊ¼»¯state
             state = net.begin_state(batch_size=X.shape[0], dtype=tf.float32)
         with tf.GradientTape(persistent=True) as g:
             y_hat, state = net(X, state)
@@ -728,13 +706,13 @@ def train_epoch_ch8(net, train_iter, loss, updater, use_random_iter):
         grads = g.gradient(l, params)
         grads = grad_clipping(grads, 1)
         updater.apply_gradients(zip(grads, params))
-        # Kerasé»˜è®¤è¿”å›ä¸€ä¸ªæ‰¹é‡ä¸­çš„å¹³å‡æŸå¤±
+        # KerasÄ¬ÈÏ·µ»ØÒ»¸öÅúÁ¿ÖĞµÄÆ½¾ùËğÊ§
         metric.add(l * d2l.size(y), d2l.size(y))
     return math.exp(metric[0] / metric[1]), metric[1] / timer.stop()
 
 def train_ch8(net, train_iter, vocab, lr, num_epochs, strategy,
               use_random_iter=False):
-    """è®­ç»ƒæ¨¡å‹ï¼ˆå®šä¹‰è§ç¬¬8ç« ï¼‰
+    """ÑµÁ·Ä£ĞÍ£¨¶¨Òå¼ûµÚ8ÕÂ£©
 
     Defined in :numref:`sec_rnn_scratch`"""
     with strategy.scope():
@@ -744,7 +722,7 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, strategy,
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
                             legend=['train'], xlim=[10, num_epochs])
     predict = lambda prefix: predict_ch8(prefix, 50, net, vocab)
-    # è®­ç»ƒå’Œé¢„æµ‹
+    # ÑµÁ·ºÍÔ¤²â
     for epoch in range(num_epochs):
         ppl, speed = train_epoch_ch8(net, train_iter, loss, updater,
                                      use_random_iter)
@@ -752,7 +730,7 @@ def train_ch8(net, train_iter, vocab, lr, num_epochs, strategy,
             print(predict('time traveller'))
             animator.add(epoch + 1, [ppl])
     device = d2l.try_gpu()._device_name
-    print(f'å›°æƒ‘åº¦ {ppl:.1f}, {speed:.1f} è¯å…ƒ/ç§’ {str(device)}')
+    print(f'À§»ó¶È {ppl:.1f}, {speed:.1f} ´ÊÔª/Ãë {str(device)}')
     print(predict('time traveller'))
     print(predict('traveller'))
 
@@ -766,7 +744,7 @@ class RNNModel(tf.keras.layers.Layer):
 
     def call(self, inputs, state):
         X = tf.one_hot(tf.transpose(inputs), self.vocab_size)
-        # rnnè¿”å›ä¸¤ä¸ªä»¥ä¸Šçš„å€¼
+        # rnn·µ»ØÁ½¸öÒÔÉÏµÄÖµ
         Y, *state = self.rnn(X, state)
         output = self.dense(tf.reshape(Y, (-1, Y.shape[-1])))
         return output, state
@@ -778,7 +756,7 @@ d2l.DATA_HUB['fra-eng'] = (d2l.DATA_URL + 'fra-eng.zip',
                            '94646ad1522d915e7b0f9296181140edcf86a4f5')
 
 def read_data_nmt():
-    """è½½å…¥â€œè‹±è¯­ï¼æ³•è¯­â€æ•°æ®é›†
+    """ÔØÈë¡°Ó¢Óï£­·¨Óï¡±Êı¾İ¼¯
 
     Defined in :numref:`sec_machine_translation`"""
     data_dir = d2l.download_extract('fra-eng')
@@ -787,22 +765,22 @@ def read_data_nmt():
         return f.read()
 
 def preprocess_nmt(text):
-    """é¢„å¤„ç†â€œè‹±è¯­ï¼æ³•è¯­â€æ•°æ®é›†
+    """Ô¤´¦Àí¡°Ó¢Óï£­·¨Óï¡±Êı¾İ¼¯
 
     Defined in :numref:`sec_machine_translation`"""
     def no_space(char, prev_char):
         return char in set(',.!?') and prev_char != ' '
 
-    # ä½¿ç”¨ç©ºæ ¼æ›¿æ¢ä¸é—´æ–­ç©ºæ ¼
-    # ä½¿ç”¨å°å†™å­—æ¯æ›¿æ¢å¤§å†™å­—æ¯
+    # Ê¹ÓÃ¿Õ¸ñÌæ»»²»¼ä¶Ï¿Õ¸ñ
+    # Ê¹ÓÃĞ¡Ğ´×ÖÄ¸Ìæ»»´óĞ´×ÖÄ¸
     text = text.replace('\u202f', ' ').replace('\xa0', ' ').lower()
-    # åœ¨å•è¯å’Œæ ‡ç‚¹ç¬¦å·ä¹‹é—´æ’å…¥ç©ºæ ¼
+    # ÔÚµ¥´ÊºÍ±êµã·ûºÅÖ®¼ä²åÈë¿Õ¸ñ
     out = [' ' + char if i > 0 and no_space(char, text[i - 1]) else char
            for i, char in enumerate(text)]
     return ''.join(out)
 
 def tokenize_nmt(text, num_examples=None):
-    """è¯å…ƒåŒ–â€œè‹±è¯­ï¼æ³•è¯­â€æ•°æ®æ•°æ®é›†
+    """´ÊÔª»¯¡°Ó¢Óï£­·¨Óï¡±Êı¾İÊı¾İ¼¯
 
     Defined in :numref:`sec_machine_translation`"""
     source, target = [], []
@@ -816,15 +794,15 @@ def tokenize_nmt(text, num_examples=None):
     return source, target
 
 def truncate_pad(line, num_steps, padding_token):
-    """æˆªæ–­æˆ–å¡«å……æ–‡æœ¬åºåˆ—
+    """½Ø¶Ï»òÌî³äÎÄ±¾ĞòÁĞ
 
     Defined in :numref:`sec_machine_translation`"""
     if len(line) > num_steps:
-        return line[:num_steps]  # æˆªæ–­
-    return line + [padding_token] * (num_steps - len(line))  # å¡«å……
+        return line[:num_steps]  # ½Ø¶Ï
+    return line + [padding_token] * (num_steps - len(line))  # Ìî³ä
 
 def build_array_nmt(lines, vocab, num_steps):
-    """å°†æœºå™¨ç¿»è¯‘çš„æ–‡æœ¬åºåˆ—è½¬æ¢æˆå°æ‰¹é‡
+    """½«»úÆ÷·­ÒëµÄÎÄ±¾ĞòÁĞ×ª»»³ÉĞ¡ÅúÁ¿
 
     Defined in :numref:`subsec_mt_data_loading`"""
     lines = [vocab[l] for l in lines]
@@ -836,7 +814,7 @@ def build_array_nmt(lines, vocab, num_steps):
     return array, valid_len
 
 def load_data_nmt(batch_size, num_steps, num_examples=600):
-    """è¿”å›ç¿»è¯‘æ•°æ®é›†çš„è¿­ä»£å™¨å’Œè¯è¡¨
+    """·µ»Ø·­ÒëÊı¾İ¼¯µÄµü´úÆ÷ºÍ´Ê±í
 
     Defined in :numref:`subsec_mt_data_loading`"""
     text = preprocess_nmt(read_data_nmt())
@@ -852,7 +830,7 @@ def load_data_nmt(batch_size, num_steps, num_examples=600):
     return data_iter, src_vocab, tgt_vocab
 
 class Encoder(tf.keras.layers.Layer):
-    """ç¼–ç å™¨-è§£ç å™¨æ¶æ„çš„åŸºæœ¬ç¼–ç å™¨æ¥å£"""
+    """±àÂëÆ÷-½âÂëÆ÷¼Ü¹¹µÄ»ù±¾±àÂëÆ÷½Ó¿Ú"""
     def __init__(self, **kwargs):
         super(Encoder, self).__init__(**kwargs)
 
@@ -860,7 +838,7 @@ class Encoder(tf.keras.layers.Layer):
         raise NotImplementedError
 
 class Decoder(tf.keras.layers.Layer):
-    """ç¼–ç å™¨-è§£ç å™¨æ¶æ„çš„åŸºæœ¬è§£ç å™¨æ¥å£
+    """±àÂëÆ÷-½âÂëÆ÷¼Ü¹¹µÄ»ù±¾½âÂëÆ÷½Ó¿Ú
 
     Defined in :numref:`sec_encoder-decoder`"""
     def __init__(self, **kwargs):
@@ -873,7 +851,7 @@ class Decoder(tf.keras.layers.Layer):
         raise NotImplementedError
 
 class EncoderDecoder(tf.keras.Model):
-    """ç¼–ç å™¨-è§£ç å™¨æ¶æ„çš„åŸºç±»
+    """±àÂëÆ÷-½âÂëÆ÷¼Ü¹¹µÄ»ùÀà
 
     Defined in :numref:`sec_encoder-decoder`"""
     def __init__(self, encoder, decoder, **kwargs):
@@ -887,12 +865,12 @@ class EncoderDecoder(tf.keras.Model):
         return self.decoder(dec_X, dec_state, **kwargs)
 
 class Seq2SeqEncoder(d2l.Encoder):
-    """ç”¨äºåºåˆ—åˆ°åºåˆ—å­¦ä¹ çš„å¾ªç¯ç¥ç»ç½‘ç»œç¼–ç å™¨
+    """ÓÃÓÚĞòÁĞµ½ĞòÁĞÑ§Ï°µÄÑ­»·Éñ¾­ÍøÂç±àÂëÆ÷
 
     Defined in :numref:`sec_seq2seq`"""
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers, dropout=0, **kwargs):
         super().__init__(*kwargs)
-        # åµŒå…¥å±‚
+        # Ç¶Èë²ã
         self.embedding = tf.keras.layers.Embedding(vocab_size, embed_size)
         self.rnn = tf.keras.layers.RNN(tf.keras.layers.StackedRNNCells(
             [tf.keras.layers.GRUCell(num_hiddens, dropout=dropout)
@@ -900,15 +878,15 @@ class Seq2SeqEncoder(d2l.Encoder):
                                        return_state=True)
 
     def call(self, X, *args, **kwargs):
-        # è¾“å…¥'X'çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`)
-        # è¾“å‡º'X'çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`,`embed_size`)
+        # ÊäÈë'X'µÄĞÎ×´£º(batch_size,num_steps)
+        # Êä³ö'X'µÄĞÎ×´£º(batch_size,num_steps,embed_size)
         X = self.embedding(X)
         output = self.rnn(X, **kwargs)
         state = output[1:]
         return output[0], state
 
 def sequence_mask(X, valid_len, value=0):
-    """åœ¨åºåˆ—ä¸­å±è”½ä¸ç›¸å…³çš„é¡¹
+    """ÔÚĞòÁĞÖĞÆÁ±Î²»Ïà¹ØµÄÏî
 
     Defined in :numref:`sec_seq2seq_decoder`"""
     maxlen = X.shape[1]
@@ -921,16 +899,16 @@ def sequence_mask(X, valid_len, value=0):
         return tf.where(mask, X, value)
 
 class MaskedSoftmaxCELoss(tf.keras.losses.Loss):
-    """å¸¦é®è”½çš„softmaxäº¤å‰ç†µæŸå¤±å‡½æ•°
+    """´øÕÚ±ÎµÄsoftmax½»²æìØËğÊ§º¯Êı
 
     Defined in :numref:`sec_seq2seq_decoder`"""
     def __init__(self, valid_len):
         super().__init__(reduction='none')
         self.valid_len = valid_len
 
-    # `pred`çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`,`vocab_size`)
-    # `label`çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`)
-    # `valid_len`çš„å½¢çŠ¶ï¼š(`batch_size`,)
+    # predµÄĞÎ×´£º(batch_size,num_steps,vocab_size)
+    # labelµÄĞÎ×´£º(batch_size,num_steps)
+    # valid_lenµÄĞÎ×´£º(batch_size,)
     def call(self, label, pred):
         weights = tf.ones_like(label, dtype=tf.float32)
         weights = sequence_mask(weights, self.valid_len)
@@ -941,7 +919,7 @@ class MaskedSoftmaxCELoss(tf.keras.losses.Loss):
         return weighted_loss
 
 def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
-    """è®­ç»ƒåºåˆ—åˆ°åºåˆ—æ¨¡å‹
+    """ÑµÁ·ĞòÁĞµ½ĞòÁĞÄ£ĞÍ
 
     Defined in :numref:`sec_seq2seq_decoder`"""
     optimizer = tf.keras.optimizers.Adam(learning_rate=lr)
@@ -949,12 +927,12 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                             xlim=[10, num_epochs])
     for epoch in range(num_epochs):
         timer = d2l.Timer()
-        metric = d2l.Accumulator(2)  # è®­ç»ƒæŸå¤±æ€»å’Œï¼Œè¯å…ƒæ•°é‡
+        metric = d2l.Accumulator(2)  # ÑµÁ·ËğÊ§×ÜºÍ£¬´ÊÔªÊıÁ¿
         for batch in data_iter:
             X, X_valid_len, Y, Y_valid_len = [x for x in batch]
             bos = tf.reshape(tf.constant([tgt_vocab['<bos>']] * Y.shape[0]),
                              shape=(-1, 1))
-            dec_input = tf.concat([bos, Y[:, :-1]], 1)  # å¼ºåˆ¶æ•™å­¦
+            dec_input = tf.concat([bos, Y[:, :-1]], 1)  # Ç¿ÖÆ½ÌÑ§
             with tf.GradientTape() as tape:
                 Y_hat, _ = net(X, dec_input, X_valid_len, training=True)
                 l = MaskedSoftmaxCELoss(Y_valid_len)(Y, Y_hat)
@@ -970,29 +948,29 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
 
 def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
                     save_attention_weights=False):
-    """åºåˆ—åˆ°åºåˆ—æ¨¡å‹çš„é¢„æµ‹
+    """ĞòÁĞµ½ĞòÁĞÄ£ĞÍµÄÔ¤²â
 
     Defined in :numref:`sec_seq2seq_training`"""
     src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
         src_vocab['<eos>']]
     enc_valid_len = tf.constant([len(src_tokens)])
     src_tokens = d2l.truncate_pad(src_tokens, num_steps, src_vocab['<pad>'])
-    # æ·»åŠ æ‰¹é‡è½´
+    # Ìí¼ÓÅúÁ¿Öá
     enc_X = tf.expand_dims(src_tokens, axis=0)
     enc_outputs = net.encoder(enc_X, enc_valid_len, training=False)
     dec_state = net.decoder.init_state(enc_outputs, enc_valid_len)
-    # æ·»åŠ æ‰¹é‡è½´
+    # Ìí¼ÓÅúÁ¿Öá
     dec_X = tf.expand_dims(tf.constant([tgt_vocab['<bos>']]), axis=0)
     output_seq, attention_weight_seq = [], []
     for _ in range(num_steps):
         Y, dec_state = net.decoder(dec_X, dec_state, training=False)
-        # æˆ‘ä»¬ä½¿ç”¨å…·æœ‰é¢„æµ‹æœ€é«˜å¯èƒ½æ€§çš„è¯å…ƒï¼Œä½œä¸ºè§£ç å™¨åœ¨ä¸‹ä¸€æ—¶é—´æ­¥çš„è¾“å…¥
+        # ÎÒÃÇÊ¹ÓÃ¾ßÓĞÔ¤²â×î¸ß¿ÉÄÜĞÔµÄ´ÊÔª£¬×÷Îª½âÂëÆ÷ÔÚÏÂÒ»Ê±¼ä²½µÄÊäÈë
         dec_X = tf.argmax(Y, axis=2)
         pred = tf.squeeze(dec_X, axis=0)
-        # ä¿å­˜æ³¨æ„åŠ›æƒé‡
+        # ±£´æ×¢ÒâÁ¦È¨ÖØ
         if save_attention_weights:
             attention_weight_seq.append(net.decoder.attention_weights)
-        # ä¸€æ—¦åºåˆ—ç»“æŸè¯å…ƒè¢«é¢„æµ‹ï¼Œè¾“å‡ºåºåˆ—çš„ç”Ÿæˆå°±å®Œæˆäº†
+        # Ò»µ©ĞòÁĞ½áÊø´ÊÔª±»Ô¤²â£¬Êä³öĞòÁĞµÄÉú³É¾ÍÍê³ÉÁË
         if pred == tgt_vocab['<eos>']:
             break
         output_seq.append(pred.numpy())
@@ -1000,7 +978,7 @@ def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
         shape = -1).numpy().tolist())), attention_weight_seq
 
 def bleu(pred_seq, label_seq, k):
-    """è®¡ç®—BLEU
+    """¼ÆËãBLEU
 
     Defined in :numref:`sec_seq2seq_training`"""
     pred_tokens, label_tokens = pred_seq.split(' '), label_seq.split(' ')
@@ -1019,7 +997,7 @@ def bleu(pred_seq, label_seq, k):
 
 def show_heatmaps(matrices, xlabel, ylabel, titles=None, figsize=(2.5, 2.5),
                   cmap='Reds'):
-    """æ˜¾ç¤ºçŸ©é˜µçƒ­å›¾
+    """ÏÔÊ¾¾ØÕóÈÈÍ¼
 
     Defined in :numref:`sec_attention-cues`"""
     d2l.use_svg_display()
@@ -1038,10 +1016,10 @@ def show_heatmaps(matrices, xlabel, ylabel, titles=None, figsize=(2.5, 2.5),
     fig.colorbar(pcm, ax=axes, shrink=0.6);
 
 def masked_softmax(X, valid_lens):
-    """é€šè¿‡åœ¨æœ€åä¸€ä¸ªè½´ä¸Šæ©è”½å…ƒç´ æ¥æ‰§è¡Œsoftmaxæ“ä½œ
+    """Í¨¹ıÔÚ×îºóÒ»¸öÖáÉÏÑÚ±ÎÔªËØÀ´Ö´ĞĞsoftmax²Ù×÷
 
     Defined in :numref:`sec_attention-scoring-functions`"""
-    # `X`:3Då¼ é‡ï¼Œ`valid_lens`:1Dæˆ–2Då¼ é‡
+    # X:3DÕÅÁ¿£¬valid_lens:1D»ò2DÕÅÁ¿
     if valid_lens is None:
         return tf.nn.softmax(X, axis=-1)
     else:
@@ -1051,7 +1029,7 @@ def masked_softmax(X, valid_lens):
 
         else:
             valid_lens = tf.reshape(valid_lens, shape=-1)
-        # æœ€åä¸€è½´ä¸Šè¢«æ©è”½çš„å…ƒç´ ä½¿ç”¨ä¸€ä¸ªéå¸¸å¤§çš„è´Ÿå€¼æ›¿æ¢ï¼Œä»è€Œå…¶softmaxè¾“å‡ºä¸º0
+        # ×îºóÒ»ÖáÉÏ±»ÑÚ±ÎµÄÔªËØÊ¹ÓÃÒ»¸ö·Ç³£´óµÄ¸ºÖµÌæ»»£¬´Ó¶øÆäsoftmaxÊä³öÎª0
         X = d2l.sequence_mask(tf.reshape(X, shape=(-1, shape[-1])),
                               valid_lens, value=-1e6)
         return tf.nn.softmax(tf.reshape(X, shape=shape), axis=-1)
@@ -1069,18 +1047,18 @@ class AdditiveAttention(tf.keras.layers.Layer):
 
     def call(self, queries, keys, values, valid_lens, **kwargs):
         queries, keys = self.W_q(queries), self.W_k(keys)
-        # åœ¨ç»´åº¦æ‰©å±•åï¼Œ
-        # `queries`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ1ï¼Œ`num_hidden`)
-        # `key`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œ1ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
-        # ä½¿ç”¨å¹¿æ’­æ–¹å¼è¿›è¡Œæ±‚å’Œ
+        # ÔÚÎ¬¶ÈÀ©Õ¹ºó£¬
+        # queriesµÄĞÎ×´£º(batch_size£¬²éÑ¯µÄ¸öÊı£¬1£¬num_hidden)
+        # keyµÄĞÎ×´£º(batch_size£¬1£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_hiddens)
+        # Ê¹ÓÃ¹ã²¥·½Ê½½øĞĞÇóºÍ
         features = tf.expand_dims(queries, axis=2) + tf.expand_dims(
             keys, axis=1)
         features = tf.nn.tanh(features)
-        # `self.w_v`ä»…æœ‰ä¸€ä¸ªè¾“å‡ºï¼Œå› æ­¤ä»å½¢çŠ¶ä¸­ç§»é™¤æœ€åé‚£ä¸ªç»´åº¦ã€‚
-        # `scores`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œâ€œé”®-å€¼â€å¯¹çš„ä¸ªæ•°)
+        # self.w_v½öÓĞÒ»¸öÊä³ö£¬Òò´Ë´ÓĞÎ×´ÖĞÒÆ³ı×îºóÄÇ¸öÎ¬¶È¡£
+        # scoresµÄĞÎ×´£º(batch_size£¬²éÑ¯µÄ¸öÊı£¬¡°¼ü-Öµ¡±¶ÔµÄ¸öÊı)
         scores = tf.squeeze(self.w_v(features), axis=-1)
         self.attention_weights = masked_softmax(scores, valid_lens)
-        # `values`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œå€¼çš„ç»´åº¦)
+        # valuesµÄĞÎ×´£º(batch_size£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬ÖµµÄÎ¬¶È)
         return tf.matmul(self.dropout(
             self.attention_weights, **kwargs), values)
 
@@ -1092,10 +1070,10 @@ class DotProductAttention(tf.keras.layers.Layer):
         super().__init__(**kwargs)
         self.dropout = tf.keras.layers.Dropout(dropout)
 
-    # `queries`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ`d`)
-    # `keys`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`d`)
-    # `values`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œå€¼çš„ç»´åº¦)
-    # `valid_lens`çš„å½¢çŠ¶:(`batch_size`ï¼Œ)æˆ–è€…(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°)
+    # queriesµÄĞÎ×´£º(batch_size£¬²éÑ¯µÄ¸öÊı£¬d)
+    # keysµÄĞÎ×´£º(batch_size£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬d)
+    # valuesµÄĞÎ×´£º(batch_size£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬ÖµµÄÎ¬¶È)
+    # valid_lensµÄĞÎ×´:(batch_size£¬)»òÕß(batch_size£¬²éÑ¯µÄ¸öÊı)
     def call(self, queries, keys, values, valid_lens, **kwargs):
         d = queries.shape[-1]
         scores = tf.matmul(queries, keys, transpose_b=True)/tf.math.sqrt(
@@ -1104,7 +1082,7 @@ class DotProductAttention(tf.keras.layers.Layer):
         return tf.matmul(self.dropout(self.attention_weights, **kwargs), values)
 
 class AttentionDecoder(d2l.Decoder):
-    """å¸¦æœ‰æ³¨æ„åŠ›æœºåˆ¶è§£ç å™¨çš„åŸºæœ¬æ¥å£
+    """´øÓĞ×¢ÒâÁ¦»úÖÆ½âÂëÆ÷µÄ»ù±¾½Ó¿Ú
 
     Defined in :numref:`sec_seq2seq_attention`"""
     def __init__(self, **kwargs):
@@ -1115,7 +1093,7 @@ class AttentionDecoder(d2l.Decoder):
         raise NotImplementedError
 
 class MultiHeadAttention(tf.keras.layers.Layer):
-    """å¤šå¤´æ³¨æ„åŠ›
+    """¶àÍ·×¢ÒâÁ¦
 
     Defined in :numref:`sec_multihead-attention`"""
     def __init__(self, key_size, query_size, value_size, num_hiddens,
@@ -1129,50 +1107,50 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         self.W_o = tf.keras.layers.Dense(num_hiddens, use_bias=bias)
 
     def call(self, queries, keys, values, valid_lens, **kwargs):
-        # `queries`ï¼Œ`keys`ï¼Œ`values`çš„å½¢çŠ¶:
-        # (`batch_size`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
-        # `valid_lens`ã€€çš„å½¢çŠ¶:
-        # (`batch_size`ï¼Œ)æˆ–(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°)
-        # ç»è¿‡å˜æ¢åï¼Œè¾“å‡ºçš„`queries`ï¼Œ`keys`ï¼Œ`values`ã€€çš„å½¢çŠ¶:
-        # (`batch_size`*`num_heads`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ
-        # `num_hiddens`/`num_heads`)
+        # queries£¬keys£¬valuesµÄĞÎ×´:
+        # (batch_size£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_hiddens)
+        # valid_lens¡¡µÄĞÎ×´:
+        # (batch_size£¬)»ò(batch_size£¬²éÑ¯µÄ¸öÊı)
+        # ¾­¹ı±ä»»ºó£¬Êä³öµÄqueries£¬keys£¬values¡¡µÄĞÎ×´:
+        # (batch_size*num_heads£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬
+        # num_hiddens/num_heads)
         queries = transpose_qkv(self.W_q(queries), self.num_heads)
         keys = transpose_qkv(self.W_k(keys), self.num_heads)
         values = transpose_qkv(self.W_v(values), self.num_heads)
 
         if valid_lens is not None:
-            # åœ¨è½´0ï¼Œå°†ç¬¬ä¸€é¡¹ï¼ˆæ ‡é‡æˆ–è€…çŸ¢é‡ï¼‰å¤åˆ¶`num_heads`æ¬¡ï¼Œ
-            # ç„¶åå¦‚æ­¤å¤åˆ¶ç¬¬äºŒé¡¹ï¼Œç„¶åè¯¸å¦‚æ­¤ç±»ã€‚
+            # ÔÚÖá0£¬½«µÚÒ»Ïî£¨±êÁ¿»òÕßÊ¸Á¿£©¸´ÖÆnum_heads´Î£¬
+            # È»ºóÈç´Ë¸´ÖÆµÚ¶şÏî£¬È»ºóÖîÈç´ËÀà¡£
             valid_lens = tf.repeat(valid_lens, repeats=self.num_heads, axis=0)
 
-        # `output`çš„å½¢çŠ¶:(`batch_size`*`num_heads`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ
-        # `num_hiddens`/`num_heads`)
+        # outputµÄĞÎ×´:(batch_size*num_heads£¬²éÑ¯µÄ¸öÊı£¬
+        # num_hiddens/num_heads)
         output = self.attention(queries, keys, values, valid_lens, **kwargs)
 
-        # `output_concat`çš„å½¢çŠ¶:(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
+        # output_concatµÄĞÎ×´:(batch_size£¬²éÑ¯µÄ¸öÊı£¬num_hiddens)
         output_concat = transpose_output(output, self.num_heads)
         return self.W_o(output_concat)
 
 def transpose_qkv(X, num_heads):
-    """ä¸ºäº†å¤šæ³¨æ„åŠ›å¤´çš„å¹¶è¡Œè®¡ç®—è€Œå˜æ¢å½¢çŠ¶
+    """ÎªÁË¶à×¢ÒâÁ¦Í·µÄ²¢ĞĞ¼ÆËã¶ø±ä»»ĞÎ×´
 
     Defined in :numref:`sec_multihead-attention`"""
-    # è¾“å…¥`X`çš„å½¢çŠ¶:(`batch_size`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
-    # è¾“å‡º`X`çš„å½¢çŠ¶:(`batch_size`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_heads`ï¼Œ
-    # `num_hiddens`/`num_heads`)
+    # ÊäÈëXµÄĞÎ×´:(batch_size£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_hiddens)
+    # Êä³öXµÄĞÎ×´:(batch_size£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_heads£¬
+    # num_hiddens/num_heads)
     X = tf.reshape(X, shape=(X.shape[0], X.shape[1], num_heads, -1))
 
-    # è¾“å‡º`X`çš„å½¢çŠ¶:(`batch_size`ï¼Œ`num_heads`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°,
-    # `num_hiddens`/`num_heads`)
+    # Êä³öXµÄĞÎ×´:(batch_size£¬num_heads£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı,
+    # num_hiddens/num_heads)
     X = tf.transpose(X, perm=(0, 2, 1, 3))
 
-    # æœ€ç»ˆè¾“å‡ºçš„å½¢çŠ¶:(`batch_size`*`num_heads`,æŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°,
-    # `num_hiddens`/`num_heads`)
+    # ×îÖÕÊä³öµÄĞÎ×´:(batch_size*num_heads,²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı,
+    # num_hiddens/num_heads)
     return tf.reshape(X, shape=(-1, X.shape[2], X.shape[3]))
 
 
 def transpose_output(X, num_heads):
-    """é€†è½¬`transpose_qkv`å‡½æ•°çš„æ“ä½œ
+    """Äæ×ªtranspose_qkvº¯ÊıµÄ²Ù×÷
 
     Defined in :numref:`sec_multihead-attention`"""
     X = tf.reshape(X, shape=(-1, num_heads, X.shape[1], X.shape[2]))
@@ -1180,13 +1158,13 @@ def transpose_output(X, num_heads):
     return tf.reshape(X, shape=(X.shape[0], X.shape[1], -1))
 
 class PositionalEncoding(tf.keras.layers.Layer):
-    """ä½ç½®ç¼–ç 
+    """Î»ÖÃ±àÂë
 
     Defined in :numref:`sec_self-attention-and-positional-encoding`"""
     def __init__(self, num_hiddens, dropout, max_len=1000):
         super().__init__()
         self.dropout = tf.keras.layers.Dropout(dropout)
-        # åˆ›å»ºä¸€ä¸ªè¶³å¤Ÿé•¿çš„`P`
+        # ´´½¨Ò»¸ö×ã¹»³¤µÄP
         self.P = np.zeros((1, max_len, num_hiddens))
         X = np.arange(max_len, dtype=np.float32).reshape(
             -1,1)/np.power(10000, np.arange(
@@ -1199,7 +1177,7 @@ class PositionalEncoding(tf.keras.layers.Layer):
         return self.dropout(X, **kwargs)
 
 class PositionWiseFFN(tf.keras.layers.Layer):
-    """åŸºäºä½ç½®çš„å‰é¦ˆç½‘ç»œ
+    """»ùÓÚÎ»ÖÃµÄÇ°À¡ÍøÂç
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, ffn_num_hiddens, ffn_num_outputs, **kwargs):
@@ -1212,7 +1190,7 @@ class PositionWiseFFN(tf.keras.layers.Layer):
         return self.dense2(self.relu(self.dense1(X)))
 
 class AddNorm(tf.keras.layers.Layer):
-    """æ®‹å·®è¿æ¥åè¿›è¡Œå±‚è§„èŒƒåŒ–
+    """²Ğ²îÁ¬½Óºó½øĞĞ²ã¹æ·¶»¯
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, normalized_shape, dropout, **kwargs):
@@ -1224,7 +1202,7 @@ class AddNorm(tf.keras.layers.Layer):
         return self.ln(self.dropout(Y, **kwargs) + X)
 
 class EncoderBlock(tf.keras.layers.Layer):
-    """transformerç¼–ç å™¨å—
+    """transformer±àÂëÆ÷¿é
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, key_size, query_size, value_size, num_hiddens,
@@ -1241,7 +1219,7 @@ class EncoderBlock(tf.keras.layers.Layer):
         return self.addnorm2(Y, self.ffn(Y), **kwargs)
 
 class TransformerEncoder(d2l.Encoder):
-    """transformerç¼–ç å™¨
+    """transformer±àÂëÆ÷
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, vocab_size, key_size, query_size, value_size,
@@ -1257,9 +1235,9 @@ class TransformerEncoder(d2l.Encoder):
             num_layers)]
 
     def call(self, X, valid_lens, **kwargs):
-        # å› ä¸ºä½ç½®ç¼–ç å€¼åœ¨-1å’Œ1ä¹‹é—´ï¼Œ
-        # å› æ­¤åµŒå…¥å€¼ä¹˜ä»¥åµŒå…¥ç»´åº¦çš„å¹³æ–¹æ ¹è¿›è¡Œç¼©æ”¾ï¼Œ
-        # ç„¶åå†ä¸ä½ç½®ç¼–ç ç›¸åŠ ã€‚
+        # ÒòÎªÎ»ÖÃ±àÂëÖµÔÚ-1ºÍ1Ö®¼ä£¬
+        # Òò´ËÇ¶ÈëÖµ³ËÒÔÇ¶ÈëÎ¬¶ÈµÄÆ½·½¸ù½øĞĞËõ·Å£¬
+        # È»ºóÔÙÓëÎ»ÖÃ±àÂëÏà¼Ó¡£
         X = self.pos_encoding(self.embedding(X) * tf.math.sqrt(
             tf.cast(self.num_hiddens, dtype=tf.float32)), **kwargs)
         self.attention_weights = [None] * len(self.blks)
@@ -1274,10 +1252,10 @@ def annotate(text, xy, xytext):
                            arrowprops=dict(arrowstyle='->'))
 
 def train_2d(trainer, steps=20, f_grad=None):
-    """ç”¨å®šåˆ¶çš„è®­ç»ƒæœºä¼˜åŒ–2Dç›®æ ‡å‡½æ•°
+    """ÓÃ¶¨ÖÆµÄÑµÁ·»úÓÅ»¯2DÄ¿±êº¯Êı
 
     Defined in :numref:`subsec_gd-learningrate`"""
-    # `s1`å’Œ`s2`æ˜¯ç¨åå°†ä½¿ç”¨çš„å†…éƒ¨çŠ¶æ€å˜é‡
+    # s1ºÍs2ÊÇÉÔºó½«Ê¹ÓÃµÄÄÚ²¿×´Ì¬±äÁ¿
     x1, x2, s1, s2 = -5, -2, 0, 0
     results = [(x1, x2)]
     for i in range(steps):
@@ -1290,7 +1268,7 @@ def train_2d(trainer, steps=20, f_grad=None):
     return results
 
 def show_trace_2d(f, results):
-    """æ˜¾ç¤ºä¼˜åŒ–è¿‡ç¨‹ä¸­2Då˜é‡çš„è½¨è¿¹
+    """ÏÔÊ¾ÓÅ»¯¹ı³ÌÖĞ2D±äÁ¿µÄ¹ì¼£
 
     Defined in :numref:`subsec_gd-learningrate`"""
     d2l.set_figsize()
@@ -1316,12 +1294,12 @@ def get_data_ch11(batch_size=10, n=1500):
 def train_ch11(trainer_fn, states, hyperparams, data_iter,
                feature_dim, num_epochs=2):
     """Defined in :numref:`sec_minibatches`"""
-    # åˆå§‹åŒ–æ¨¡å‹
+    # ³õÊ¼»¯Ä£ĞÍ
     w = tf.Variable(tf.random.normal(shape=(feature_dim, 1),
                                    mean=0, stddev=0.01),trainable=True)
     b = tf.Variable(tf.zeros(1), trainable=True)
 
-    # è®­ç»ƒæ¨¡å‹
+    # ÑµÁ·Ä£ĞÍ
     net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
@@ -1347,12 +1325,12 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
 
 def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=2):
     """Defined in :numref:`sec_minibatches`"""
-    # åˆå§‹åŒ–æ¨¡å‹
+    # ³õÊ¼»¯Ä£ĞÍ
     net = tf.keras.Sequential()
     net.add(tf.keras.layers.Dense(1,
             kernel_initializer=tf.random_normal_initializer(stddev=0.01)))
     optimizer = trainer_fn(**hyperparams)
-    # æ³¨æ„ï¼šMeanSquaredErrorè®¡ç®—å¹³æ–¹è¯¯å·®æ—¶ä¸å¸¦ç³»æ•°1/2
+    # ×¢Òâ£ºMeanSquaredError¼ÆËãÆ½·½Îó²îÊ±²»´øÏµÊı1/2
     loss = tf.keras.losses.MeanSquaredError()
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
@@ -1376,7 +1354,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=2):
     print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
 
 class Benchmark:
-    """ç”¨äºæµ‹é‡è¿è¡Œæ—¶é—´"""
+    """ÓÃÓÚ²âÁ¿ÔËĞĞÊ±¼ä"""
     def __init__(self, description='Done'):
         """Defined in :numref:`sec_hybridize`"""
         self.description = description
@@ -1389,7 +1367,7 @@ class Benchmark:
         print(f'{self.description}: {self.timer.stop():.4f} sec')
 
 def box_corner_to_center(boxes):
-    """ä»ï¼ˆå·¦ä¸Šï¼Œå³ä¸‹ï¼‰è½¬æ¢åˆ°ï¼ˆä¸­é—´ï¼Œå®½åº¦ï¼Œé«˜åº¦ï¼‰
+    """´Ó£¨×óÉÏ£¬ÓÒÏÂ£©×ª»»µ½£¨ÖĞ¼ä£¬¿í¶È£¬¸ß¶È£©
 
     Defined in :numref:`sec_bbox`"""
     x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
@@ -1401,7 +1379,7 @@ def box_corner_to_center(boxes):
     return boxes
 
 def box_center_to_corner(boxes):
-    """ä»ï¼ˆä¸­é—´ï¼Œå®½åº¦ï¼Œé«˜åº¦ï¼‰è½¬æ¢åˆ°ï¼ˆå·¦ä¸Šï¼Œå³ä¸‹ï¼‰
+    """´Ó£¨ÖĞ¼ä£¬¿í¶È£¬¸ß¶È£©×ª»»µ½£¨×óÉÏ£¬ÓÒÏÂ£©
 
     Defined in :numref:`sec_bbox`"""
     cx, cy, w, h = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
@@ -1414,8 +1392,8 @@ def box_center_to_corner(boxes):
 
 def bbox_to_rect(bbox, color):
     """Defined in :numref:`sec_bbox`"""
-    # å°†è¾¹ç•Œæ¡†(å·¦ä¸Šx,å·¦ä¸Šy,å³ä¸‹x,å³ä¸‹y)æ ¼å¼è½¬æ¢æˆmatplotlibæ ¼å¼ï¼š
-    # ((å·¦ä¸Šx,å·¦ä¸Šy),å®½,é«˜)
+    # ½«±ß½ç¿ò(×óÉÏx,×óÉÏy,ÓÒÏÂx,ÓÒÏÂy)¸ñÊ½×ª»»³Ématplotlib¸ñÊ½£º
+    # ((×óÉÏx,×óÉÏy),¿í,¸ß)
     return d2l.plt.Rectangle(
         xy=(bbox[0], bbox[1]), width=bbox[2]-bbox[0], height=bbox[3]-bbox[1],
         fill=False, edgecolor=color, linewidth=2)# Alias defined in config.ini
