@@ -54,26 +54,10 @@ GPU并已安装\ `CUDA <https://developer.nvidia.com/cuda-downloads>`__\ 。
 如果你的机器没有任何GPU，没有必要担心，因为你的CPU在前几章完全够用。
 但是，如果你想流畅地学习全部章节，请提早获取GPU并且安装深度学习框架的GPU版本。
 
-安装MXNet的GPU版本，你首先需要知道已安装的CUDA版本。
-（你可以通过运行\ ``nvcc --version``\ 或\ ``cat /usr/local/cuda/version.txt``\ 来检验。）
-假设你已安装CUDA 10.1版本，请执行以下命令：
-
 .. code:: bash
 
-   # 对于Linux和macOS用户
-   pip install mxnet-cu101==1.7.0
-
-   # 对于Windows用户
-   pip install mxnet-cu101==1.7.0 -f https://dist.mxnet.io/python
-
-你可以根据你的CUDA版本更改如上\ ``mxnet-cu101``\ 的最后一位数字，
-例如：CUDA 10.0是\ ``cu100``\ ， CUDA 9.0是\ ``cu90``\ 。
-
-如果你的机器没有NVIDIA GPU或CUDA， 你可以按如下方式MXNet的CPU版本：
-
-.. code:: bash
-
-   pip install mxnet==1.7.0.post1
+   python -m pip install paddlepaddle==2.2.1 -i https://mirror.baidu.com/pypi/simple
+   python -m pip install paddlepaddle-gpu==2.2.1 -i https://mirror.baidu.com/pypi/simple
 
 我们的下一步是安装\ ``d2l``\ 包，以方便调取本书中经常使用的函数和类：
 
@@ -87,15 +71,6 @@ GPU并已安装\ `CUDA <https://developer.nvidia.com/cuda-downloads>`__\ 。
 接下来，需要下载这本书的代码。 你可以点击本书HTML页面顶部的“Jupyter
 记事本”选项下载后解压代码。 或者，你可以按照如下方式进行下载：
 
-.. code:: bash
-
-   mkdir d2l-zh && cd d2l-zh
-   curl https://zh-v2.d2l.ai/d2l-zh-2.0.0.zip -o d2l-zh.zip
-   unzip d2l-zh.zip && rm d2l-zh.zip
-   cd mxnet
-
-注意：如果你没有安装\ ``unzip``\ ，则可以通过运行\ ``sudo apt install unzip``\ 进行安装。
-
 安装完成后，你可以通过运行以下命令打开Jupyter笔记本：
 
 .. code:: bash
@@ -106,5 +81,3 @@ GPU并已安装\ `CUDA <https://developer.nvidia.com/cuda-downloads>`__\ 。
 由此，你可以运行这本书中每个部分的代码。
 在运行书籍代码、更新深度学习框架或\ ``d2l``\ 软件包之前，请始终执行\ ``conda activate d2l``\ 以激活运行时环境。
 要退出环境，请运行\ ``conda deactivate``\ 。
-
-`Discussions <https://discuss.d2l.ai/t/2082>`__

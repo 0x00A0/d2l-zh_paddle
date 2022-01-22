@@ -1,5 +1,5 @@
 
-None None None # 概率
+None None None None # 概率
 
 .. _sec_prob:
 
@@ -71,17 +71,16 @@ numbers）告诉我们：
 .. code:: python
 
     %matplotlib inline
-    import random
-    from mxnet import np, npx
-    from d2l import mxnet as d2l
-    
-    npx.set_np()
+    import sys
+    import numpy as np
+    import paddle
+    from d2l import paddle as d2l
 
 
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-nz4u573b because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-8altqz7v because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
 
 在统计学中，我们把从概率分布中抽取样本的过程称为\ *抽样*\ （sampling）。
@@ -96,7 +95,7 @@ distribution）。
 .. code:: python
 
     fair_probs = [1.0 / 6] * 6
-    np.random.multinomial(1, fair_probs)
+    paddle.to_tensor(np.random.multinomial(1, fair_probs))
 
 
 
@@ -104,7 +103,8 @@ distribution）。
 .. parsed-literal::
     :class: output
 
-    array([0, 0, 0, 1, 0, 0], dtype=int64)
+    Tensor(shape=[6], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [0, 0, 0, 0, 0, 1])
 
 
 
@@ -114,7 +114,7 @@ distribution）。
 
 .. code:: python
 
-    np.random.multinomial(10, fair_probs)
+    paddle.to_tensor(np.random.multinomial(10, fair_probs))
 
 
 
@@ -122,7 +122,8 @@ distribution）。
 .. parsed-literal::
     :class: output
 
-    array([1, 1, 5, 1, 1, 1], dtype=int64)
+    Tensor(shape=[6], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [0, 3, 3, 1, 1, 2])
 
 
 
@@ -132,7 +133,7 @@ distribution）。
 
 .. code:: python
 
-    counts = np.random.multinomial(1000, fair_probs).astype(np.float32)
+    counts = paddle.to_tensor(np.random.multinomial(1000, fair_probs).astype(np.float32))
     counts / 1000
 
 
@@ -141,7 +142,8 @@ distribution）。
 .. parsed-literal::
     :class: output
 
-    array([0.162, 0.149, 0.178, 0.17 , 0.166, 0.175])
+    Tensor(shape=[6], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [0.15700001, 0.17700000, 0.16500001, 0.18400002, 0.15800001, 0.15900001])
 
 
 
@@ -153,13 +155,12 @@ distribution）。
 
 .. code:: python
 
-    counts = np.random.multinomial(10, fair_probs, size=500)
-    cum_counts = counts.astype(np.float32).cumsum(axis=0)
-    estimates = cum_counts / cum_counts.sum(axis=1, keepdims=True)
-    
+    counts =paddle.to_tensor(np.random.multinomial(10, fair_probs, size=500),dtype="float32")
+    cum_counts = counts.cumsum(axis=0)
+    estimates = cum_counts / cum_counts.sum(axis=1, keepdim=True)
     d2l.set_figsize((6, 4.5))
     for i in range(6):
-        d2l.plt.plot(estimates[:, i].asnumpy(),
+        d2l.plt.plot(estimates[:, i].numpy(),
                      label=("P(die=" + str(i + 1) + ")"))
     d2l.plt.axhline(y=0.167, color='black', linestyle='dashed')
     d2l.plt.gca().set_xlabel('Groups of experiments')
@@ -167,8 +168,15 @@ distribution）。
     d2l.plt.legend();
 
 
+.. parsed-literal::
+    :class: output
 
-.. figure:: output_probability_245b7d_9_0.svg
+    /home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
+      display.set_matplotlib_formats('svg')
+
+
+
+.. figure:: output_probability_74dc3a_9_1.svg
 
 
 每条实线对应于骰子的6个值中的一个，并给出骰子在每组实验后出现值的估计概率。
@@ -458,5 +466,3 @@ independent），
 3. 假设我们有一系列随机变量，例如\ :math:`A`\ 、\ :math:`B`\ 和\ :math:`C`\ ，其中\ :math:`B`\ 只依赖于\ :math:`A`\ ，而\ :math:`C`\ 只依赖于\ :math:`B`\ ，你能简化联合概率\ :math:`P(A, B, C)`\ 吗？（提示：这是一个\ `马尔可夫链 <https://en.wikipedia.org/wiki/Markov_chain>`__\ 。)
 4. 在
    :numref:`subsec_probability_hiv_app`\ 中，第一个测试更准确。为什么不运行第一个测试两次，而是同时运行第一个和第二个测试?
-
-`Discussions <https://discuss.d2l.ai/t/1761>`__

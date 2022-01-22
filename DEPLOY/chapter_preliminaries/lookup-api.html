@@ -359,14 +359,6 @@ Show Source
 <h1><span class="section-number">2.44. </span>查找模块中的所有函数和类<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>为了知道模块中可以调用哪些函数和类，我们调用<code class="docutils literal notranslate"><span class="pre">dir</span></code>函数。
 例如，我们可以查询随机数生成模块中的所有属性：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;__all__&#39;</span><span class="p">,</span> <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;_mx_nd_np&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;chisquare&#39;</span><span class="p">,</span> <span class="s1">&#39;choice&#39;</span><span class="p">,</span> <span class="s1">&#39;exponential&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;gumbel&#39;</span><span class="p">,</span> <span class="s1">&#39;logistic&#39;</span><span class="p">,</span> <span class="s1">&#39;lognormal&#39;</span><span class="p">,</span> <span class="s1">&#39;multinomial&#39;</span><span class="p">,</span> <span class="s1">&#39;multivariate_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;pareto&#39;</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">,</span> <span class="s1">&#39;rand&#39;</span><span class="p">,</span> <span class="s1">&#39;randint&#39;</span><span class="p">,</span> <span class="s1">&#39;randn&#39;</span><span class="p">,</span> <span class="s1">&#39;rayleigh&#39;</span><span class="p">,</span> <span class="s1">&#39;shuffle&#39;</span><span class="p">,</span> <span class="s1">&#39;uniform&#39;</span><span class="p">,</span> <span class="s1">&#39;weibull&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paddle</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">paddle</span><span class="o">.</span><span class="n">distribution</span><span class="p">))</span>
@@ -384,52 +376,6 @@ Show Source
 <h1><span class="section-number">2.45. </span>查找特定函数和类的用法<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
 <p>有关如何使用给定函数或类的更具体说明，我们可以调用<code class="docutils literal notranslate"><span class="pre">help</span></code>函数。
 例如，我们来查看张量<code class="docutils literal notranslate"><span class="pre">ones</span></code>函数的用法。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">)</span>
-</pre></div>
-</div>
-<pre class="output literal-block">Help on function ones in module mxnet.numpy:
-
-ones(shape, dtype=&lt;class 'numpy.float32'&gt;, order='C', ctx=None)
-    Return a new array of given shape and type, filled with ones.
-    This function currently only supports storing multi-dimensional data
-    in row-major (C-style).
-
-    Parameters
-    ----------
-    shape : int or tuple of int
-        The shape of the empty array.
-    dtype : str or numpy.dtype, optional
-        An optional value type. Default is <cite>numpy.float32</cite>. Note that this
-        behavior is different from NumPy's <cite>ones</cite> function where <cite>float64</cite>
-        is the default value, because <cite>float32</cite> is considered as the default
-        data type in deep learning.
-    order : {'C'}, optional, default: 'C'
-        How to store multi-dimensional data in memory, currently only row-major
-        (C-style) is supported.
-    ctx : Context, optional
-        An optional device context (default is the current default context).
-
-    Returns
-    -------
-    out : ndarray
-        Array of ones with the given shape, dtype, and ctx.
-
-    Examples
-    --------
-    &gt;&gt;&gt; np.ones(5)
-    array([1., 1., 1., 1., 1.])
-
-    &gt;&gt;&gt; np.ones((5,), dtype=int)
-    array([1, 1, 1, 1, 1], dtype=int64)
-
-    &gt;&gt;&gt; np.ones((2, 1))
-    array([[1.],
-           [1.]])
-
-    &gt;&gt;&gt; s = (2,2)
-    &gt;&gt;&gt; np.ones(s)
-    array([[1., 1.],
-           [1., 1.]])</pre>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -469,12 +415,6 @@ ones(shape, dtype=None, name=None)
           #  [1 1]]</pre>
 <p>从文档中，我们可以看到<code class="docutils literal notranslate"><span class="pre">ones</span></code>函数创建一个具有指定形状的新张量，并将所有元素值设置为1。
 让我们来运行一个快速测试来确认这一解释：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
-</pre></div>
-</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>

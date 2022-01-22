@@ -15,16 +15,14 @@ None None # 线性回归的从零开始实现
 
     %matplotlib inline
     import random
-    from mxnet import autograd, np, npx
-    from d2l import mxnet as d2l
-    
-    npx.set_np()
+    import paddle
+    from d2l import paddle as d2l
 
 
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-xnhyjwhh because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-hu3_4u2f because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
 
 生成数据集
@@ -50,14 +48,14 @@ None None # 线性回归的从零开始实现
 
     def synthetic_data(w, b, num_examples):  #@save
         """生成y=Xw+b+噪声"""
-        X = np.random.normal(0, 1, (num_examples, len(w)))
-        y = np.dot(X, w) + b
-        y += np.random.normal(0, 0.01, y.shape)
+        X = paddle.normal(0, 1, (num_examples, len(w)))
+        y = paddle.matmul(X, w) + b
+        y += paddle.normal(0, 0.01, y.shape)
         return X, y.reshape((-1, 1))
 
 .. code:: python
 
-    true_w = np.array([2, -3.4])
+    true_w = paddle.paddle.to_tensor([2, -3.4])
     true_b = 4.2
     features, labels = synthetic_data(true_w, true_b, 1000)
 
@@ -72,8 +70,10 @@ None None # 线性回归的从零开始实现
 .. parsed-literal::
     :class: output
 
-    features: [2.2122064 1.1630787] 
-    label: [4.662078]
+    features: Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [-0.85444152, -0.84043044]) 
+    label: Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [5.33892918])
 
 
 通过生成第二个特征\ ``features[:, 1]``\ 和\ ``labels``\ 的散点图，
@@ -82,11 +82,18 @@ None None # 线性回归的从零开始实现
 .. code:: python
 
     d2l.set_figsize()
-    d2l.plt.scatter(features[:, 1].asnumpy(), labels.asnumpy(), 1);
+    d2l.plt.scatter(features[:, 1].detach().numpy(), labels.detach().numpy(), 1);
+
+
+.. parsed-literal::
+    :class: output
+
+    /home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
+      display.set_matplotlib_formats('svg')
 
 
 
-.. figure:: output_linear-regression-scratch_58de05_8_0.svg
+.. figure:: output_linear-regression-scratch_20cad4_8_1.svg
 
 
 读取数据集
@@ -108,7 +115,7 @@ None None # 线性回归的从零开始实现
         # 这些样本是随机读取的，没有特定的顺序
         random.shuffle(indices)
         for i in range(0, num_examples, batch_size):
-            batch_indices = np.array(
+            batch_indices = paddle.paddle.to_tensor(
                 indices[i: min(i + batch_size, num_examples)])
             yield features[batch_indices], labels[batch_indices]
 
@@ -132,26 +139,28 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 .. parsed-literal::
     :class: output
 
-    [[-1.1113098  -0.30177692]
-     [ 0.38265088  0.03740939]
-     [-1.3710262  -0.96949255]
-     [-1.0407568  -0.9086523 ]
-     [ 0.19236873  1.5087148 ]
-     [ 1.2040389  -0.9592459 ]
-     [-0.74951595 -0.56062907]
-     [ 0.4156301   0.26202562]
-     [ 1.4377805   0.48993957]
-     [ 0.8468736  -0.55909204]] 
-     [[ 3.017058 ]
-     [ 4.8314457]
-     [ 4.7385955]
-     [ 5.203292 ]
-     [-0.5411148]
-     [ 9.875983 ]
-     [ 4.5837693]
-     [ 4.1413517]
-     [ 5.4153085]
-     [ 7.7833023]]
+    Tensor(shape=[10, 2], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[ 0.57839602,  0.12784559],
+            [ 1.32678747,  0.62418109],
+            [-1.68597305, -0.58163345],
+            [ 0.75606495, -1.43711996],
+            [ 1.18271351,  0.81513554],
+            [ 0.76287901,  1.33117425],
+            [ 2.02042794, -1.75181365],
+            [ 1.27040672,  0.89667845],
+            [ 0.39472452, -0.57963079],
+            [-0.77342790,  0.24352361]]) 
+     Tensor(shape=[10, 1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[4.92175961],
+            [4.73639727],
+            [2.79040408],
+            [10.60384750],
+            [3.78761220],
+            [1.19443870],
+            [14.20015526],
+            [3.68340325],
+            [6.95417309],
+            [1.81782389]])
 
 
 当我们运行迭代时，我们会连续地获得不同的小批量，直至遍历完整个数据集。
@@ -170,10 +179,8 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 
 .. code:: python
 
-    w = np.random.normal(0, 0.01, (2, 1))
-    b = np.zeros(1)
-    w.attach_grad()
-    b.attach_grad()
+    w = paddle.normal(0., 0.01, shape=(2,1))
+    b = paddle.zeros([1])
 
 在初始化参数之后，我们的任务是更新这些参数，直到这些参数足够拟合我们的数据。
 每次更新都需要计算损失函数关于模型参数的梯度。
@@ -195,7 +202,7 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 
     def linreg(X, w, b):  #@save
         """线性回归模型"""
-        return np.dot(X, w) + b
+        return paddle.matmul(X, w) + b
 
 定义损失函数
 ------------
@@ -230,8 +237,11 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 
     def sgd(params, lr, batch_size):  #@save
         """小批量随机梯度下降"""
-        for param in params:
-            param[:] = param - lr * param.grad / batch_size
+        with paddle.no_grad():  # 由于Paddle框架的问题,即使在no_grad下也必须手动修改stop_gradient来控制带梯度参数的inplace操作,该bug已提交Issue:https://github.com/PaddlePaddle/Paddle/issues/38016
+            for param in params:
+                param.stop_gradient=True
+                param.subtract_(lr * param.grad / batch_size)
+                param.clear_grad()
 
 训练
 ----
@@ -269,21 +279,28 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 
     for epoch in range(num_epochs):
         for X, y in data_iter(batch_size, features, labels):
-            with autograd.record():
-                l = loss(net(X, w, b), y)  # X和y的小批量损失
-            # 计算l关于[w,b]的梯度
-            l.backward()
+            w.stop_gradient=False
+            b.stop_gradient=False
+            l = loss(net(X, w, b), y)  # X和y的小批量损失
+            # 因为l形状是(batch_size,1)，而不是一个标量。l中的所有元素被加到一起，
+            # 并以此计算关于[w,b]的梯度
+            l.sum().backward()
             sgd([w, b], lr, batch_size)  # 使用参数的梯度更新参数
-        train_l = loss(net(features, w, b), labels)
-        print(f'epoch {epoch + 1}, loss {float(train_l.mean()):f}')
+        with paddle.no_grad():
+            train_l = loss(net(features, w, b), labels)
+            print(f'epoch {epoch + 1}, loss {float(train_l.mean()):f}')
 
 
 .. parsed-literal::
     :class: output
 
-    epoch 1, loss 0.025035
-    epoch 2, loss 0.000089
-    epoch 3, loss 0.000051
+    /home/wan/anaconda3/lib/python3.9/site-packages/paddle/fluid/dygraph/varbase_patch_methods.py:392: UserWarning: 
+    Warning:
+    tensor.grad will return the tensor value of the gradient. This is an incompatible upgrade for tensor.grad API.  It's return type changes from numpy.ndarray in version 2.0 to paddle.Tensor in version 2.1.0.  If you want to get the numpy value of the gradient, you can use :code:`x.grad.numpy()` 
+      warnings.warn(warning_msg)
+    epoch 1, loss 0.044338
+    epoch 2, loss 0.000195
+    epoch 3, loss 0.000049
 
 
 因为我们使用的是自己合成的数据集，所以我们知道真正的参数是什么。
@@ -299,8 +316,10 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 .. parsed-literal::
     :class: output
 
-    w的估计误差: [0.00046122 0.00022483]
-    b的估计误差: [0.00059652]
+    w的估计误差: Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [-0.00061345, -0.00164795])
+    b的估计误差: Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [0.00127888])
 
 
 注意，我们不应该想当然地认为我们能够完美地求解参数。
@@ -324,5 +343,3 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 5. 为什么在\ ``squared_loss``\ 函数中需要使用\ ``reshape``\ 函数？
 6. 尝试使用不同的学习率，观察损失函数值下降的快慢。
 7. 如果样本个数不能被批量大小整除，\ ``data_iter``\ 函数的行为会有什么变化？
-
-`Discussions <https://discuss.d2l.ai/t/1779>`__

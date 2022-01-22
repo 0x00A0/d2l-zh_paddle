@@ -368,16 +368,16 @@ Show Source
 <div class="section" id="id1">
 <h1><span class="section-number">3.16. </span>生成数据集<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>与 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中类似，我们首先生成数据集。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
-<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
-
-<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">paddle</span>
+<span class="kn">from</span> <span class="nn">paddle</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">paddle</span> <span class="k">as</span> <span class="n">d2l</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="mi">7</span><span class="n">rl_wppt</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="n">hwoi_8xl</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">true_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">true_w</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">])</span>
 <span class="n">true_b</span> <span class="o">=</span> <span class="mf">4.2</span>
 <span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">synthetic_data</span><span class="p">(</span><span class="n">true_w</span><span class="p">,</span> <span class="n">true_b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 </pre></div>
@@ -389,9 +389,9 @@ Show Source
 我们将<code class="docutils literal notranslate"><span class="pre">features</span></code>和<code class="docutils literal notranslate"><span class="pre">labels</span></code>作为API的参数传递，并通过数据迭代器指定<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>。
 此外，布尔值<code class="docutils literal notranslate"><span class="pre">is_train</span></code>表示是否希望数据迭代器对象在每个迭代周期内打乱数据。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_array</span><span class="p">(</span><span class="n">data_arrays</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1">#@save</span>
-    <span class="sd">&quot;&quot;&quot;构造一个Gluon数据迭代器&quot;&quot;&quot;</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ArrayDataset</span><span class="p">(</span><span class="o">*</span><span class="n">data_arrays</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">is_train</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;构造一个PyTorch数据迭代器&quot;&quot;&quot;</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">data_arrays</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">is_train</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
@@ -405,26 +405,28 @@ Show Source
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_iter</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.25945112</span><span class="p">,</span>  <span class="mf">0.4179527</span> <span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">2.0447428</span> <span class="p">,</span>  <span class="mf">0.74624586</span><span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">0.06807706</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.13130364</span><span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">1.0227915</span> <span class="p">,</span>  <span class="mf">0.05346791</span><span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">0.74539703</span><span class="p">,</span>  <span class="mf">0.38242742</span><span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">1.3002341</span> <span class="p">,</span>  <span class="mf">1.1119636</span> <span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">0.51751894</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5553699</span> <span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">1.4760977</span> <span class="p">,</span> <span class="o">-</span><span class="mf">0.18857454</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">0.54560065</span><span class="p">,</span>  <span class="mf">0.10940859</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">0.09016981</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5549816</span> <span class="p">]]),</span>
- <span class="n">array</span><span class="p">([[</span> <span class="mf">3.300429</span> <span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">2.4220822</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">4.5233345</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">1.9630948</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">1.4026579</span><span class="p">],</span>
-        <span class="p">[</span><span class="o">-</span><span class="mf">2.1769006</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">5.0592566</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">1.8882915</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">4.9092207</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">6.2645936</span><span class="p">]])]</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[[</span> <span class="mf">0.26695454</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.61031514</span><span class="p">],</span>
+         <span class="p">[</span> <span class="mf">1.56811917</span><span class="p">,</span>  <span class="mf">0.23991548</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mf">1.48661160</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.14512579</span><span class="p">],</span>
+         <span class="p">[</span> <span class="mf">0.28009248</span><span class="p">,</span>  <span class="mf">0.89850241</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mf">0.56320649</span><span class="p">,</span>  <span class="mf">0.75310522</span><span class="p">],</span>
+         <span class="p">[</span> <span class="mf">0.72914153</span><span class="p">,</span>  <span class="mf">1.73198748</span><span class="p">],</span>
+         <span class="p">[</span> <span class="mf">1.80055797</span><span class="p">,</span>  <span class="mf">0.45330566</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mf">1.25546420</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.38003913</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mf">0.00679264</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.04314697</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mf">0.06246236</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.14536108</span><span class="p">]]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[[</span><span class="mf">6.81621885</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">6.53260994</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">1.71733129</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">1.72119415</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.51202148</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mf">0.23238815</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">6.24916029</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">2.98804927</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">7.74188757</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">4.59819794</span><span class="p">]])]</span>
 </pre></div>
 </div>
 </div>
@@ -445,17 +447,13 @@ Show Source
 <p>回顾 <a class="reference internal" href="linear-regression.html#fig-single-neuron"><span class="std std-numref">图3.4.1</span></a>中的单层网络架构，
 这一单层被称为<em>全连接层</em>（fully-connected layer），
 因为它的每一个输入都通过矩阵-向量乘法得到它的每个输出。</p>
-<p>在Gluon中，全连接层在<code class="docutils literal notranslate"><span class="pre">Dense</span></code>类中定义。
-由于我们只想得到一个标量输出，所以我们将该数字设置为1。</p>
-<p>值得注意的是，为了方便使用，Gluon并不要求我们为每个层指定输入的形状。
-所以在这里，我们不需要告诉Gluon有多少输入进入这一层。
-当我们第一次尝试通过我们的模型传递数据时，例如，当后面执行<code class="docutils literal notranslate"><span class="pre">net(X)</span></code>时，
-Gluon会自动推断每个层输入的形状。 我们稍后将详细介绍这种工作机制。</p>
+<p>在Paddle中，全连接层在<code class="docutils literal notranslate"><span class="pre">Linear</span></code>类中定义。
+值得注意的是，我们将两个参数传递到<code class="docutils literal notranslate"><span class="pre">nn.Linear</span></code>中。
+第一个指定输入特征形状，即2，第二个指定输出特征形状，输出特征形状为单个标量，因此为1。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># nn是神经网络的缩写</span>
-<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">paddle</span> <span class="kn">import</span> <span class="n">nn</span>
 
-<span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
-<span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -466,41 +464,33 @@ Gluon会自动推断每个层输入的形状。 我们稍后将详细介绍这�
 深度学习框架通常有预定义的方法来初始化参数。
 在这里，我们指定每个权重参数应该从均值为0、标准差为0.01的正态分布中随机采样，
 偏置参数将初始化为零。</p>
-<p>我们从MXNet导入<code class="docutils literal notranslate"><span class="pre">initializer</span></code>模块，这个模块提供了各种模型参数初始化方法。
-Gluon将<code class="docutils literal notranslate"><span class="pre">init</span></code>作为访问<code class="docutils literal notranslate"><span class="pre">initializer</span></code>包的快捷方式。
-我们可以通过调用<code class="docutils literal notranslate"><span class="pre">init.Normal(sigma=0.01)</span></code>来指定初始化权重的方法。
-默认情况下，偏置参数初始化为零。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">init</span>
-
-<span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">init</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))</span>
+<p>paddle<code class="docutils literal notranslate"><span class="pre">initializers</span></code>模块提供了多种模型参数初始化方法。
+在paddle中最简单的指定初始化方法是在创建层时指定参数,参数由<code class="docutils literal notranslate"><span class="pre">ParamAttr</span></code>方法生成
+在这里，我们通过<code class="docutils literal notranslate"><span class="pre">net[0]</span></code>选择网络中的第一个图层，然后重新创建了它</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">weight_attr</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">ParamAttr</span><span class="p">(</span>
+    <span class="n">initializer</span><span class="o">=</span><span class="n">paddle</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">initializer</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
+<span class="n">bias_attr</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">ParamAttr</span><span class="p">(</span>
+    <span class="n">initializer</span><span class="o">=</span><span class="n">paddle</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">initializer</span><span class="o">.</span><span class="n">Constant</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">weight_attr</span><span class="o">=</span><span class="n">weight_attr</span><span class="p">,</span> <span class="n">bias_attr</span><span class="o">=</span><span class="n">bias_attr</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>上面的代码可能看起来很简单，但是你应该注意到这里的一个细节：
-我们正在为网络初始化参数，而Gluon还不知道输入将有多少维!
-网络的输入可能有2维，也可能有2000维。
-Gluon让我们避免了这个问题，在后端执行时，初始化实际上是<em>推迟</em>（deferred）执行的，
-只有在我们第一次尝试通过网络传递数据时才会进行真正的初始化。
-请注意，因为参数还没有初始化，所以我们不能访问或操作它们。</p>
 </div>
 <div class="section" id="id5">
 <h1><span class="section-number">3.20. </span>定义损失函数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
-<p>在Gluon中，<code class="docutils literal notranslate"><span class="pre">loss</span></code>模块定义了各种损失函数。
-在这个例子中，我们将使用Gluon中的均方误差（<code class="docutils literal notranslate"><span class="pre">L2Loss</span></code>）。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">L2Loss</span><span class="p">()</span>
+<p>计算均方误差使用的是<code class="docutils literal notranslate"><span class="pre">MSELoss</span></code>类，也称为平方<span class="math notranslate nohighlight">\(L_2\)</span>范数。
+默认情况下，它返回所有样本损失的平均值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="id6">
 <h1><span class="section-number">3.21. </span>定义优化算法<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
 <p>小批量随机梯度下降算法是一种优化神经网络的标准工具，
-Gluon通过<code class="docutils literal notranslate"><span class="pre">Trainer</span></code>类支持该算法的许多变种。
-当我们实例化<code class="docutils literal notranslate"><span class="pre">Trainer</span></code>时，我们要指定优化的参数
-（可通过<code class="docutils literal notranslate"><span class="pre">net.collect_params()</span></code>从我们的模型<code class="docutils literal notranslate"><span class="pre">net</span></code>中获得）、
-我们希望使用的优化算法（<code class="docutils literal notranslate"><span class="pre">sgd</span></code>）以及优化算法所需的超参数字典。
-小批量随机梯度下降只需要设置<code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>值，这里设置为0.03。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span>
-
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Trainer</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">&#39;sgd&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">})</span>
+Paddle在<code class="docutils literal notranslate"><span class="pre">optimizer</span></code>模块中实现了该算法的许多变种。
+动态图模式下,当我们实例化一个<code class="docutils literal notranslate"><span class="pre">SGD</span></code>实例时，我们要指定优化的参数
+（可通过<code class="docutils literal notranslate"><span class="pre">net.parameters()</span></code>从我们的模型中获得）以及优化算法所需的超参数字典。
+小批量随机梯度下降只需要设置<code class="docutils literal notranslate"><span class="pre">lr</span></code>值，这里设置为0.03。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -522,41 +512,37 @@ Gluon通过<code class="docutils literal notranslate"><span class="pre">Trainer<
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-            <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">clear_grad</span><span class="p">()</span>
         <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-        <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">features</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;epoch </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">, loss </span><span class="si">{</span><span class="n">l</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="si">:</span><span class="s1">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;epoch </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">, loss </span><span class="si">{</span><span class="n">l</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.025170</span>
-<span class="n">epoch</span> <span class="mi">2</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.000089</span>
-<span class="n">epoch</span> <span class="mi">3</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.000051</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">loss</span> <span class="p">[</span><span class="mf">0.00023696</span><span class="p">]</span>
+<span class="n">epoch</span> <span class="mi">2</span><span class="p">,</span> <span class="n">loss</span> <span class="p">[</span><span class="mf">9.882164e-05</span><span class="p">]</span>
+<span class="n">epoch</span> <span class="mi">3</span><span class="p">,</span> <span class="n">loss</span> <span class="p">[</span><span class="mf">9.844466e-05</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>下面我们比较生成数据集的真实参数和通过有限数据训练获得的模型参数。
 要访问参数，我们首先从<code class="docutils literal notranslate"><span class="pre">net</span></code>访问所需的层，然后读取该层的权重和偏置。
 正如在从零开始实现中一样，我们估计得到的参数与生成数据的真实参数非常接近。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;w的估计误差： </span><span class="si">{</span><span class="n">true_w</span> <span class="o">-</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">true_w</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;b的估计误差： </span><span class="si">{</span><span class="n">true_b</span> <span class="o">-</span> <span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;w的估计误差：&#39;</span><span class="p">,</span> <span class="n">true_w</span> <span class="o">-</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">true_w</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;b的估计误差：&#39;</span><span class="p">,</span> <span class="n">true_b</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span>w的估计误差： [ 6.5875053e-04 -8.0585480e-05]
-b的估计误差： [0.00037432]
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span>w的估计误差： Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=False,
+       [ 0.00018191, -0.00056386])
+b的估计误差： Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=False,
+       [-0.00027847])
 </pre></div>
 </div>
 </div>
 <div class="section" id="id8">
 <h1><span class="section-number">3.23. </span>小结<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>我们可以使用Gluon更简洁地实现模型。</p></li>
-<li><p>在Gluon中，<code class="docutils literal notranslate"><span class="pre">data</span></code>模块提供了数据处理工具，<code class="docutils literal notranslate"><span class="pre">nn</span></code>模块定义了大量的神经网络层，<code class="docutils literal notranslate"><span class="pre">loss</span></code>模块定义了许多常见的损失函数。</p></li>
-<li><p>MXNet的<code class="docutils literal notranslate"><span class="pre">initializer</span></code>模块提供了各种模型参数初始化方法。</p></li>
-<li><p>维度和存储可以自动推断，但注意不要在初始化参数之前尝试访问参数。</p></li>
-</ul>
 </div>
 <div class="section" id="id9">
 <h1><span class="section-number">3.24. </span>练习<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
@@ -568,7 +554,6 @@ b的估计误差： [0.00037432]
 </li>
 <li><p>你如何访问线性回归的梯度？</p></li>
 </ol>
-<p><a class="reference external" href="https://discuss.d2l.ai/t/1782">Discussions</a></p>
 </div>
 
 

@@ -355,7 +355,7 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <p>None None None # 概率</p>
+  <p>None None None None # 概率</p>
 <p id="sec-prob">简单地说，机器学习就是做出预测。</p>
 <p>根据病人的临床病史，我们可能想预测他们在下一年心脏病发作的<em>概率</em>。
 在飞机喷气发动机的异常检测中，我们想要评估一组发动机读数为正常运行情况的概率有多大。
@@ -407,14 +407,13 @@ numbers）告诉我们：
 让我们用代码试一试！</p>
 <p>首先，我们导入必要的软件包。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
-<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
-
-<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">paddle</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">paddle</span> <span class="k">as</span> <span class="n">d2l</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="n">nz4u573b</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="mi">8</span><span class="n">altqz7v</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>在统计学中，我们把从概率分布中抽取样本的过程称为<em>抽样</em>（sampling）。
@@ -425,42 +424,44 @@ distribution）。</p>
 <p>为了抽取一个样本，即掷骰子，我们只需传入一个概率向量。
 输出是另一个相同长度的向量：它在索引<span class="math notranslate nohighlight">\(i\)</span>处的值是采样结果中<span class="math notranslate nohighlight">\(i\)</span>出现的次数。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fair_probs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">6</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span>
+<span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>在估计一个骰子的公平性时，我们希望从同一分布中生成多个样本。
 如果用Python的for循环来完成这个任务，速度会慢得惊人。
 因此我们使用深度学习框架的函数同时抽取多个样本，得到我们想要的任意形状的独立样本数组。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>现在我们知道如何对骰子进行采样，我们可以模拟1000次投掷。
 然后，我们可以统计1000次投掷后，每个数字被投中了多少次。
 具体来说，我们计算相对频率，以作为真实概率的估计。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 <span class="n">counts</span> <span class="o">/</span> <span class="mi">1000</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">0.162</span><span class="p">,</span> <span class="mf">0.149</span><span class="p">,</span> <span class="mf">0.178</span><span class="p">,</span> <span class="mf">0.17</span> <span class="p">,</span> <span class="mf">0.166</span><span class="p">,</span> <span class="mf">0.175</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">0.15700001</span><span class="p">,</span> <span class="mf">0.17700000</span><span class="p">,</span> <span class="mf">0.16500001</span><span class="p">,</span> <span class="mf">0.18400002</span><span class="p">,</span> <span class="mf">0.15800001</span><span class="p">,</span> <span class="mf">0.15900001</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>因为我们是从一个公平的骰子中生成的数据，我们知道每个结果都有真实的概率<span class="math notranslate nohighlight">\(\frac{1}{6}\)</span>，
 大约是<span class="math notranslate nohighlight">\(0.167\)</span>，所以上面输出的估计值看起来不错。</p>
 <p>我们也可以看到这些概率如何随着时间的推移收敛到真实概率。
 让我们进行500组实验，每组抽取10个样本。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">cum_counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">estimates</span> <span class="o">=</span> <span class="n">cum_counts</span> <span class="o">/</span> <span class="n">cum_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">counts</span> <span class="o">=</span><span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">fair_probs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+<span class="n">cum_counts</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">estimates</span> <span class="o">=</span> <span class="n">cum_counts</span> <span class="o">/</span> <span class="n">cum_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">d2l</span><span class="o">.</span><span class="n">set_figsize</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-    <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">estimates</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span>
+    <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">estimates</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
                  <span class="n">label</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;P(die=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">))</span>
 <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.167</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
 <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Groups of experiments&#39;</span><span class="p">)</span>
@@ -468,8 +469,10 @@ distribution）。</p>
 <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
 </pre></div>
 </div>
+<pre class="output literal-block">/home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: <cite>set_matplotlib_formats</cite> is deprecated since IPython 7.23, directly use <cite>matplotlib_inline.backend_inline.set_matplotlib_formats()</cite>
+  display.set_matplotlib_formats('svg')</pre>
 <div class="figure align-default">
-<img alt="../_images/output_probability_245b7d_9_0.svg" src="../_images/output_probability_245b7d_9_0.svg" /></div>
+<img alt="../_images/output_probability_74dc3a_9_1.svg" src="../_images/output_probability_74dc3a_9_1.svg" /></div>
 <p>每条实线对应于骰子的6个值中的一个，并给出骰子在每组实验后出现值的估计概率。
 当我们通过更多的实验获得更多的数据时，这<span class="math notranslate nohighlight">\(6\)</span>条实体曲线向真实概率收敛。</p>
 <div class="section" id="id2">
@@ -739,7 +742,6 @@ E[X^2] - E[X]^2.\]</div>
 <li><p>在
 <a class="reference internal" href="#subsec-probability-hiv-app"><span class="std std-numref">2.40.6节</span></a>中，第一个测试更准确。为什么不运行第一个测试两次，而是同时运行第一个和第二个测试?</p></li>
 </ol>
-<p><a class="reference external" href="https://discuss.d2l.ai/t/1761">Discussions</a></p>
 </div>
 
 

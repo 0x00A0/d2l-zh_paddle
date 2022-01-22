@@ -11,9 +11,9 @@ MNIST数据集 :cite:`LeCun.Bottou.Bengio.ea.1998`
 .. code:: python
 
     %matplotlib inline
-    import sys
-    from mxnet import gluon
-    from d2l import mxnet as d2l
+    import paddle
+    from paddle import io, vision
+    from d2l import paddle as d2l
     
     d2l.use_svg_display()
 
@@ -21,7 +21,9 @@ MNIST数据集 :cite:`LeCun.Bottou.Bengio.ea.1998`
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-0k5kg69o because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-83dc4cmz because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    /home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
+      display.set_matplotlib_formats('svg')
 
 
 读取数据集
@@ -31,8 +33,8 @@ MNIST数据集 :cite:`LeCun.Bottou.Bengio.ea.1998`
 
 .. code:: python
 
-    mnist_train = gluon.data.vision.FashionMNIST(train=True)
-    mnist_test = gluon.data.vision.FashionMNIST(train=False)
+    mnist_train = vision.datasets.FashionMNIST(mode='train', backend='cv2')
+    mnist_test = vision.datasets.FashionMNIST(mode='test', backend='cv2')
 
 Fashion-MNIST由10个类别的图像组成， 每个类别由\ *训练数据集*\ （train
 dataset）中的6000张图像 和\ *测试数据集*\ （test
@@ -57,20 +59,6 @@ dataset）中的1000张图像组成。
 每个输入图像的高度和宽度均为28像素。 数据集由灰度图像组成，其通道数为1。
 为了简洁起见，本书将高度\ :math:`h`\ 像素、宽度\ :math:`w`\ 像素图像的形状记为\ :math:`h \times w`\ 或（\ :math:`h`,\ :math:`w`\ ）。
 
-.. code:: python
-
-    mnist_train[0][0].shape
-
-
-
-
-.. parsed-literal::
-    :class: output
-
-    (28, 28, 1)
-
-
-
 Fashion-MNIST中包含的10个类别，分别为t-shirt（T恤）、trouser（裤子）、pullover（套衫）、dress（连衣裙）、coat（外套）、sandal（凉鞋）、shirt（衬衫）、sneaker（运动鞋）、bag（包）和ankle
 boot（短靴）。 以下函数用于在数字标签索引及其文本名称之间进行转换。
 
@@ -92,7 +80,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
         _, axes = d2l.plt.subplots(num_rows, num_cols, figsize=figsize)
         axes = axes.flatten()
         for i, (ax, img) in enumerate(zip(axes, imgs)):
-            ax.imshow(img.asnumpy())
+            ax.imshow(img.detach().numpy())
             ax.axes.get_xaxis().set_visible(False)
             ax.axes.get_yaxis().set_visible(False)
             if titles:
@@ -103,20 +91,12 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 
 .. code:: python
 
-    X, y = mnist_train[:18]
-    
-    print(X.shape)
-    show_images(X.squeeze(axis=-1), 2, 9, titles=get_fashion_mnist_labels(y));
-
-
-.. parsed-literal::
-    :class: output
-
-    (18, 28, 28, 1)
+    X, y = next(iter(io.DataLoader(mnist_train, batch_size=18)))
+    show_images(X.reshape((18, 28, 28)), 2, 9, titles=get_fashion_mnist_labels(y));
 
 
 
-.. figure:: output_image-classification-dataset_e45669_13_1.svg
+.. figure:: output_image-classification-dataset_a6d0d8_12_0.svg
 
 
 读取小批量
@@ -131,15 +111,11 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
     batch_size = 256
     
     def get_dataloader_workers():  #@save
-        """在非Windows的平台上，使用4个进程来读取数据"""
-        return 0 if sys.platform.startswith('win') else 4
+        """使用4个进程来读取数据"""
+        return 4
     
-    # 通过ToTensor实例将图像数据从uint8格式变换成32位浮点数格式，并除以255使得所有像素的数值
-    # 均在0到1之间
-    transformer = gluon.data.vision.transforms.ToTensor()
-    train_iter = gluon.data.DataLoader(mnist_train.transform_first(transformer),
-                                       batch_size, shuffle=True,
-                                       num_workers=get_dataloader_workers())
+    train_iter = io.DataLoader(mnist_train, batch_size=batch_size, shuffle=True,
+                                 num_workers=get_dataloader_workers())
 
 我们看一下读取训练数据所需的时间。
 
@@ -156,7 +132,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 .. parsed-literal::
     :class: output
 
-    '3.47 sec'
+    '0.48 sec'
 
 
 
@@ -171,17 +147,18 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 
     def load_data_fashion_mnist(batch_size, resize=None):  #@save
         """下载Fashion-MNIST数据集，然后将其加载到内存中"""
-        dataset = gluon.data.vision
-        trans = [dataset.transforms.ToTensor()]
+        trans = [vision.transforms.ToTensor()]
         if resize:
-            trans.insert(0, dataset.transforms.Resize(resize))
-        trans = dataset.transforms.Compose(trans)
-        mnist_train = dataset.FashionMNIST(train=True).transform_first(trans)
-        mnist_test = dataset.FashionMNIST(train=False).transform_first(trans)
-        return (gluon.data.DataLoader(mnist_train, batch_size, shuffle=True,
-                                      num_workers=get_dataloader_workers()),
-                gluon.data.DataLoader(mnist_test, batch_size, shuffle=False,
-                                      num_workers=get_dataloader_workers()))
+            trans.insert(0, vision.transforms.Resize(resize))
+        trans = vision.transforms.transforms.Compose(trans)
+    
+        mnist_train = vision.datasets.FashionMNIST(mode='train', backend='cv2')
+        mnist_test = vision.datasets.FashionMNIST(mode='test', backend='cv2')
+    
+        return (io.DataLoader(mnist_train, batch_size=batch_size, shuffle=True,
+                                 num_workers=get_dataloader_workers()),
+                io.DataLoader(mnist_test, batch_size=batch_size, shuffle=True,
+                                 num_workers=get_dataloader_workers()))
 
 下面，我们通过指定\ ``resize``\ 参数来测试\ ``load_data_fashion_mnist``\ 函数的图像大小调整功能。
 
@@ -196,7 +173,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 .. parsed-literal::
     :class: output
 
-    (32, 1, 64, 64) <class 'numpy.float32'> (32,) <class 'numpy.int32'>
+    [32, 28, 28] paddle.float32 [32, 1] paddle.int64
 
 
 我们现在已经准备好使用Fashion-MNIST数据集，便于下面的章节调用来评估各种分类算法。
@@ -214,5 +191,3 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 1. 减少\ ``batch_size``\ （如减少到1）是否会影响读取性能？
 2. 数据迭代器的性能非常重要。你认为当前的实现足够快吗？探索各种选择来改进它。
 3. 查阅框架的在线API文档。还有哪些其他数据集可用？
-
-`Discussions <https://discuss.d2l.ai/t/1788>`__

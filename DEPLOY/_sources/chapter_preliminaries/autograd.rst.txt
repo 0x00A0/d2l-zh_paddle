@@ -1,5 +1,5 @@
 
-None None # 自动微分
+None None None # 自动微分
 
 .. _sec_autograd:
 
@@ -23,11 +23,9 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 
 .. code:: python
 
-    from mxnet import autograd, np, npx
+    import paddle
     
-    npx.set_np()
-    
-    x = np.arange(4.0)
+    x=paddle.arange(4.0,dtype="float32")
     x
 
 
@@ -36,7 +34,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array([0., 1., 2., 3.])
+    Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [0., 1., 2., 3.])
 
 
 
@@ -47,28 +46,13 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 
 .. code:: python
 
-    # 我们通过调用attach_grad来为一个张量的梯度分配内存
-    x.attach_grad()
-    # 在我们计算关于x的梯度后，我们将能够通过'grad'属性访问它，它的值被初始化为0
-    x.grad
-
-
-
-
-.. parsed-literal::
-    :class: output
-
-    array([0., 0., 0., 0.])
-
-
+    x.stop_gradient=False  # 将stop_gradient设为False以计算梯度
 
 现在让我们计算\ :math:`y`\ 。
 
 .. code:: python
 
-    # 把代码放到autograd.record内，以建立计算图
-    with autograd.record():
-        y = 2 * np.dot(x, x)
+    y = 2 * paddle.dot(x, x)
     y
 
 
@@ -77,7 +61,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array(28.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=False,
+           [28.])
 
 
 
@@ -90,12 +75,22 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
     x.grad
 
 
+.. parsed-literal::
+    :class: output
+
+    /home/wan/anaconda3/lib/python3.9/site-packages/paddle/fluid/dygraph/varbase_patch_methods.py:392: UserWarning: 
+    Warning:
+    tensor.grad will return the tensor value of the gradient. This is an incompatible upgrade for tensor.grad API.  It's return type changes from numpy.ndarray in version 2.0 to paddle.Tensor in version 2.1.0.  If you want to get the numpy value of the gradient, you can use :code:`x.grad.numpy()` 
+      warnings.warn(warning_msg)
+
+
 
 
 .. parsed-literal::
     :class: output
 
-    array([ 0.,  4.,  8., 12.])
+    Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=False,
+           [0. , 4. , 8. , 12.])
 
 
 
@@ -112,7 +107,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array([ True,  True,  True,  True])
+    Tensor(shape=[4], dtype=bool, place=CPUPlace, stop_gradient=False,
+           [True, True, True, True])
 
 
 
@@ -120,10 +116,11 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 
 .. code:: python
 
-    with autograd.record():
-        y = x.sum()
+    # 在默认情况下，Paddle会累积梯度，我们需要清除之前的值
+    x.clear_grad()
+    y = x.sum()
     y.backward()
-    x.grad  # 被新计算的梯度覆盖
+    x.grad
 
 
 
@@ -131,7 +128,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array([1., 1., 1., 1.])
+    Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=False,
+           [1., 1., 1., 1.])
 
 
 
@@ -147,12 +145,13 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 
 .. code:: python
 
-    # 当我们对向量值变量y（关于x的函数）调用backward时，将通过对y中的元素求和来创建
-    # 一个新的标量变量。然后计算这个标量变量相对于x的梯度
-    with autograd.record():
-        y = x * x  # y是一个向量
-    y.backward()
-    x.grad  # 等价于y=sum(x*x)
+    # 对非标量调用backward需要传入一个gradient参数，该参数指定微分函数关于self的梯度。
+    # 在我们的例子中，我们只想求偏导数的和，所以传递一个1的梯度是合适的
+    x.clear_grad()
+    y = x * x
+    # 等价于y.backward(paddle.ones(len(x)))
+    y.sum().backward()
+    x.grad
 
 
 
@@ -160,7 +159,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array([0., 2., 4., 6.])
+    Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=False,
+           [0., 2., 4., 6.])
 
 
 
@@ -180,11 +180,12 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 
 .. code:: python
 
-    with autograd.record():
-        y = x * x
-        u = y.detach()
-        z = u * x
-    z.backward()
+    x.clear_grad()
+    y = x * x
+    u = y.detach()
+    z = u * x
+    
+    z.sum().backward()
     x.grad == u
 
 
@@ -193,7 +194,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array([ True,  True,  True,  True])
+    Tensor(shape=[4], dtype=bool, place=CPUPlace, stop_gradient=False,
+           [True, True, True, True])
 
 
 
@@ -202,7 +204,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 
 .. code:: python
 
-    y.backward()
+    x.clear_grad()
+    y.sum().backward()
     x.grad == 2 * x
 
 
@@ -211,7 +214,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 .. parsed-literal::
     :class: output
 
-    array([ True,  True,  True,  True])
+    Tensor(shape=[4], dtype=bool, place=CPUPlace, stop_gradient=False,
+           [True, True, True, True])
 
 
 
@@ -226,7 +230,7 @@ Python控制流的梯度计算
 
     def f(a):
         b = a * 2
-        while np.linalg.norm(b) < 1000:
+        while b.norm() < 1000:
             b = b * 2
         if b.sum() > 0:
             c = b
@@ -238,10 +242,9 @@ Python控制流的梯度计算
 
 .. code:: python
 
-    a = np.random.normal()
-    a.attach_grad()
-    with autograd.record():
-        d = f(a)
+    a = paddle.randn(shape=[1])
+    a.stop_gradient=False
+    d = f(a)
     d.backward()
 
 我们现在可以分析上面定义的\ ``f``\ 函数。
@@ -259,7 +262,8 @@ Python控制流的梯度计算
 .. parsed-literal::
     :class: output
 
-    array(True)
+    Tensor(shape=[1], dtype=bool, place=CPUPlace, stop_gradient=False,
+           [True])
 
 
 
@@ -276,5 +280,3 @@ Python控制流的梯度计算
 3. 在控制流的例子中，我们计算\ ``d``\ 关于\ ``a``\ 的导数，如果我们将变量\ ``a``\ 更改为随机向量或矩阵，会发生什么？
 4. 重新设计一个求控制流梯度的例子，运行并分析结果。
 5. 使\ :math:`f(x)=\sin(x)`\ ，绘制\ :math:`f(x)`\ 和\ :math:`\frac{df(x)}{dx}`\ 的图像，其中后者不使用\ :math:`f'(x)=\cos(x)`\ 。
-
-`Discussions <https://discuss.d2l.ai/t/1758>`__

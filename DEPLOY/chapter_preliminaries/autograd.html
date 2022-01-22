@@ -355,7 +355,7 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <p>None None # 自动微分</p>
+  <p>None None None # 自动微分</p>
 <p id="sec-autograd">正如我们在
 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_calculus</span></code>中所说的那样，求导是几乎所有深度学习优化算法的关键步骤。
 虽然求导的计算很简单，只需要一些基本的微积分。
@@ -370,38 +370,30 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 <h1><span class="section-number">2.33. </span>一个简单的例子<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>作为一个演示例子，假设我们想对函数<span class="math notranslate nohighlight">\(y=2\mathbf{x}^{\top}\mathbf{x}\)</span>关于列向量<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>求导。
 首先，我们创建变量<code class="docutils literal notranslate"><span class="pre">x</span></code>并为其分配一个初始值。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paddle</span>
 
-<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
-
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>
+<span class="n">x</span><span class="o">=</span><span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
 <span class="n">x</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>在我们计算<span class="math notranslate nohighlight">\(y\)</span>关于<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>的梯度之前，我们需要一个地方来存储梯度。
 重要的是，我们不会在每次对一个参数求导时都分配新的内存。
 因为我们经常会成千上万次地更新相同的参数，每次都分配新的内存可能很快就会将内存耗尽。
 注意，一个标量函数关于向量<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>的梯度是向量，并且与<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>具有相同的形状。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 我们通过调用attach_grad来为一个张量的梯度分配内存</span>
-<span class="n">x</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
-<span class="c1"># 在我们计算关于x的梯度后，我们将能够通过&#39;grad&#39;属性访问它，它的值被初始化为0</span>
-<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
-</pre></div>
-</div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># 将stop_gradient设为False以计算梯度</span>
 </pre></div>
 </div>
 <p>现在让我们计算<span class="math notranslate nohighlight">\(y\)</span>。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 把代码放到autograd.record内，以建立计算图</span>
-<span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">paddle</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">y</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">28.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">28.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">x</span></code>是一个长度为4的向量，计算<code class="docutils literal notranslate"><span class="pre">x</span></code>和<code class="docutils literal notranslate"><span class="pre">x</span></code>的点积，得到了我们赋值给<code class="docutils literal notranslate"><span class="pre">y</span></code>的标量输出。
@@ -410,7 +402,12 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 <span class="n">x</span><span class="o">.</span><span class="n">grad</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">])</span>
+<pre class="output literal-block">/home/wan/anaconda3/lib/python3.9/site-packages/paddle/fluid/dygraph/varbase_patch_methods.py:392: UserWarning:
+Warning:
+tensor.grad will return the tensor value of the gradient. This is an incompatible upgrade for tensor.grad API.  It's return type changes from numpy.ndarray in version 2.0 to paddle.Tensor in version 2.1.0.  If you want to get the numpy value of the gradient, you can use <code class="code docutils literal notranslate"><span class="pre">x.grad.numpy()</span></code>
+  warnings.warn(warning_msg)</pre>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">0.</span> <span class="p">,</span> <span class="mf">4.</span> <span class="p">,</span> <span class="mf">8.</span> <span class="p">,</span> <span class="mf">12.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>函数<span class="math notranslate nohighlight">\(y=2\mathbf{x}^{\top}\mathbf{x}\)</span>关于<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>的梯度应为<span class="math notranslate nohighlight">\(4\mathbf{x}\)</span>。
@@ -418,17 +415,20 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">grad</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">x</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>现在让我们计算<code class="docutils literal notranslate"><span class="pre">x</span></code>的另一个函数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在默认情况下，Paddle会累积梯度，我们需要清除之前的值</span>
+<span class="n">x</span><span class="o">.</span><span class="n">clear_grad</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="n">x</span><span class="o">.</span><span class="n">grad</span>  <span class="c1"># 被新计算的梯度覆盖</span>
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -439,15 +439,17 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 <p>然而，虽然这些更奇特的对象确实出现在高级机器学习中（包括深度学习中），
 但当我们调用向量的反向计算时，我们通常会试图计算一批训练样本中每个组成部分的损失函数的导数。
 这里，我们的目的不是计算微分矩阵，而是单独计算批量中每个样本的偏导数之和。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 当我们对向量值变量y（关于x的函数）调用backward时，将通过对y中的元素求和来创建</span>
-<span class="c1"># 一个新的标量变量。然后计算这个标量变量相对于x的梯度</span>
-<span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>  <span class="c1"># y是一个向量</span>
-<span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-<span class="n">x</span><span class="o">.</span><span class="n">grad</span>  <span class="c1"># 等价于y=sum(x*x)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 对非标量调用backward需要传入一个gradient参数，该参数指定微分函数关于self的梯度。</span>
+<span class="c1"># 在我们的例子中，我们只想求偏导数的和，所以传递一个1的梯度是合适的</span>
+<span class="n">x</span><span class="o">.</span><span class="n">clear_grad</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+<span class="c1"># 等价于y.backward(paddle.ones(len(x)))</span>
+<span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="n">grad</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -462,24 +464,28 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 换句话说，梯度不会向后流经<code class="docutils literal notranslate"><span class="pre">u</span></code>到<code class="docutils literal notranslate"><span class="pre">x</span></code>。
 因此，下面的反向传播函数计算<code class="docutils literal notranslate"><span class="pre">z=u*x</span></code>关于<code class="docutils literal notranslate"><span class="pre">x</span></code>的偏导数，同时将<code class="docutils literal notranslate"><span class="pre">u</span></code>作为常数处理，
 而不是<code class="docutils literal notranslate"><span class="pre">z=x*x*x</span></code>关于<code class="docutils literal notranslate"><span class="pre">x</span></code>的偏导数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">x</span>
-<span class="n">z</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">clear_grad</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="n">x</span>
+
+<span class="n">z</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 <span class="n">x</span><span class="o">.</span><span class="n">grad</span> <span class="o">==</span> <span class="n">u</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>由于记录了<code class="docutils literal notranslate"><span class="pre">y</span></code>的计算结果，我们可以随后在<code class="docutils literal notranslate"><span class="pre">y</span></code>上调用反向传播，
 得到<code class="docutils literal notranslate"><span class="pre">y=x*x</span></code>关于的<code class="docutils literal notranslate"><span class="pre">x</span></code>的导数，即<code class="docutils literal notranslate"><span class="pre">2*x</span></code>。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">clear_grad</span><span class="p">()</span>
+<span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 <span class="n">x</span><span class="o">.</span><span class="n">grad</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -490,7 +496,7 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 在下面的代码中，<code class="docutils literal notranslate"><span class="pre">while</span></code>循环的迭代次数和<code class="docutils literal notranslate"><span class="pre">if</span></code>语句的结果都取决于输入<code class="docutils literal notranslate"><span class="pre">a</span></code>的值。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">2</span>
-    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+    <span class="k">while</span> <span class="n">b</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="mi">2</span>
     <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">b</span>
@@ -500,10 +506,9 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 </pre></div>
 </div>
 <p>让我们计算梯度。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">()</span>
-<span class="n">a</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
-<span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">a</span><span class="o">.</span><span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -514,7 +519,8 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">grad</span> <span class="o">==</span> <span class="n">d</span> <span class="o">/</span> <span class="n">a</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+       <span class="p">[</span><span class="kc">True</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -533,7 +539,6 @@ graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生�
 <li><p>重新设计一个求控制流梯度的例子，运行并分析结果。</p></li>
 <li><p>使<span class="math notranslate nohighlight">\(f(x)=\sin(x)\)</span>，绘制<span class="math notranslate nohighlight">\(f(x)\)</span>和<span class="math notranslate nohighlight">\(\frac{df(x)}{dx}\)</span>的图像，其中后者不使用<span class="math notranslate nohighlight">\(f'(x)=\cos(x)\)</span>。</p></li>
 </ol>
-<p><a class="reference external" href="https://discuss.d2l.ai/t/1758">Discussions</a></p>
 </div>
 
 

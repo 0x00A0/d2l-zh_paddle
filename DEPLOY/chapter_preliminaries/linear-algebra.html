@@ -376,17 +376,22 @@ Show Source
 我们可以用<span class="math notranslate nohighlight">\(x, y \in \{0,1\}\)</span>来表明<span class="math notranslate nohighlight">\(x\)</span>和<span class="math notranslate nohighlight">\(y\)</span>是值只能为<span class="math notranslate nohighlight">\(0\)</span>或<span class="math notranslate nohighlight">\(1\)</span>的数字。</p>
 <p>标量由只有一个元素的张量表示。
 在下面的代码中，我们实例化两个标量，并执行一些熟悉的算术运算，即加法、乘法、除法和指数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paddle</span>
 
-<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-
-<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">**</span> <span class="n">y</span>
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="n">y</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="mf">5.</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">9.</span><span class="p">))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">5.</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">6.</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">1.50000000</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">9.</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
@@ -402,11 +407,12 @@ Show Source
 在数学表示法中，我们通常将向量记为粗体、小写的符号
 （例如，<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>、<span class="math notranslate nohighlight">\(\mathbf{y}\)</span>和<span class="math notranslate nohighlight">\(\mathbf{z})\)</span>）。</p>
 <p>我们通过一维张量处理向量。一般来说，张量可以具有任意长度，取决于机器的内存限制。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">=</span><span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">x</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>我们可以使用下标来引用向量的任一元素。
@@ -420,7 +426,8 @@ Show Source
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">3.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="section" id="id3">
@@ -442,7 +449,7 @@ Show Source
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>请注意，<em>维度</em>（dimension）这个词在不同上下文时往往会有不同的含义，这经常会使人感到困惑。
@@ -470,15 +477,16 @@ Show Source
 因此，它被称为<em>方阵</em>（square matrix）。</p>
 <p>当调用函数来实例化张量时，
 我们可以通过指定两个分量<span class="math notranslate nohighlight">\(m\)</span>和<span class="math notranslate nohighlight">\(n\)</span>来创建一个形状为<span class="math notranslate nohighlight">\(m \times n\)</span>的矩阵。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">A</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mi">0</span> <span class="p">,</span> <span class="mi">1</span> <span class="p">,</span> <span class="mi">2</span> <span class="p">,</span> <span class="mi">3</span> <span class="p">],</span>
+        <span class="p">[</span><span class="mi">4</span> <span class="p">,</span> <span class="mi">5</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">],</span>
+        <span class="p">[</span><span class="mi">8</span> <span class="p">,</span> <span class="mi">9</span> <span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>我们可以通过行索引（<span class="math notranslate nohighlight">\(i\)</span>）和列索引（<span class="math notranslate nohighlight">\(j\)</span>）来访问矩阵中的标量元素<span class="math notranslate nohighlight">\(a_{ij}\)</span>，
@@ -506,31 +514,34 @@ Show Source
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">16.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mi">0</span> <span class="p">,</span> <span class="mi">4</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span> <span class="p">,</span> <span class="mi">5</span> <span class="p">,</span> <span class="mi">9</span> <span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">2</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">18</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">3</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">19</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>作为方阵的一种特殊类型，<em>对称矩阵</em>（symmetric
 matrix）<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>等于其转置：<span class="math notranslate nohighlight">\(\mathbf{A} = \mathbf{A}^\top\)</span>。
 这里我们定义一个对称矩阵<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
 <span class="n">B</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>现在我们将<code class="docutils literal notranslate"><span class="pre">B</span></code>与它的转置进行比较。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">==</span> <span class="n">B</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">],</span>
-       <span class="p">[</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">],</span>
-       <span class="p">[</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>矩阵是有用的数据结构：它们允许我们组织具有不同模式的数据。
@@ -553,17 +564,18 @@ matrix）<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>等于�
 其中3个轴对应于高度、宽度，以及一个<em>通道</em>（channel）轴，
 用于表示颜色通道（红色、绿色和蓝色）。
 现在，我们先将高阶张量暂放一边，而是专注学习其基础知识。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">X</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]],</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[[</span><span class="mi">0</span> <span class="p">,</span> <span class="mi">1</span> <span class="p">,</span> <span class="mi">2</span> <span class="p">,</span> <span class="mi">3</span> <span class="p">],</span>
+         <span class="p">[</span><span class="mi">4</span> <span class="p">,</span> <span class="mi">5</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">],</span>
+         <span class="p">[</span><span class="mi">8</span> <span class="p">,</span> <span class="mi">9</span> <span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]],</span>
 
-       <span class="p">[[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">23.</span><span class="p">]]])</span>
+        <span class="p">[[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">]]])</span>
 </pre></div>
 </div>
 </div>
@@ -573,21 +585,23 @@ matrix）<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>等于�
 例如，你可能已经从按元素操作的定义中注意到，任何按元素的一元运算都不会改变其操作数的形状。
 同样，给定具有相同形状的任意两个张量，任何按元素二元运算的结果都将是相同形状的张量。
 例如，将两个相同形状的矩阵相加，会在这两个矩阵上执行元素加法。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># 通过分配新内存，将A的一个副本分配给B</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>  <span class="c1"># 通过分配新内存，将A的一个副本分配给B</span>
 <span class="n">A</span><span class="p">,</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]]),</span>
- <span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">],</span>
-        <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">24.</span><span class="p">,</span> <span class="mf">26.</span><span class="p">,</span> <span class="mf">28.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">],</span>
-        <span class="p">[</span><span class="mf">32.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">]]))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[[</span><span class="mf">0.</span> <span class="p">,</span> <span class="mf">1.</span> <span class="p">,</span> <span class="mf">2.</span> <span class="p">,</span> <span class="mf">3.</span> <span class="p">],</span>
+         <span class="p">[</span><span class="mf">4.</span> <span class="p">,</span> <span class="mf">5.</span> <span class="p">,</span> <span class="mf">6.</span> <span class="p">,</span> <span class="mf">7.</span> <span class="p">],</span>
+         <span class="p">[</span><span class="mf">8.</span> <span class="p">,</span> <span class="mf">9.</span> <span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[[</span><span class="mf">0.</span> <span class="p">,</span> <span class="mf">2.</span> <span class="p">,</span> <span class="mf">4.</span> <span class="p">,</span> <span class="mf">6.</span> <span class="p">],</span>
+         <span class="p">[</span><span class="mf">8.</span> <span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">24.</span><span class="p">,</span> <span class="mf">26.</span><span class="p">,</span> <span class="mf">28.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">32.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">]]))</span>
 </pre></div>
 </div>
 <p>具体而言，两个矩阵的按元素乘法称为<em>Hadamard积</em>（Hadamard
@@ -607,27 +621,29 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">*</span> <span class="n">B</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span>  <span class="mf">0.</span><span class="p">,</span>   <span class="mf">1.</span><span class="p">,</span>   <span class="mf">4.</span><span class="p">,</span>   <span class="mf">9.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">16.</span><span class="p">,</span>  <span class="mf">25.</span><span class="p">,</span>  <span class="mf">36.</span><span class="p">,</span>  <span class="mf">49.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">64.</span><span class="p">,</span>  <span class="mf">81.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">121.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">144.</span><span class="p">,</span> <span class="mf">169.</span><span class="p">,</span> <span class="mf">196.</span><span class="p">,</span> <span class="mf">225.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">256.</span><span class="p">,</span> <span class="mf">289.</span><span class="p">,</span> <span class="mf">324.</span><span class="p">,</span> <span class="mf">361.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mf">0.</span>  <span class="p">,</span> <span class="mf">1.</span>  <span class="p">,</span> <span class="mf">4.</span>  <span class="p">,</span> <span class="mf">9.</span>  <span class="p">],</span>
+        <span class="p">[</span><span class="mf">16.</span> <span class="p">,</span> <span class="mf">25.</span> <span class="p">,</span> <span class="mf">36.</span> <span class="p">,</span> <span class="mf">49.</span> <span class="p">],</span>
+        <span class="p">[</span><span class="mf">64.</span> <span class="p">,</span> <span class="mf">81.</span> <span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">121.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">144.</span><span class="p">,</span> <span class="mf">169.</span><span class="p">,</span> <span class="mf">196.</span><span class="p">,</span> <span class="mf">225.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">256.</span><span class="p">,</span> <span class="mf">289.</span><span class="p">,</span> <span class="mf">324.</span><span class="p">,</span> <span class="mf">361.</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>将张量乘以或加上一个标量不会改变张量的形状，其中张量的每个元素都将与标量相加或相乘。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">a</span> <span class="o">+</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([[[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">],</span>
-         <span class="p">[</span> <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">],</span>
-         <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">]],</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[[[</span><span class="mi">2</span> <span class="p">,</span> <span class="mi">3</span> <span class="p">,</span> <span class="mi">4</span> <span class="p">,</span> <span class="mi">5</span> <span class="p">],</span>
+          <span class="p">[</span><span class="mi">6</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">9</span> <span class="p">],</span>
+          <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">]],</span>
 
-        <span class="p">[[</span><span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">],</span>
-         <span class="p">[</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">],</span>
-         <span class="p">[</span><span class="mf">22.</span><span class="p">,</span> <span class="mf">23.</span><span class="p">,</span> <span class="mf">24.</span><span class="p">,</span> <span class="mf">25.</span><span class="p">]]]),</span>
- <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+         <span class="p">[[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">]]]),</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -637,11 +653,14 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 在数学表示法中，我们使用<span class="math notranslate nohighlight">\(\sum\)</span>符号表示求和。
 为了表示长度为<span class="math notranslate nohighlight">\(d\)</span>的向量中元素的总和，可以记为<span class="math notranslate nohighlight">\(\sum_{i=1}^dx_i\)</span>。
 在代码中，我们可以调用计算求和的函数：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
 <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">6.</span><span class="p">]))</span>
 </pre></div>
 </div>
 <p>我们可以表示任意形状张量的元素和。
@@ -649,7 +668,9 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">190.</span><span class="p">))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">190.</span><span class="p">]))</span>
 </pre></div>
 </div>
 <p>默认情况下，调用求和函数会沿所有的轴降低张量的维度，使它变为一个标量。
@@ -660,7 +681,9 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 <span class="n">A_sum_axis0</span><span class="p">,</span> <span class="n">A_sum_axis0</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">40.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">55.</span><span class="p">]),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">40.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">55.</span><span class="p">]),</span>
+ <span class="p">[</span><span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>指定<code class="docutils literal notranslate"><span class="pre">axis=1</span></code>将通过汇总所有列的元素降维（轴1）。因此，输入轴1的维数在输出形状中消失。</p>
@@ -668,14 +691,17 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 <span class="n">A_sum_axis1</span><span class="p">,</span> <span class="n">A_sum_axis1</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">6.</span> <span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]),</span>
+ <span class="p">[</span><span class="mi">5</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>沿着行和列对矩阵求和，等价于对矩阵的所有元素进行求和。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># SameasA.sum()</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">190.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">190.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>一个与求和相关的量是<em>平均值</em>（mean或average）。
@@ -684,39 +710,47 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">size</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="mf">9.5</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">9.5</span><span class="p">))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">9.50000000</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">9.50000000</span><span class="p">]))</span>
 </pre></div>
 </div>
 <p>同样，计算平均值的函数也可以沿指定轴降低张量的维度。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">8.</span> <span class="p">,</span> <span class="mf">9.</span> <span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">8.</span> <span class="p">,</span> <span class="mf">9.</span> <span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]))</span>
 </pre></div>
 </div>
 <div class="section" id="subseq-lin-alg-non-reduction">
 <span id="id8"></span><h2><span class="section-number">2.19.1. </span>非降维求和<a class="headerlink" href="#subseq-lin-alg-non-reduction" title="Permalink to this headline">¶</a></h2>
 <p>但是，有时在调用函数来计算总和或均值时保持轴数不变会很有用。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sum_A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sum_A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">sum_A</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">6.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">22.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">38.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">54.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">70.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mf">6.</span> <span class="p">],</span>
+        <span class="p">[</span><span class="mf">22.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">38.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">54.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">70.</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>例如，由于<code class="docutils literal notranslate"><span class="pre">sum_A</span></code>在对每行进行求和后仍保持两个轴，我们可以通过广播将<code class="docutils literal notranslate"><span class="pre">A</span></code>除以<code class="docutils literal notranslate"><span class="pre">sum_A</span></code>。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">/</span> <span class="n">sum_A</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span>        <span class="p">,</span> <span class="mf">0.16666667</span><span class="p">,</span> <span class="mf">0.33333334</span><span class="p">,</span> <span class="mf">0.5</span>       <span class="p">],</span>
-       <span class="p">[</span><span class="mf">0.18181819</span><span class="p">,</span> <span class="mf">0.22727273</span><span class="p">,</span> <span class="mf">0.27272728</span><span class="p">,</span> <span class="mf">0.3181818</span> <span class="p">],</span>
-       <span class="p">[</span><span class="mf">0.21052632</span><span class="p">,</span> <span class="mf">0.23684211</span><span class="p">,</span> <span class="mf">0.2631579</span> <span class="p">,</span> <span class="mf">0.28947368</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">0.22222222</span><span class="p">,</span> <span class="mf">0.24074075</span><span class="p">,</span> <span class="mf">0.25925925</span><span class="p">,</span> <span class="mf">0.2777778</span> <span class="p">],</span>
-       <span class="p">[</span><span class="mf">0.22857143</span><span class="p">,</span> <span class="mf">0.24285714</span><span class="p">,</span> <span class="mf">0.25714287</span><span class="p">,</span> <span class="mf">0.27142859</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mf">0.</span>        <span class="p">,</span> <span class="mf">0.16666667</span><span class="p">,</span> <span class="mf">0.33333334</span><span class="p">,</span> <span class="mf">0.50000000</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.18181819</span><span class="p">,</span> <span class="mf">0.22727273</span><span class="p">,</span> <span class="mf">0.27272728</span><span class="p">,</span> <span class="mf">0.31818181</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.21052632</span><span class="p">,</span> <span class="mf">0.23684211</span><span class="p">,</span> <span class="mf">0.26315790</span><span class="p">,</span> <span class="mf">0.28947368</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.22222222</span><span class="p">,</span> <span class="mf">0.24074075</span><span class="p">,</span> <span class="mf">0.25925925</span><span class="p">,</span> <span class="mf">0.27777779</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.22857143</span><span class="p">,</span> <span class="mf">0.24285714</span><span class="p">,</span> <span class="mf">0.25714287</span><span class="p">,</span> <span class="mf">0.27142859</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>如果我们想沿某个轴计算<code class="docutils literal notranslate"><span class="pre">A</span></code>元素的累积总和，
@@ -725,11 +759,12 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">24.</span><span class="p">,</span> <span class="mf">28.</span><span class="p">,</span> <span class="mf">32.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">40.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">55.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mf">0.</span> <span class="p">,</span> <span class="mf">1.</span> <span class="p">,</span> <span class="mf">2.</span> <span class="p">,</span> <span class="mf">3.</span> <span class="p">],</span>
+        <span class="p">[</span><span class="mf">4.</span> <span class="p">,</span> <span class="mf">6.</span> <span class="p">,</span> <span class="mf">8.</span> <span class="p">,</span> <span class="mf">10.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">24.</span><span class="p">,</span> <span class="mf">28.</span><span class="p">,</span> <span class="mf">32.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">40.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">55.</span><span class="p">]])</span>
 </pre></div>
 </div>
 </div>
@@ -741,18 +776,24 @@ product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</s
 它们的<em>点积</em>（dot product）<span class="math notranslate nohighlight">\(\mathbf{x}^\top\mathbf{y}\)</span>
 （或<span class="math notranslate nohighlight">\(\langle\mathbf{x},\mathbf{y}\rangle\)</span>）
 是相同位置的按元素乘积的和：<span class="math notranslate nohighlight">\(\mathbf{x}^\top \mathbf{y} = \sum_{i=1}^{d} x_i y_i\)</span>。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">paddle</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span> <span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">6.</span><span class="p">]))</span>
 </pre></div>
 </div>
 <p>注意，我们可以通过执行按元素乘法，然后进行求和来表示两个向量的点积：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paddle</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">6.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>点积在很多场合都很有用。
@@ -800,13 +841,13 @@ product）。 回顾分别在 <a class="reference internal" href="#equation-eq-m
 这些转换是非常有用的。例如，我们可以用方阵的乘法来表示旋转。
 我们将在后续章节中讲到，我们也可以使用矩阵-向量积来描述在给定前一层的值时，
 求解神经网络每一层所需的复杂计算。</p>
-<p>在代码中使用张量表示矩阵-向量积，我们使用与点积相同的<code class="docutils literal notranslate"><span class="pre">dot</span></code>函数。
-当我们为矩阵<code class="docutils literal notranslate"><span class="pre">A</span></code>和向量<code class="docutils literal notranslate"><span class="pre">x</span></code>调用<code class="docutils literal notranslate"><span class="pre">np.dot(A,x)</span></code>时，会执行矩阵-向量积。
-注意，<code class="docutils literal notranslate"><span class="pre">A</span></code>的列维数（沿轴1的长度）必须与<code class="docutils literal notranslate"><span class="pre">x</span></code>的维数（其长度）相同。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">paddle</span><span class="o">.</span><span class="n">mv</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="n">array</span><span class="p">([</span> <span class="mf">14.</span><span class="p">,</span>  <span class="mf">38.</span><span class="p">,</span>  <span class="mf">62.</span><span class="p">,</span>  <span class="mf">86.</span><span class="p">,</span> <span class="mf">110.</span><span class="p">]))</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+ <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">[</span><span class="mf">14.</span> <span class="p">,</span> <span class="mf">38.</span> <span class="p">,</span> <span class="mf">62.</span> <span class="p">,</span> <span class="mf">86.</span> <span class="p">,</span> <span class="mf">110.</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
@@ -861,15 +902,16 @@ product）。 回顾分别在 <a class="reference internal" href="#equation-eq-m
 在下面的代码中，我们在<code class="docutils literal notranslate"><span class="pre">A</span></code>和<code class="docutils literal notranslate"><span class="pre">B</span></code>上执行矩阵乘法。
 这里的<code class="docutils literal notranslate"><span class="pre">A</span></code>是一个5行4列的矩阵，<code class="docutils literal notranslate"><span class="pre">B</span></code>是一个4行3列的矩阵。
 两者相乘后，我们得到了一个5行3列的矩阵。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">paddle</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">6.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">22.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">38.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">54.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">],</span>
-       <span class="p">[</span><span class="mf">70.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]])</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mf">6.</span> <span class="p">,</span> <span class="mf">6.</span> <span class="p">,</span> <span class="mf">6.</span> <span class="p">],</span>
+        <span class="p">[</span><span class="mf">22.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">38.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">54.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">70.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>矩阵-矩阵乘法可以简单地称为<strong>矩阵乘法</strong>，不应与“Hadamard积”混淆。</p>
@@ -903,11 +945,12 @@ product）。 回顾分别在 <a class="reference internal" href="#equation-eq-m
 <span class="eqno">(2.23.5)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-11" title="Permalink to this equation">¶</a></span>\[\|\mathbf{x}\|_2 = \sqrt{\sum_{i=1}^n x_i^2},\]</div>
 <p>其中，在<span class="math notranslate nohighlight">\(L_2\)</span>范数中常常省略下标<span class="math notranslate nohighlight">\(2\)</span>，也就是说<span class="math notranslate nohighlight">\(\|\mathbf{x}\|\)</span>等同于<span class="math notranslate nohighlight">\(\|\mathbf{x}\|_2\)</span>。
 在代码中，我们可以按如下方式计算向量的<span class="math notranslate nohighlight">\(L_2\)</span>范数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">])</span>
-<span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">])</span>
+<span class="n">paddle</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">5.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">5.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>在深度学习中，我们更经常地使用<span class="math notranslate nohighlight">\(L_2\)</span>范数的平方。
@@ -916,10 +959,11 @@ product）。 回顾分别在 <a class="reference internal" href="#equation-eq-m
 <span class="eqno">(2.23.6)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-12" title="Permalink to this equation">¶</a></span>\[\|\mathbf{x}\|_1 = \sum_{i=1}^n \left|x_i \right|.\]</div>
 <p>与<span class="math notranslate nohighlight">\(L_2\)</span>范数相比，<span class="math notranslate nohighlight">\(L_1\)</span>范数受异常值的影响较小。
 为了计算<span class="math notranslate nohighlight">\(L_1\)</span>范数，我们将绝对值函数和按元素求和组合起来。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paddle</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">7.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">7.</span><span class="p">])</span>
 </pre></div>
 </div>
 <p><span class="math notranslate nohighlight">\(L_2\)</span>范数和<span class="math notranslate nohighlight">\(L_1\)</span>范数都是更一般的<span class="math notranslate nohighlight">\(L_p\)</span>范数的特例：</p>
@@ -931,10 +975,11 @@ norm）是矩阵元素平方和的平方根：</p>
 <span class="eqno">(2.23.8)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-14" title="Permalink to this equation">¶</a></span>\[\|\mathbf{X}\|_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}.\]</div>
 <p>Frobenius范数满足向量范数的所有性质，它就像是矩阵形向量的<span class="math notranslate nohighlight">\(L_2\)</span>范数。
 调用以下函数将计算矩阵的Frobenius范数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paddle</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">)</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">6.</span><span class="p">])</span>
 </pre></div>
 </div>
 <div class="section" id="subsec-norms-and-objectives">
@@ -980,7 +1025,6 @@ norm）是矩阵元素平方和的平方根：</p>
 <li><p>考虑一个具有形状<span class="math notranslate nohighlight">\((2,3,4)\)</span>的张量，在轴0、1、2上的求和输出是什么形状?</p></li>
 <li><p>为<code class="docutils literal notranslate"><span class="pre">linalg.norm</span></code>函数提供3个或更多轴的张量，并观察其输出。对于任意形状的张量这个函数计算得到什么?</p></li>
 </ol>
-<p><a class="reference external" href="https://discuss.d2l.ai/t/1752">Discussions</a></p>
 </div>
 
 

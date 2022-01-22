@@ -30,14 +30,12 @@ None # 线性代数
 
 .. code:: python
 
-    from mxnet import np, npx
+    import paddle
     
-    npx.set_np()
+    x = paddle.to_tensor(3.0)
+    y = paddle.to_tensor(2.0)
     
-    x = np.array(3.0)
-    y = np.array(2.0)
-    
-    x + y, x * y, x / y, x ** y
+    x + y, x * y, x / y, x**y
 
 
 
@@ -45,7 +43,14 @@ None # 线性代数
 .. parsed-literal::
     :class: output
 
-    (array(5.), array(6.), array(1.5), array(9.))
+    (Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [5.]),
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [6.]),
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [1.50000000]),
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [9.]))
 
 
 
@@ -66,7 +71,7 @@ None # 线性代数
 
 .. code:: python
 
-    x = np.arange(4)
+    x=paddle.arange(4)
     x
 
 
@@ -75,7 +80,8 @@ None # 线性代数
 .. parsed-literal::
     :class: output
 
-    array([0., 1., 2., 3.])
+    Tensor(shape=[4], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [0, 1, 2, 3])
 
 
 
@@ -100,7 +106,8 @@ None # 线性代数
 .. parsed-literal::
     :class: output
 
-    array(3.)
+    Tensor(shape=[1], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [3])
 
 
 
@@ -142,7 +149,7 @@ None # 线性代数
 .. parsed-literal::
     :class: output
 
-    (4,)
+    [4]
 
 
 
@@ -178,7 +185,7 @@ None # 线性代数
 
 .. code:: python
 
-    A = np.arange(20).reshape(5, 4)
+    A = paddle.arange(20).reshape((5, 4))
     A
 
 
@@ -187,11 +194,12 @@ None # 线性代数
 .. parsed-literal::
     :class: output
 
-    array([[ 0.,  1.,  2.,  3.],
-           [ 4.,  5.,  6.,  7.],
-           [ 8.,  9., 10., 11.],
-           [12., 13., 14., 15.],
-           [16., 17., 18., 19.]])
+    Tensor(shape=[5, 4], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [[0 , 1 , 2 , 3 ],
+            [4 , 5 , 6 , 7 ],
+            [8 , 9 , 10, 11],
+            [12, 13, 14, 15],
+            [16, 17, 18, 19]])
 
 
 
@@ -233,10 +241,11 @@ None # 线性代数
 .. parsed-literal::
     :class: output
 
-    array([[ 0.,  4.,  8., 12., 16.],
-           [ 1.,  5.,  9., 13., 17.],
-           [ 2.,  6., 10., 14., 18.],
-           [ 3.,  7., 11., 15., 19.]])
+    Tensor(shape=[4, 5], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [[0 , 4 , 8 , 12, 16],
+            [1 , 5 , 9 , 13, 17],
+            [2 , 6 , 10, 14, 18],
+            [3 , 7 , 11, 15, 19]])
 
 
 
@@ -246,7 +255,7 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 
 .. code:: python
 
-    B = np.array([[1, 2, 3], [2, 0, 4], [3, 4, 5]])
+    B = paddle.to_tensor([[1, 2, 3], [2, 0, 4], [3, 4, 5]])
     B
 
 
@@ -255,9 +264,10 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 .. parsed-literal::
     :class: output
 
-    array([[1., 2., 3.],
-           [2., 0., 4.],
-           [3., 4., 5.]])
+    Tensor(shape=[3, 3], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [[1, 2, 3],
+            [2, 0, 4],
+            [3, 4, 5]])
 
 
 
@@ -273,9 +283,10 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 .. parsed-literal::
     :class: output
 
-    array([[ True,  True,  True],
-           [ True,  True,  True],
-           [ True,  True,  True]])
+    Tensor(shape=[3, 3], dtype=bool, place=CPUPlace, stop_gradient=True,
+           [[True, True, True],
+            [True, True, True],
+            [True, True, True]])
 
 
 
@@ -304,7 +315,7 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 
 .. code:: python
 
-    X = np.arange(24).reshape(2, 3, 4)
+    X = paddle.arange(24).reshape((2, 3, 4))
     X
 
 
@@ -313,13 +324,14 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 .. parsed-literal::
     :class: output
 
-    array([[[ 0.,  1.,  2.,  3.],
-            [ 4.,  5.,  6.,  7.],
-            [ 8.,  9., 10., 11.]],
+    Tensor(shape=[2, 3, 4], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [[[0 , 1 , 2 , 3 ],
+             [4 , 5 , 6 , 7 ],
+             [8 , 9 , 10, 11]],
     
-           [[12., 13., 14., 15.],
-            [16., 17., 18., 19.],
-            [20., 21., 22., 23.]]])
+            [[12, 13, 14, 15],
+             [16, 17, 18, 19],
+             [20, 21, 22, 23]]])
 
 
 
@@ -333,8 +345,8 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 
 .. code:: python
 
-    A = np.arange(20).reshape(5, 4)
-    B = A.copy()  # 通过分配新内存，将A的一个副本分配给B
+    A = paddle.arange(20, dtype='float32').reshape((5, 4))
+    B = A.clone()  # 通过分配新内存，将A的一个副本分配给B
     A, A + B
 
 
@@ -343,16 +355,18 @@ matrix）\ :math:`\mathbf{A}`\ 等于其转置：\ :math:`\mathbf{A} = \mathbf{A
 .. parsed-literal::
     :class: output
 
-    (array([[ 0.,  1.,  2.,  3.],
-            [ 4.,  5.,  6.,  7.],
-            [ 8.,  9., 10., 11.],
-            [12., 13., 14., 15.],
-            [16., 17., 18., 19.]]),
-     array([[ 0.,  2.,  4.,  6.],
-            [ 8., 10., 12., 14.],
-            [16., 18., 20., 22.],
-            [24., 26., 28., 30.],
-            [32., 34., 36., 38.]]))
+    (Tensor(shape=[5, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[0. , 1. , 2. , 3. ],
+             [4. , 5. , 6. , 7. ],
+             [8. , 9. , 10., 11.],
+             [12., 13., 14., 15.],
+             [16., 17., 18., 19.]]),
+     Tensor(shape=[5, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[0. , 2. , 4. , 6. ],
+             [8. , 10., 12., 14.],
+             [16., 18., 20., 22.],
+             [24., 26., 28., 30.],
+             [32., 34., 36., 38.]]))
 
 
 
@@ -384,11 +398,12 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    array([[  0.,   1.,   4.,   9.],
-           [ 16.,  25.,  36.,  49.],
-           [ 64.,  81., 100., 121.],
-           [144., 169., 196., 225.],
-           [256., 289., 324., 361.]])
+    Tensor(shape=[5, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[0.  , 1.  , 4.  , 9.  ],
+            [16. , 25. , 36. , 49. ],
+            [64. , 81. , 100., 121.],
+            [144., 169., 196., 225.],
+            [256., 289., 324., 361.]])
 
 
 
@@ -397,7 +412,7 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. code:: python
 
     a = 2
-    X = np.arange(24).reshape(2, 3, 4)
+    X = paddle.arange(24).reshape((2, 3, 4))
     a + X, (a * X).shape
 
 
@@ -406,14 +421,15 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array([[[ 2.,  3.,  4.,  5.],
-             [ 6.,  7.,  8.,  9.],
-             [10., 11., 12., 13.]],
+    (Tensor(shape=[2, 3, 4], dtype=int64, place=CPUPlace, stop_gradient=True,
+            [[[2 , 3 , 4 , 5 ],
+              [6 , 7 , 8 , 9 ],
+              [10, 11, 12, 13]],
      
-            [[14., 15., 16., 17.],
-             [18., 19., 20., 21.],
-             [22., 23., 24., 25.]]]),
-     (2, 3, 4))
+             [[14, 15, 16, 17],
+              [18, 19, 20, 21],
+              [22, 23, 24, 25]]]),
+     [2, 3, 4])
 
 
 
@@ -430,7 +446,7 @@ product）（数学符号\ :math:`\odot`\ ）。
 
 .. code:: python
 
-    x = np.arange(4)
+    x = paddle.arange(4, dtype='float32')
     x, x.sum()
 
 
@@ -439,7 +455,10 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array([0., 1., 2., 3.]), array(6.))
+    (Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [0., 1., 2., 3.]),
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [6.]))
 
 
 
@@ -456,7 +475,9 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    ((5, 4), array(190.))
+    ([5, 4],
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [190.]))
 
 
 
@@ -476,7 +497,9 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array([40., 45., 50., 55.]), (4,))
+    (Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [40., 45., 50., 55.]),
+     [4])
 
 
 
@@ -493,7 +516,9 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array([ 6., 22., 38., 54., 70.]), (5,))
+    (Tensor(shape=[5], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [6. , 22., 38., 54., 70.]),
+     [5])
 
 
 
@@ -509,7 +534,8 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    array(190.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [190.])
 
 
 
@@ -527,7 +553,10 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array(9.5), array(9.5))
+    (Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [9.50000000]),
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [9.50000000]))
 
 
 
@@ -543,7 +572,10 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array([ 8.,  9., 10., 11.]), array([ 8.,  9., 10., 11.]))
+    (Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [8. , 9. , 10., 11.]),
+     Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [8. , 9. , 10., 11.]))
 
 
 
@@ -557,7 +589,7 @@ product）（数学符号\ :math:`\odot`\ ）。
 
 .. code:: python
 
-    sum_A = A.sum(axis=1, keepdims=True)
+    sum_A = A.sum(axis=1, keepdim=True)
     sum_A
 
 
@@ -566,11 +598,12 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    array([[ 6.],
-           [22.],
-           [38.],
-           [54.],
-           [70.]])
+    Tensor(shape=[5, 1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[6. ],
+            [22.],
+            [38.],
+            [54.],
+            [70.]])
 
 
 
@@ -586,11 +619,12 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    array([[0.        , 0.16666667, 0.33333334, 0.5       ],
-           [0.18181819, 0.22727273, 0.27272728, 0.3181818 ],
-           [0.21052632, 0.23684211, 0.2631579 , 0.28947368],
-           [0.22222222, 0.24074075, 0.25925925, 0.2777778 ],
-           [0.22857143, 0.24285714, 0.25714287, 0.27142859]])
+    Tensor(shape=[5, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[0.        , 0.16666667, 0.33333334, 0.50000000],
+            [0.18181819, 0.22727273, 0.27272728, 0.31818181],
+            [0.21052632, 0.23684211, 0.26315790, 0.28947368],
+            [0.22222222, 0.24074075, 0.25925925, 0.27777779],
+            [0.22857143, 0.24285714, 0.25714287, 0.27142859]])
 
 
 
@@ -608,11 +642,12 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    array([[ 0.,  1.,  2.,  3.],
-           [ 4.,  6.,  8., 10.],
-           [12., 15., 18., 21.],
-           [24., 28., 32., 36.],
-           [40., 45., 50., 55.]])
+    Tensor(shape=[5, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[0. , 1. , 2. , 3. ],
+            [4. , 6. , 8. , 10.],
+            [12., 15., 18., 21.],
+            [24., 28., 32., 36.],
+            [40., 45., 50., 55.]])
 
 
 
@@ -627,8 +662,8 @@ product）（数学符号\ :math:`\odot`\ ）。
 
 .. code:: python
 
-    y = np.ones(4)
-    x, y, np.dot(x, y)
+    y = paddle.ones([4], dtype = 'float32')
+    x, y, paddle.dot(x, y)
 
 
 
@@ -636,7 +671,12 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    (array([0., 1., 2., 3.]), array([1., 1., 1., 1.]), array(6.))
+    (Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [0., 1., 2., 3.]),
+     Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [1., 1., 1., 1.]),
+     Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [6.]))
 
 
 
@@ -644,7 +684,7 @@ product）（数学符号\ :math:`\odot`\ ）。
 
 .. code:: python
 
-    np.sum(x * y)
+    paddle.sum(x * y)
 
 
 
@@ -652,7 +692,8 @@ product）（数学符号\ :math:`\odot`\ ）。
 .. parsed-literal::
     :class: output
 
-    array(6.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [6.])
 
 
 
@@ -710,13 +751,9 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 我们将在后续章节中讲到，我们也可以使用矩阵-向量积来描述在给定前一层的值时，
 求解神经网络每一层所需的复杂计算。
 
-在代码中使用张量表示矩阵-向量积，我们使用与点积相同的\ ``dot``\ 函数。
-当我们为矩阵\ ``A``\ 和向量\ ``x``\ 调用\ ``np.dot(A,x)``\ 时，会执行矩阵-向量积。
-注意，\ ``A``\ 的列维数（沿轴1的长度）必须与\ ``x``\ 的维数（其长度）相同。
-
 .. code:: python
 
-    A.shape, x.shape, np.dot(A, x)
+    A.shape, x.shape, paddle.mv(A, x)
 
 
 
@@ -724,7 +761,10 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 .. parsed-literal::
     :class: output
 
-    ((5, 4), (4,), array([ 14.,  38.,  62.,  86., 110.]))
+    ([5, 4],
+     [4],
+     Tensor(shape=[5], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [14. , 38. , 62. , 86. , 110.]))
 
 
 
@@ -793,8 +833,8 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 
 .. code:: python
 
-    B = np.ones(shape=(4, 3))
-    np.dot(A, B)
+    B = paddle.ones((4, 3))
+    paddle.mm(A, B)
 
 
 
@@ -802,11 +842,12 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 .. parsed-literal::
     :class: output
 
-    array([[ 6.,  6.,  6.],
-           [22., 22., 22.],
-           [38., 38., 38.],
-           [54., 54., 54.],
-           [70., 70., 70.]])
+    Tensor(shape=[5, 3], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[6. , 6. , 6. ],
+            [22., 22., 22.],
+            [38., 38., 38.],
+            [54., 54., 54.],
+            [70., 70., 70.]])
 
 
 
@@ -854,8 +895,8 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 
 .. code:: python
 
-    u = np.array([3, -4])
-    np.linalg.norm(u)
+    u = paddle.to_tensor([3.0, -4.0])
+    paddle.norm(u)
 
 
 
@@ -863,7 +904,8 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 .. parsed-literal::
     :class: output
 
-    array(5.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [5.])
 
 
 
@@ -877,7 +919,7 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 
 .. code:: python
 
-    np.abs(u).sum()
+    paddle.abs(u).sum()
 
 
 
@@ -885,7 +927,8 @@ product）。 回顾分别在 :eq:`eq_matrix_def`\ 和
 .. parsed-literal::
     :class: output
 
-    array(7.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [7.])
 
 
 
@@ -903,7 +946,7 @@ Frobenius范数满足向量范数的所有性质，它就像是矩阵形向量�
 
 .. code:: python
 
-    np.linalg.norm(np.ones((4, 9)))
+    paddle.norm(paddle.ones((4, 9)))
 
 
 
@@ -911,7 +954,8 @@ Frobenius范数满足向量范数的所有性质，它就像是矩阵形向量�
 .. parsed-literal::
     :class: output
 
-    array(6.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [6.])
 
 
 
@@ -961,5 +1005,3 @@ Frobenius范数满足向量范数的所有性质，它就像是矩阵形向量�
 6. 运行\ ``A/A.sum(axis=1)``\ ，看看会发生什么。你能分析原因吗？
 7. 考虑一个具有形状\ :math:`(2,3,4)`\ 的张量，在轴0、1、2上的求和输出是什么形状?
 8. 为\ ``linalg.norm``\ 函数提供3个或更多轴的张量，并观察其输出。对于任意形状的张量这个函数计算得到什么?
-
-`Discussions <https://discuss.d2l.ai/t/1752>`__

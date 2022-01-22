@@ -240,24 +240,16 @@ dataset）上评估得到的。
     %matplotlib inline
     import math
     import time
-    from mxnet import np
-    from d2l import mxnet as d2l
+    import numpy as np
+    import paddle
+    from d2l import paddle as d2l
 
 
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-7wklazve because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-rp1bpaps because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
-
-.. code:: python
-
-    %matplotlib inline
-    import math
-    import time
-    import numpy as np
-    import paddle
-    from d2l import paddle as d2l
 
 为了说明矢量化为什么如此重要，我们考虑对向量相加的两种方法。
 我们实例化两个全为1的10000维向量。
@@ -319,7 +311,7 @@ dataset）上评估得到的。
 .. parsed-literal::
     :class: output
 
-    '0.59988 sec'
+    '0.51804 sec'
 
 
 
@@ -337,7 +329,7 @@ dataset）上评估得到的。
 .. parsed-literal::
     :class: output
 
-    '0.00496 sec'
+    '0.01245 sec'
 
 
 
@@ -390,7 +382,7 @@ distribution），也称为\ *高斯分布*\ （Gaussian distribution），
 
 
 
-.. figure:: output_linear-regression_216540_14_1.svg
+.. figure:: output_linear-regression_24eb52_13_1.svg
 
 
 就像我们所看到的，改变均值会产生沿\ :math:`x`\ 轴的偏移，增加方差将会分散分布、降低其峰值。

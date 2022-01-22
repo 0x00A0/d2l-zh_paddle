@@ -546,19 +546,12 @@ dataset）上评估得到的。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span>
-<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
-</pre></div>
-</div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="mi">7</span><span class="n">wklazve</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">paddle</span>
 <span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">paddle</span> <span class="k">as</span> <span class="n">d2l</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="n">rp1bpaps</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>为了说明矢量化为什么如此重要，我们考虑对向量相加的两种方法。
@@ -608,7 +601,7 @@ dataset）上评估得到的。</p>
 <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0.59988 sec&#39;</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0.51804 sec&#39;</span>
 </pre></div>
 </div>
 <p>或者，我们使用重载的<code class="docutils literal notranslate"><span class="pre">+</span></code>运算符来计算按元素的和。</p>
@@ -617,7 +610,7 @@ dataset）上评估得到的。</p>
 <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0.00496 sec&#39;</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0.01245 sec&#39;</span>
 </pre></div>
 </div>
 <p>结果很明显，第二种方法比第一种方法快得多。
@@ -653,7 +646,7 @@ distribution），也称为<em>高斯分布</em>（Gaussian distribution），
 <pre class="output literal-block">/home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: <cite>set_matplotlib_formats</cite> is deprecated since IPython 7.23, directly use <cite>matplotlib_inline.backend_inline.set_matplotlib_formats()</cite>
   display.set_matplotlib_formats('svg')</pre>
 <div class="figure align-default">
-<img alt="../_images/output_linear-regression_216540_14_1.svg" src="../_images/output_linear-regression_216540_14_1.svg" /></div>
+<img alt="../_images/output_linear-regression_24eb52_13_1.svg" src="../_images/output_linear-regression_24eb52_13_1.svg" /></div>
 <p>就像我们所看到的，改变均值会产生沿<span class="math notranslate nohighlight">\(x\)</span>轴的偏移，增加方差将会分散分布、降低其峰值。</p>
 <p>均方误差损失函数（简称均方损失）可以用于线性回归的一个原因是：
 我们假设了观测中包含噪声，其中噪声服从正态分布。 噪声正态分布如下式:</p>

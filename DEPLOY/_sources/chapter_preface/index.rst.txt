@@ -117,14 +117,8 @@ Bishop的优秀教科书 :cite:`Bishop.2006`
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-r1_zwnpg because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-587e2t37 because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
-
-.. code:: python
-
-    #@save
-    from mxnet import autograd, context, gluon, image, init, np, npx
-    from mxnet.gluon import nn, rnn
 
 .. code:: python
 

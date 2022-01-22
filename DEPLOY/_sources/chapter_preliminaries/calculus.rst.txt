@@ -63,11 +63,10 @@ calculus）被发明出来。
 .. code:: python
 
     %matplotlib inline
+    import numpy as np
     from IPython import display
-    from mxnet import np, npx
-    from d2l import mxnet as d2l
+    from d2l import paddle as d2l
     
-    npx.set_np()
     
     def f(x):
         return 3 * x ** 2 - 4 * x
@@ -76,19 +75,8 @@ calculus）被发明出来。
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-wdat44rr because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-w0jsdcix because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
-
-.. code:: python
-
-    %matplotlib inline
-    import numpy as np
-    from IPython import display
-    from d2l import paddle as d2l
-    
-    
-    def f(x):
-        return 3 * x ** 2 - 4 * x
 
 通过令\ :math:`x=1`\ 并让\ :math:`h`\ 接近\ :math:`0`\ ，
 :eq:`eq_derivative`\ 中\ :math:`\frac{f(x+h)-f(x)}{h}`\ 的数值结果接近\ :math:`2`\ 。
@@ -244,12 +232,12 @@ calculus）被发明出来。
 .. parsed-literal::
     :class: output
 
-    /tmp/ipykernel_6554/4122074511.py:3: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
+    /tmp/ipykernel_2273/4122074511.py:3: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
       display.set_matplotlib_formats('svg')
 
 
 
-.. figure:: output_calculus_7e7694_14_1.svg
+.. figure:: output_calculus_ac5d77_13_1.svg
 
 
 偏导数

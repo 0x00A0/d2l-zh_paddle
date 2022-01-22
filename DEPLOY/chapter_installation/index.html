@@ -391,20 +391,8 @@ sh Miniconda3-py38_4.10.3-Linux-x86_64.sh -b
 GPU并已安装<a class="reference external" href="https://developer.nvidia.com/cuda-downloads">CUDA</a>。
 如果你的机器没有任何GPU，没有必要担心，因为你的CPU在前几章完全够用。
 但是，如果你想流畅地学习全部章节，请提早获取GPU并且安装深度学习框架的GPU版本。</p>
-<p>安装MXNet的GPU版本，你首先需要知道已安装的CUDA版本。
-（你可以通过运行<code class="docutils literal notranslate"><span class="pre">nvcc</span> <span class="pre">--version</span></code>或<code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">/usr/local/cuda/version.txt</span></code>来检验。）
-假设你已安装CUDA 10.1版本，请执行以下命令：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 对于Linux和macOS用户</span>
-pip install mxnet-cu101<span class="o">==</span><span class="m">1</span>.7.0
-
-<span class="c1"># 对于Windows用户</span>
-pip install mxnet-cu101<span class="o">==</span><span class="m">1</span>.7.0 -f https://dist.mxnet.io/python
-</pre></div>
-</div>
-<p>你可以根据你的CUDA版本更改如上<code class="docutils literal notranslate"><span class="pre">mxnet-cu101</span></code>的最后一位数字，
-例如：CUDA 10.0是<code class="docutils literal notranslate"><span class="pre">cu100</span></code>， CUDA 9.0是<code class="docutils literal notranslate"><span class="pre">cu90</span></code>。</p>
-<p>如果你的机器没有NVIDIA GPU或CUDA， 你可以按如下方式MXNet的CPU版本：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install <span class="nv">mxnet</span><span class="o">==</span><span class="m">1</span>.7.0.post1
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pip install <span class="nv">paddlepaddle</span><span class="o">==</span><span class="m">2</span>.2.1 -i https://mirror.baidu.com/pypi/simple
+python -m pip install paddlepaddle-gpu<span class="o">==</span><span class="m">2</span>.2.1 -i https://mirror.baidu.com/pypi/simple
 </pre></div>
 </div>
 <p>我们的下一步是安装<code class="docutils literal notranslate"><span class="pre">d2l</span></code>包，以方便调取本书中经常使用的函数和类：</p>
@@ -416,13 +404,6 @@ pip install mxnet-cu101<span class="o">==</span><span class="m">1</span>.7.0 -f 
 <h1>下载 D2L Notebook<a class="headerlink" href="#d2l-notebook" title="Permalink to this headline">¶</a></h1>
 <p>接下来，需要下载这本书的代码。 你可以点击本书HTML页面顶部的“Jupyter
 记事本”选项下载后解压代码。 或者，你可以按照如下方式进行下载：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir d2l-zh <span class="o">&amp;&amp;</span> <span class="nb">cd</span> d2l-zh
-curl https://zh-v2.d2l.ai/d2l-zh-2.0.0.zip -o d2l-zh.zip
-unzip d2l-zh.zip <span class="o">&amp;&amp;</span> rm d2l-zh.zip
-<span class="nb">cd</span> mxnet
-</pre></div>
-</div>
-<p>注意：如果你没有安装<code class="docutils literal notranslate"><span class="pre">unzip</span></code>，则可以通过运行<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">unzip</span></code>进行安装。</p>
 <p>安装完成后，你可以通过运行以下命令打开Jupyter笔记本：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter notebook
 </pre></div>
@@ -431,7 +412,6 @@ unzip d2l-zh.zip <span class="o">&amp;&amp;</span> rm d2l-zh.zip
 由此，你可以运行这本书中每个部分的代码。
 在运行书籍代码、更新深度学习框架或<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包之前，请始终执行<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">d2l</span></code>以激活运行时环境。
 要退出环境，请运行<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">deactivate</span></code>。</p>
-<p><a class="reference external" href="https://discuss.d2l.ai/t/2082">Discussions</a></p>
 </div>
 
 

@@ -21,21 +21,21 @@ None None # 线性回归的简洁实现
 
 .. code:: python
 
-    from mxnet import autograd, gluon, np, npx
-    from d2l import mxnet as d2l
-    
-    npx.set_np()
+    import numpy as np
+    import paddle
+    from paddle import io
+    from d2l import paddle as d2l
 
 
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-7rl_wppt because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-hwoi_8xl because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
 
 .. code:: python
 
-    true_w = np.array([2, -3.4])
+    true_w = paddle.paddle.to_tensor([2, -3.4])
     true_b = 4.2
     features, labels = d2l.synthetic_data(true_w, true_b, 1000)
 
@@ -49,9 +49,9 @@ None None # 线性回归的简洁实现
 .. code:: python
 
     def load_array(data_arrays, batch_size, is_train=True):  #@save
-        """构造一个Gluon数据迭代器"""
-        dataset = gluon.data.ArrayDataset(*data_arrays)
-        return gluon.data.DataLoader(dataset, batch_size, shuffle=is_train)
+        """构造一个PyTorch数据迭代器"""
+        dataset = io.TensorDataset(data_arrays)
+        return io.DataLoader(dataset, batch_size=batch_size, shuffle=is_train)
 
 .. code:: python
 
@@ -73,26 +73,28 @@ None None # 线性回归的简洁实现
 .. parsed-literal::
     :class: output
 
-    [array([[ 0.25945112,  0.4179527 ],
-            [-2.0447428 ,  0.74624586],
-            [-0.06807706, -0.13130364],
-            [-1.0227915 ,  0.05346791],
-            [-0.74539703,  0.38242742],
-            [-1.3002341 ,  1.1119636 ],
-            [-0.51751894, -0.5553699 ],
-            [-1.4760977 , -0.18857454],
-            [ 0.54560065,  0.10940859],
-            [ 0.09016981, -0.5549816 ]]),
-     array([[ 3.300429 ],
-            [-2.4220822],
-            [ 4.5233345],
-            [ 1.9630948],
-            [ 1.4026579],
-            [-2.1769006],
-            [ 5.0592566],
-            [ 1.8882915],
-            [ 4.9092207],
-            [ 6.2645936]])]
+    [Tensor(shape=[10, 2], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[ 0.26695454, -0.61031514],
+             [ 1.56811917,  0.23991548],
+             [-1.48661160, -0.14512579],
+             [ 0.28009248,  0.89850241],
+             [-0.56320649,  0.75310522],
+             [ 0.72914153,  1.73198748],
+             [ 1.80055797,  0.45330566],
+             [-1.25546420, -0.38003913],
+             [-0.00679264, -1.04314697],
+             [-0.06246236, -0.14536108]]),
+     Tensor(shape=[10, 1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[6.81621885],
+             [6.53260994],
+             [1.71733129],
+             [1.72119415],
+             [0.51202148],
+             [-0.23238815],
+             [6.24916029],
+             [2.98804927],
+             [7.74188757],
+             [4.59819794]])]
 
 
 
@@ -117,21 +119,16 @@ None None # 线性回归的简洁实现
 这一单层被称为\ *全连接层*\ （fully-connected layer），
 因为它的每一个输入都通过矩阵-向量乘法得到它的每个输出。
 
-在Gluon中，全连接层在\ ``Dense``\ 类中定义。
-由于我们只想得到一个标量输出，所以我们将该数字设置为1。
-
-值得注意的是，为了方便使用，Gluon并不要求我们为每个层指定输入的形状。
-所以在这里，我们不需要告诉Gluon有多少输入进入这一层。
-当我们第一次尝试通过我们的模型传递数据时，例如，当后面执行\ ``net(X)``\ 时，
-Gluon会自动推断每个层输入的形状。 我们稍后将详细介绍这种工作机制。
+在Paddle中，全连接层在\ ``Linear``\ 类中定义。
+值得注意的是，我们将两个参数传递到\ ``nn.Linear``\ 中。
+第一个指定输入特征形状，即2，第二个指定输出特征形状，输出特征形状为单个标量，因此为1。
 
 .. code:: python
 
     # nn是神经网络的缩写
-    from mxnet.gluon import nn
+    from paddle import nn
     
-    net = nn.Sequential()
-    net.add(nn.Dense(1))
+    net = nn.Sequential(nn.Linear(2, 1))
 
 初始化模型参数
 --------------
@@ -142,49 +139,42 @@ Gluon会自动推断每个层输入的形状。 我们稍后将详细介绍这�
 在这里，我们指定每个权重参数应该从均值为0、标准差为0.01的正态分布中随机采样，
 偏置参数将初始化为零。
 
-我们从MXNet导入\ ``initializer``\ 模块，这个模块提供了各种模型参数初始化方法。
-Gluon将\ ``init``\ 作为访问\ ``initializer``\ 包的快捷方式。
-我们可以通过调用\ ``init.Normal(sigma=0.01)``\ 来指定初始化权重的方法。
-默认情况下，偏置参数初始化为零。
+paddle\ ``initializers``\ 模块提供了多种模型参数初始化方法。
+在paddle中最简单的指定初始化方法是在创建层时指定参数,参数由\ ``ParamAttr``\ 方法生成
+在这里，我们通过\ ``net[0]``\ 选择网络中的第一个图层，然后重新创建了它
 
 .. code:: python
 
-    from mxnet import init
-    
-    net.initialize(init.Normal(sigma=0.01))
+    weight_attr = paddle.ParamAttr(
+        initializer=paddle.nn.initializer.Normal(0, 0.01))
+    bias_attr = paddle.ParamAttr(
+        initializer=paddle.nn.initializer.Constant(0))
+    net[0] = nn.Linear(2, 1, weight_attr=weight_attr, bias_attr=bias_attr)
 
-上面的代码可能看起来很简单，但是你应该注意到这里的一个细节：
-我们正在为网络初始化参数，而Gluon还不知道输入将有多少维!
-网络的输入可能有2维，也可能有2000维。
-Gluon让我们避免了这个问题，在后端执行时，初始化实际上是\ *推迟*\ （deferred）执行的，
-只有在我们第一次尝试通过网络传递数据时才会进行真正的初始化。
-请注意，因为参数还没有初始化，所以我们不能访问或操作它们。
+
 
 定义损失函数
 ------------
 
-在Gluon中，\ ``loss``\ 模块定义了各种损失函数。
-在这个例子中，我们将使用Gluon中的均方误差（\ ``L2Loss``\ ）。
+计算均方误差使用的是\ ``MSELoss``\ 类，也称为平方\ :math:`L_2`\ 范数。
+默认情况下，它返回所有样本损失的平均值。
 
 .. code:: python
 
-    loss = gluon.loss.L2Loss()
+    loss = nn.MSELoss()
 
 定义优化算法
 ------------
 
 小批量随机梯度下降算法是一种优化神经网络的标准工具，
-Gluon通过\ ``Trainer``\ 类支持该算法的许多变种。
-当我们实例化\ ``Trainer``\ 时，我们要指定优化的参数
-（可通过\ ``net.collect_params()``\ 从我们的模型\ ``net``\ 中获得）、
-我们希望使用的优化算法（\ ``sgd``\ ）以及优化算法所需的超参数字典。
-小批量随机梯度下降只需要设置\ ``learning_rate``\ 值，这里设置为0.03。
+Paddle在\ ``optimizer``\ 模块中实现了该算法的许多变种。
+动态图模式下,当我们实例化一个\ ``SGD``\ 实例时，我们要指定优化的参数
+（可通过\ ``net.parameters()``\ 从我们的模型中获得）以及优化算法所需的超参数字典。
+小批量随机梯度下降只需要设置\ ``lr``\ 值，这里设置为0.03。
 
 .. code:: python
 
-    from mxnet import gluon
-    
-    trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': 0.03})
+    trainer = paddle.optimizer.SGD(learning_rate=0.03, parameters=net[0].parameters())
 
 训练
 ----
@@ -209,20 +199,20 @@ Gluon通过\ ``Trainer``\ 类支持该算法的许多变种。
     num_epochs = 3
     for epoch in range(num_epochs):
         for X, y in data_iter:
-            with autograd.record():
-                l = loss(net(X), y)
+            l = loss(net(X) ,y)
+            trainer.clear_grad()
             l.backward()
-            trainer.step(batch_size)
+            trainer.step()
         l = loss(net(features), labels)
-        print(f'epoch {epoch + 1}, loss {l.mean().asnumpy():f}')
+        print(f'epoch {epoch + 1}, loss {l.numpy()}')
 
 
 .. parsed-literal::
     :class: output
 
-    epoch 1, loss 0.025170
-    epoch 2, loss 0.000089
-    epoch 3, loss 0.000051
+    epoch 1, loss [0.00023696]
+    epoch 2, loss [9.882164e-05]
+    epoch 3, loss [9.844466e-05]
 
 
 下面我们比较生成数据集的真实参数和通过有限数据训练获得的模型参数。
@@ -231,26 +221,23 @@ Gluon通过\ ``Trainer``\ 类支持该算法的许多变种。
 
 .. code:: python
 
-    w = net[0].weight.data()
-    print(f'w的估计误差： {true_w - w.reshape(true_w.shape)}')
-    b = net[0].bias.data()
-    print(f'b的估计误差： {true_b - b}')
+    w = net[0].weight
+    print('w的估计误差：', true_w - w.reshape(true_w.shape))
+    b = net[0].bias
+    print('b的估计误差：', true_b - b)
 
 
 .. parsed-literal::
     :class: output
 
-    w的估计误差： [ 6.5875053e-04 -8.0585480e-05]
-    b的估计误差： [0.00037432]
+    w的估计误差： Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=False,
+           [ 0.00018191, -0.00056386])
+    b的估计误差： Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=False,
+           [-0.00027847])
 
 
 小结
 ----
-
--  我们可以使用Gluon更简洁地实现模型。
--  在Gluon中，\ ``data``\ 模块提供了数据处理工具，\ ``nn``\ 模块定义了大量的神经网络层，\ ``loss``\ 模块定义了许多常见的损失函数。
--  MXNet的\ ``initializer``\ 模块提供了各种模型参数初始化方法。
--  维度和存储可以自动推断，但注意不要在初始化参数之前尝试访问参数。
 
 练习
 ----
@@ -260,5 +247,3 @@ Gluon通过\ ``Trainer``\ 类支持该算法的许多变种。
 
    .. math:: l(y,y') = \begin{cases}|y-y'| -\frac{\sigma}{2} & \text{ if } |y-y'| > \sigma \\ \frac{1}{2 \sigma} (y-y')^2 & \text{ 其它情况}\end{cases}
 3. 你如何访问线性回归的梯度？
-
-`Discussions <https://discuss.d2l.ai/t/1782>`__

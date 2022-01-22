@@ -365,13 +365,11 @@ Show Source
 在之后的章节中，我们会充分利用深度学习框架的优势，介绍更简洁的实现方式。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
-<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
-
-<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">paddle</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">paddle</span> <span class="k">as</span> <span class="n">d2l</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="n">xnhyjwhh</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="n">hu3_4u2f</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
 </pre></div>
 </div>
 <div class="section" id="id1">
@@ -391,13 +389,13 @@ Show Source
 为了简化问题，我们将标准差设为0.01。 下面的代码生成合成数据集。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">synthetic_data</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">):</span>  <span class="c1">#@save</span>
     <span class="sd">&quot;&quot;&quot;生成y=Xw+b+噪声&quot;&quot;&quot;</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">num_examples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)))</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
-    <span class="n">y</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">num_examples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="n">y</span> <span class="o">+=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">true_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">true_w</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">])</span>
 <span class="n">true_b</span> <span class="o">=</span> <span class="mf">4.2</span>
 <span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">synthetic_data</span><span class="p">(</span><span class="n">true_w</span><span class="p">,</span> <span class="n">true_b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 </pre></div>
@@ -407,18 +405,22 @@ Show Source
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;features:&#39;</span><span class="p">,</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">label:&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">features</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.2122064</span> <span class="mf">1.1630787</span><span class="p">]</span>
-<span class="n">label</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.662078</span><span class="p">]</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="o">-</span><span class="mf">0.85444152</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.84043044</span><span class="p">])</span>
+<span class="n">label</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">5.33892918</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>通过生成第二个特征<code class="docutils literal notranslate"><span class="pre">features[:,</span> <span class="pre">1]</span></code>和<code class="docutils literal notranslate"><span class="pre">labels</span></code>的散点图，
 可以直观观察到两者之间的线性关系。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d2l</span><span class="o">.</span><span class="n">set_figsize</span><span class="p">()</span>
-<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">features</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">labels</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="mi">1</span><span class="p">);</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">features</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">labels</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="mi">1</span><span class="p">);</span>
 </pre></div>
 </div>
+<pre class="output literal-block">/home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: <cite>set_matplotlib_formats</cite> is deprecated since IPython 7.23, directly use <cite>matplotlib_inline.backend_inline.set_matplotlib_formats()</cite>
+  display.set_matplotlib_formats('svg')</pre>
 <div class="figure align-default">
-<img alt="../_images/output_linear-regression-scratch_58de05_8_0.svg" src="../_images/output_linear-regression-scratch_58de05_8_0.svg" /></div>
+<img alt="../_images/output_linear-regression-scratch_20cad4_8_1.svg" src="../_images/output_linear-regression-scratch_20cad4_8_1.svg" /></div>
 </div>
 <div class="section" id="id2">
 <h1><span class="section-number">3.8. </span>读取数据集<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
@@ -434,7 +436,7 @@ Show Source
     <span class="c1"># 这些样本是随机读取的，没有特定的顺序</span>
     <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-        <span class="n">batch_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="n">batch_indices</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">paddle</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span>
             <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">)])</span>
         <span class="k">yield</span> <span class="n">features</span><span class="p">[</span><span class="n">batch_indices</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">batch_indices</span><span class="p">]</span>
 </pre></div>
@@ -452,26 +454,28 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
     <span class="k">break</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">1.1113098</span>  <span class="o">-</span><span class="mf">0.30177692</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.38265088</span>  <span class="mf">0.03740939</span><span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">1.3710262</span>  <span class="o">-</span><span class="mf">0.96949255</span><span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">1.0407568</span>  <span class="o">-</span><span class="mf">0.9086523</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.19236873</span>  <span class="mf">1.5087148</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">1.2040389</span>  <span class="o">-</span><span class="mf">0.9592459</span> <span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">0.74951595</span> <span class="o">-</span><span class="mf">0.56062907</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.4156301</span>   <span class="mf">0.26202562</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">1.4377805</span>   <span class="mf">0.48993957</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">0.8468736</span>  <span class="o">-</span><span class="mf">0.55909204</span><span class="p">]]</span>
- <span class="p">[[</span> <span class="mf">3.017058</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">4.8314457</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">4.7385955</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">5.203292</span> <span class="p">]</span>
- <span class="p">[</span><span class="o">-</span><span class="mf">0.5411148</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">9.875983</span> <span class="p">]</span>
- <span class="p">[</span> <span class="mf">4.5837693</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">4.1413517</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">5.4153085</span><span class="p">]</span>
- <span class="p">[</span> <span class="mf">7.7833023</span><span class="p">]]</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span> <span class="mf">0.57839602</span><span class="p">,</span>  <span class="mf">0.12784559</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">1.32678747</span><span class="p">,</span>  <span class="mf">0.62418109</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">1.68597305</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.58163345</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">0.75606495</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.43711996</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">1.18271351</span><span class="p">,</span>  <span class="mf">0.81513554</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">0.76287901</span><span class="p">,</span>  <span class="mf">1.33117425</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">2.02042794</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.75181365</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">1.27040672</span><span class="p">,</span>  <span class="mf">0.89667845</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">0.39472452</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.57963079</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.77342790</span><span class="p">,</span>  <span class="mf">0.24352361</span><span class="p">]])</span>
+ <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[[</span><span class="mf">4.92175961</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">4.73639727</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">2.79040408</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">10.60384750</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">3.78761220</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.19443870</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">14.20015526</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">3.68340325</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">6.95417309</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.81782389</span><span class="p">]])</span>
 </pre></div>
 </div>
 <p>当我们运行迭代时，我们会连续地获得不同的小批量，直至遍历完整个数据集。
@@ -486,10 +490,8 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 我们需要先有一些参数。
 在下面的代码中，我们通过从均值为0、标准差为0.01的正态分布中采样随机数来初始化权重，
 并将偏置初始化为0。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">w</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
-<span class="n">b</span><span class="o">.</span><span class="n">attach_grad</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>在初始化参数之后，我们的任务是更新这些参数，直到这些参数足够拟合我们的数据。
@@ -508,7 +510,7 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 当我们用一个向量加一个标量时，标量会被加到向量的每个分量上。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">linreg</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>  <span class="c1">#@save</span>
     <span class="sd">&quot;&quot;&quot;线性回归模型&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="k">return</span> <span class="n">paddle</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 </div>
 </div>
@@ -538,8 +540,11 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 来规范化步长，这样步长大小就不会取决于我们对批量大小的选择。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sgd</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>  <span class="c1">#@save</span>
     <span class="sd">&quot;&quot;&quot;小批量随机梯度下降&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-        <span class="n">param</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">param</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="o">/</span> <span class="n">batch_size</span>
+    <span class="k">with</span> <span class="n">paddle</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>  <span class="c1"># 由于Paddle框架的问题,即使在no_grad下也必须手动修改stop_gradient来控制带梯度参数的inplace操作,该bug已提交Issue:https://github.com/PaddlePaddle/Paddle/issues/38016</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">subtract_</span><span class="p">(</span><span class="n">lr</span> <span class="o">*</span> <span class="n">param</span><span class="o">.</span><span class="n">grad</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">clear_grad</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -575,20 +580,25 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
-            <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># X和y的小批量损失</span>
-        <span class="c1"># 计算l关于[w,b]的梯度</span>
-        <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">stop_gradient</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># X和y的小批量损失</span>
+        <span class="c1"># 因为l形状是(batch_size,1)，而不是一个标量。l中的所有元素被加到一起，</span>
+        <span class="c1"># 并以此计算关于[w,b]的梯度</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
         <span class="n">sgd</span><span class="p">([</span><span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># 使用参数的梯度更新参数</span>
-    <span class="n">train_l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;epoch </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">, loss </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">train_l</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="si">:</span><span class="s1">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">paddle</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">train_l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;epoch </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">, loss </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">train_l</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="si">:</span><span class="s1">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.025035</span>
-<span class="n">epoch</span> <span class="mi">2</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.000089</span>
-<span class="n">epoch</span> <span class="mi">3</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.000051</span>
-</pre></div>
-</div>
+<pre class="output literal-block">/home/wan/anaconda3/lib/python3.9/site-packages/paddle/fluid/dygraph/varbase_patch_methods.py:392: UserWarning:
+Warning:
+tensor.grad will return the tensor value of the gradient. This is an incompatible upgrade for tensor.grad API.  It's return type changes from numpy.ndarray in version 2.0 to paddle.Tensor in version 2.1.0.  If you want to get the numpy value of the gradient, you can use <code class="code docutils literal notranslate"><span class="pre">x.grad.numpy()</span></code>
+  warnings.warn(warning_msg)
+epoch 1, loss 0.044338
+epoch 2, loss 0.000195
+epoch 3, loss 0.000049</pre>
 <p>因为我们使用的是自己合成的数据集，所以我们知道真正的参数是什么。
 因此，我们可以通过比较真实参数和通过训练学到的参数来评估训练的成功程度。
 事实上，真实参数和通过训练学到的参数确实非常接近。</p>
@@ -596,8 +606,10 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;b的估计误差: </span><span class="si">{</span><span class="n">true_b</span> <span class="o">-</span> <span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">w的估计误差</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00046122</span> <span class="mf">0.00022483</span><span class="p">]</span>
-<span class="n">b的估计误差</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00059652</span><span class="p">]</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">w的估计误差</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="o">-</span><span class="mf">0.00061345</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00164795</span><span class="p">])</span>
+<span class="n">b的估计误差</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">0.00127888</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>注意，我们不应该想当然地认为我们能够完美地求解参数。
@@ -623,7 +635,6 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 <li><p>尝试使用不同的学习率，观察损失函数值下降的快慢。</p></li>
 <li><p>如果样本个数不能被批量大小整除，<code class="docutils literal notranslate"><span class="pre">data_iter</span></code>函数的行为会有什么变化？</p></li>
 </ol>
-<p><a class="reference external" href="https://discuss.d2l.ai/t/1779">Discussions</a></p>
 </div>
 
 

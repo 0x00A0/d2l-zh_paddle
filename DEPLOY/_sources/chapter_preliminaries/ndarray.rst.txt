@@ -24,16 +24,11 @@ None None None None # 数据操作
 后面的章节将通过一些实际的例子来回顾这些内容。
 如果你已经具有相关经验，想要深入学习数学内容，可以跳过本节。
 
-首先，我们从MXNet导入\ ``np``\ （\ ``numpy``\ ）模块和\ ``npx``\ （\ ``numpy_extension``\ ）模块。
-``np``\ 模块包含NumPy支持的函数；
-而\ ``npx``\ 模块包含一组扩展函数，用来在类似NumPy的环境中实现深度学习开发。
-当使用张量时，几乎总是会调用\ ``set_np``\ 函数，这是为了兼容MXNet的其他张量处理组件。
+首先，我们导入\ ``paddle``\ 。
 
 .. code:: python
 
-    from mxnet import np, npx
-    
-    npx.set_np()
+    import paddle
 
 张量表示由一个数值组成的数组，这个数组可能有多个维度。
 具有一个轴的张量对应数学上的\ *向量*\ （vector）；
@@ -41,13 +36,13 @@ None None None None # 数据操作
 具有两个轴以上的张量没有特殊的数学名称。
 
 首先，我们可以使用 ``arange`` 创建一个行向量
-``x``\ 。这个行向量包含以0开始的前12个整数，它们默认创建为浮点数。张量中的每个值都称为张量的
+``x``\ 。这个行向量包含以0开始的前12个整数，它们默认创建为整数。也可指定创建类型为浮点数。张量中的每个值都称为张量的
 *元素*\ （element）。例如，张量 ``x`` 中有 12
 个元素。除非额外指定，新的张量将存储在内存中，并采用基于CPU的计算。
 
 .. code:: python
 
-    x = np.arange(12)
+    x=paddle.arange(12)
     x
 
 
@@ -56,7 +51,8 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9., 10., 11.])
+    Tensor(shape=[12], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10, 11])
 
 
 
@@ -72,7 +68,7 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (12,)
+    [12]
 
 
 
@@ -99,23 +95,6 @@ None None None None # 数据操作
 要重点说明一下，虽然张量的形状发生了改变，但其元素值并没有变。
 注意，通过改变张量的形状，张量的大小不会改变。
 
-.. code:: python
-
-    X = x.reshape(3, 4)
-    X
-
-
-
-
-.. parsed-literal::
-    :class: output
-
-    array([[ 0.,  1.,  2.,  3.],
-           [ 4.,  5.,  6.,  7.],
-           [ 8.,  9., 10., 11.]])
-
-
-
 我们不需要通过手动指定每个维度来改变形状。
 也就是说，如果我们的目标形状是（高度,宽度），
 那么在知道宽度后，高度会被自动计算得出，不必我们自己做除法。
@@ -128,7 +107,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    np.zeros((2, 3, 4))
+    paddle.zeros((2,3,4))
 
 
 
@@ -136,13 +115,14 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[[0., 0., 0., 0.],
-            [0., 0., 0., 0.],
-            [0., 0., 0., 0.]],
+    Tensor(shape=[2, 3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[[0., 0., 0., 0.],
+             [0., 0., 0., 0.],
+             [0., 0., 0., 0.]],
     
-           [[0., 0., 0., 0.],
-            [0., 0., 0., 0.],
-            [0., 0., 0., 0.]]])
+            [[0., 0., 0., 0.],
+             [0., 0., 0., 0.],
+             [0., 0., 0., 0.]]])
 
 
 
@@ -150,7 +130,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    np.ones((2, 3, 4))
+    paddle.ones((2,3,4))
 
 
 
@@ -158,13 +138,14 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[[1., 1., 1., 1.],
-            [1., 1., 1., 1.],
-            [1., 1., 1., 1.]],
+    Tensor(shape=[2, 3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[[1., 1., 1., 1.],
+             [1., 1., 1., 1.],
+             [1., 1., 1., 1.]],
     
-           [[1., 1., 1., 1.],
-            [1., 1., 1., 1.],
-            [1., 1., 1., 1.]]])
+            [[1., 1., 1., 1.],
+             [1., 1., 1., 1.],
+             [1., 1., 1., 1.]]])
 
 
 
@@ -175,7 +156,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    np.random.normal(0, 1, size=(3, 4))
+    paddle.rand((3,4))
 
 
 
@@ -183,9 +164,10 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[ 2.2122064 ,  1.1630787 ,  0.7740038 ,  0.4838046 ],
-           [ 1.0434403 ,  0.29956347,  1.1839255 ,  0.15302546],
-           [ 1.8917114 , -1.1688148 , -1.2347414 ,  1.5580711 ]])
+    Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[0.31547299, 0.99122596, 0.54409450, 0.49098599],
+            [0.49716374, 0.21069932, 0.90828288, 0.50644064],
+            [0.38027856, 0.55042410, 0.31337497, 0.69451392]])
 
 
 
@@ -194,7 +176,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    np.array([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
+    paddle.to_tensor([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 
 
 
@@ -202,9 +184,10 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[2., 1., 4., 3.],
-           [1., 2., 3., 4.],
-           [4., 3., 2., 1.]])
+    Tensor(shape=[3, 4], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [[2, 1, 4, 3],
+            [1, 2, 3, 4],
+            [4, 3, 2, 1]])
 
 
 
@@ -236,8 +219,8 @@ None None None None # 数据操作
 
 .. code:: python
 
-    x = np.array([1, 2, 4, 8])
-    y = np.array([2, 2, 2, 2])
+    x = paddle.to_tensor([1.0, 2, 4, 8])
+    y = paddle.to_tensor([2.0, 2, 2, 2])
     x + y, x - y, x * y, x / y, x ** y  # **运算符是求幂运算
 
 
@@ -246,11 +229,16 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (array([ 3.,  4.,  6., 10.]),
-     array([-1.,  0.,  2.,  6.]),
-     array([ 2.,  4.,  8., 16.]),
-     array([0.5, 1. , 2. , 4. ]),
-     array([ 1.,  4., 16., 64.]))
+    (Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [3. , 4. , 6. , 10.]),
+     Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [-1.,  0.,  2.,  6.]),
+     Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [2. , 4. , 8. , 16.]),
+     Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [0.50000000, 1.        , 2.        , 4.        ]),
+     Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [1. , 4. , 16., 64.]))
 
 
 
@@ -258,7 +246,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    np.exp(x)
+    paddle.exp(x)
 
 
 
@@ -266,7 +254,8 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([2.7182817e+00, 7.3890562e+00, 5.4598148e+01, 2.9809580e+03])
+    Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [2.71828175   , 7.38905621   , 54.59814835  , 2980.95800781])
 
 
 
@@ -283,9 +272,9 @@ None None None None # 数据操作
 
 .. code:: python
 
-    X = np.arange(12).reshape(3, 4)
-    Y = np.array([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
-    np.concatenate([X, Y], axis=0), np.concatenate([X, Y], axis=1)
+    X = paddle.arange(12, dtype='float32').reshape((3,4))
+    Y = paddle.to_tensor([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
+    paddle.concat((X, Y), axis=0), paddle.concat((X, Y), axis=1)
 
 
 
@@ -293,15 +282,17 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (array([[ 0.,  1.,  2.,  3.],
-            [ 4.,  5.,  6.,  7.],
-            [ 8.,  9., 10., 11.],
-            [ 2.,  1.,  4.,  3.],
-            [ 1.,  2.,  3.,  4.],
-            [ 4.,  3.,  2.,  1.]]),
-     array([[ 0.,  1.,  2.,  3.,  2.,  1.,  4.,  3.],
-            [ 4.,  5.,  6.,  7.,  1.,  2.,  3.,  4.],
-            [ 8.,  9., 10., 11.,  4.,  3.,  2.,  1.]]))
+    (Tensor(shape=[6, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[0. , 1. , 2. , 3. ],
+             [4. , 5. , 6. , 7. ],
+             [8. , 9. , 10., 11.],
+             [2. , 1. , 4. , 3. ],
+             [1. , 2. , 3. , 4. ],
+             [4. , 3. , 2. , 1. ]]),
+     Tensor(shape=[3, 8], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[0. , 1. , 2. , 3. , 2. , 1. , 4. , 3. ],
+             [4. , 5. , 6. , 7. , 1. , 2. , 3. , 4. ],
+             [8. , 9. , 10., 11., 4. , 3. , 2. , 1. ]]))
 
 
 
@@ -319,9 +310,10 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[False,  True, False,  True],
-           [False, False, False, False],
-           [False, False, False, False]])
+    Tensor(shape=[3, 4], dtype=bool, place=CPUPlace, stop_gradient=True,
+           [[False, True , False, True ],
+            [False, False, False, False],
+            [False, False, False, False]])
 
 
 
@@ -337,7 +329,8 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array(66.)
+    Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [66.])
 
 
 
@@ -358,8 +351,8 @@ None None None None # 数据操作
 
 .. code:: python
 
-    a = np.arange(3).reshape(3, 1)
-    b = np.arange(2).reshape(1, 2)
+    a = paddle.arange(3).reshape((3, 1))
+    b = paddle.arange(2).reshape((1, 2))
     a, b
 
 
@@ -368,10 +361,12 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (array([[0.],
-            [1.],
-            [2.]]),
-     array([[0., 1.]]))
+    (Tensor(shape=[3, 1], dtype=int64, place=CPUPlace, stop_gradient=True,
+            [[0],
+             [1],
+             [2]]),
+     Tensor(shape=[1, 2], dtype=int64, place=CPUPlace, stop_gradient=True,
+            [[0, 1]]))
 
 
 
@@ -389,9 +384,10 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[0., 1.],
-           [1., 2.],
-           [2., 3.]])
+    Tensor(shape=[3, 2], dtype=int64, place=CPUPlace, stop_gradient=True,
+           [[0, 1],
+            [1, 2],
+            [2, 3]])
 
 
 
@@ -414,9 +410,11 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (array([ 8.,  9., 10., 11.]),
-     array([[ 4.,  5.,  6.,  7.],
-            [ 8.,  9., 10., 11.]]))
+    (Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [8. , 9. , 10., 11.]),
+     Tensor(shape=[2, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [[4. , 5. , 6. , 7. ],
+             [8. , 9. , 10., 11.]]))
 
 
 
@@ -433,9 +431,10 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[ 0.,  1.,  2.,  3.],
-           [ 4.,  5.,  9.,  7.],
-           [ 8.,  9., 10., 11.]])
+    Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[0. , 1. , 2. , 3. ],
+            [4. , 5. , 9. , 7. ],
+            [8. , 9. , 10., 11.]])
 
 
 
@@ -454,9 +453,10 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    array([[12., 12., 12., 12.],
-           [12., 12., 12., 12.],
-           [ 8.,  9., 10., 11.]])
+    Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[12., 12., 12., 12.],
+            [12., 12., 12., 12.],
+            [8. , 9. , 10., 11.]])
 
 
 
@@ -500,7 +500,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    Z = np.zeros_like(Y)
+    Z = paddle.zeros_like(Y)
     print('id(Z):', id(Z))
     Z[:] = X + Y
     print('id(Z):', id(Z))
@@ -509,41 +509,23 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    id(Z): 139725554912512
-    id(Z): 139725554912512
+    id(Z): 140210216872496
+    id(Z): 140210216872496
 
 
 如果在后续计算中没有重复使用\ ``X``\ ，
 我们也可以使用\ ``X[:] = X + Y``\ 或\ ``X += Y``\ 来减少操作的内存开销。
 
-.. code:: python
-
-    before = id(X)
-    X += Y
-    id(X) == before
-
-
-
-
-.. parsed-literal::
-    :class: output
-
-    True
-
-
-
 转换为其他Python对象
 --------------------
 
 将深度学习框架定义的张量转换为NumPy张量（\ ``ndarray``\ ）很容易，反之也同样容易。
-转换后的结果不共享内存。
-这个小的不便实际上是非常重要的：当你在CPU或GPU上执行操作的时候，
-如果Python的NumPy包也希望使用相同的内存块执行其他操作，你不希望停下计算来等它。
+torch张量和numpy数组将共享它们的底层内存，就地操作更改一个张量也会同时更改另一个张量。
 
 .. code:: python
 
-    A = X.asnumpy()
-    B = np.array(A)
+    A = X.numpy()
+    B = paddle.to_tensor(A)
     type(A), type(B)
 
 
@@ -552,7 +534,7 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (numpy.ndarray, mxnet.numpy.ndarray)
+    (numpy.ndarray, paddle.Tensor)
 
 
 
@@ -560,7 +542,7 @@ None None None None # 数据操作
 
 .. code:: python
 
-    a = np.array([3.5])
+    a = paddle.to_tensor([3.5])
     a, a.item(), float(a), int(a)
 
 
@@ -569,7 +551,11 @@ None None None None # 数据操作
 .. parsed-literal::
     :class: output
 
-    (array([3.5]), 3.5, 3.5, 3)
+    (Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+            [3.50000000]),
+     3.5,
+     3.5,
+     3)
 
 
 
@@ -583,5 +569,3 @@ None None None None # 数据操作
 
 1. 运行本节中的代码。将本节中的条件语句\ ``X == Y``\ 更改为\ ``X < Y``\ 或\ ``X > Y``\ ，然后看看你可以得到什么样的张量。
 2. 用其他形状（例如三维张量）替换广播机制中按元素操作的两个张量。结果是否与预期相同？
-
-`Discussions <https://discuss.d2l.ai/t/1745>`__
