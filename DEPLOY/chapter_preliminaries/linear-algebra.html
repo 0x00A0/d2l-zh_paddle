@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>2.14. 标量 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.27. 导数和微分" href="calculus.html" />
+    <link rel="prev" title="2.9. 读取数据集" href="pandas.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">2. </span>预备知识</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">2.14. </span>标量</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_preliminaries/linear-algebra.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  MXNet
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-pytorch.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  PyTorch
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-paddle.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  Paddle
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.zip">
+                  <i class="fas fa-download"></i>
+                  Jupyter 记事本
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://courses.d2l.ai/zh-v2/">
+                  <i class="fas fa-user-graduate"></i>
+                  课程
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/0x00A0/d2l-zh_paddle">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://d2l.ai">
+                  <i class="fas fa-external-link-alt"></i>
+                  English
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. 预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. 预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <p>None # 线性代数</p>
+<p id="sec-linear-algebra">在你已经可以存储和操作数据后，让我们简要地回顾一下部分基本线性代数内容。
+这些内容能够帮助你了解和实现本书中介绍的大多数模型。
+本节我们将介绍线性代数中的基本数学对象、算术和运算，并用数学符号和相应的代码实现来表示它们。</p>
+<div class="section" id="id1">
+<h1><span class="section-number">2.14. </span>标量<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>如果你曾经在餐厅支付餐费，那么你已经知道一些基本的线性代数，比如在数字间相加或相乘。
+例如，北京的温度为<span class="math notranslate nohighlight">\(52^{\circ}F\)</span>（除了摄氏度外，另一种温度计量单位）。
+严格来说，我们称仅包含一个数值的叫<em>标量</em>（scalar）。
+如果要将此华氏度值转换为更常用的摄氏度，
+则可以计算表达式<span class="math notranslate nohighlight">\(c=\frac{5}{9}(f-32)\)</span>，并将<span class="math notranslate nohighlight">\(f\)</span>赋为<span class="math notranslate nohighlight">\(52\)</span>。
+在此等式中，每一项（<span class="math notranslate nohighlight">\(5\)</span>、<span class="math notranslate nohighlight">\(9\)</span>和<span class="math notranslate nohighlight">\(32\)</span>）都是标量值。
+符号<span class="math notranslate nohighlight">\(c\)</span>和<span class="math notranslate nohighlight">\(f\)</span>称为<em>变量</em>（variable），它们表示未知的标量值。</p>
+<p>在本书中，我们采用了数学表示法，其中标量变量由普通小写字母表示（例如，<span class="math notranslate nohighlight">\(x\)</span>、<span class="math notranslate nohighlight">\(y\)</span>和<span class="math notranslate nohighlight">\(z\)</span>）。
+我们用<span class="math notranslate nohighlight">\(\mathbb{R}\)</span>表示所有（连续）<em>实数</em>标量的空间。
+我们之后将严格定义<em>空间</em>（space）是什么，
+但现在你只要记住表达式<span class="math notranslate nohighlight">\(x\in\mathbb{R}\)</span>是表示<span class="math notranslate nohighlight">\(x\)</span>是一个实值标量的正式形式。
+符号<span class="math notranslate nohighlight">\(\in\)</span>称为“属于”，它表示“是集合中的成员”。
+我们可以用<span class="math notranslate nohighlight">\(x, y \in \{0,1\}\)</span>来表明<span class="math notranslate nohighlight">\(x\)</span>和<span class="math notranslate nohighlight">\(y\)</span>是值只能为<span class="math notranslate nohighlight">\(0\)</span>或<span class="math notranslate nohighlight">\(1\)</span>的数字。</p>
+<p>标量由只有一个元素的张量表示。
+在下面的代码中，我们实例化两个标量，并执行一些熟悉的算术运算，即加法、乘法、除法和指数。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+
+<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">**</span> <span class="n">y</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="mf">5.</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">9.</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h1><span class="section-number">2.15. </span>向量<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<p>你可以将向量视为标量值组成的列表。
+我们将这些标量值称为向量的<em>元素</em>（element）或<em>分量</em>（component）。
+当向量表示数据集中的样本时，它们的值具有一定的现实意义。
+例如，如果我们正在训练一个模型来预测贷款违约风险，我们可能会将每个申请人与一个向量相关联，
+其分量与其收入、工作年限、过往违约次数和其他因素相对应。
+如果我们正在研究医院患者可能面临的心脏病发作风险，我们可能会用一个向量来表示每个患者，
+其分量为最近的生命体征、胆固醇水平、每天运动时间等。
+在数学表示法中，我们通常将向量记为粗体、小写的符号
+（例如，<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>、<span class="math notranslate nohighlight">\(\mathbf{y}\)</span>和<span class="math notranslate nohighlight">\(\mathbf{z})\)</span>）。</p>
+<p>我们通过一维张量处理向量。一般来说，张量可以具有任意长度，取决于机器的内存限制。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">x</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>我们可以使用下标来引用向量的任一元素。
+例如，我们可以通过<span class="math notranslate nohighlight">\(x_i\)</span>来引用第<span class="math notranslate nohighlight">\(i\)</span>个元素。
+注意，元素<span class="math notranslate nohighlight">\(x_i\)</span>是一个标量，所以我们在引用它时不会加粗。
+大量文献认为列向量是向量的默认方向，在本书中也是如此。
+在数学中，向量<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>可以写为：</p>
+<div class="math notranslate nohighlight" id="equation-eq-vec-def">
+<span class="eqno">(2.15.1)<a class="headerlink" href="#equation-eq-vec-def" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{x} =\begin{bmatrix}x_{1}  \\x_{2}  \\ \vdots  \\x_{n}\end{bmatrix},\end{split}\]</div>
+<p>其中<span class="math notranslate nohighlight">\(x_1,\ldots,x_n\)</span>是向量的元素。在代码中，我们通过张量的索引来访问任一元素。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">3.</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">2.15.1. </span>长度、维度和形状<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>向量只是一个数字数组，就像每个数组都有一个长度一样，每个向量也是如此。
+在数学表示法中，如果我们想说一个向量<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>由<span class="math notranslate nohighlight">\(n\)</span>个实值标量组成，
+我们可以将其表示为<span class="math notranslate nohighlight">\(\mathbf{x}\in\mathbb{R}^n\)</span>。
+向量的长度通常称为向量的<em>维度</em>（dimension）。</p>
+<p>与普通的Python数组一样，我们可以通过调用Python的内置<code class="docutils literal notranslate"><span class="pre">len()</span></code>函数来访问张量的长度。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">4</span>
+</pre></div>
+</div>
+<p>当用张量表示一个向量（只有一个轴）时，我们也可以通过<code class="docutils literal notranslate"><span class="pre">.shape</span></code>属性访问向量的长度。
+形状（shape）是一个元素组，列出了张量沿每个轴的长度（维数）。
+对于只有一个轴的张量，形状只有一个元素。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">4</span><span class="p">,)</span>
+</pre></div>
+</div>
+<p>请注意，<em>维度</em>（dimension）这个词在不同上下文时往往会有不同的含义，这经常会使人感到困惑。
+为了清楚起见，我们在此明确一下：
+<em>向量</em>或<em>轴</em>的维度被用来表示<em>向量</em>或<em>轴</em>的长度，即向量或轴的元素数量。
+然而，张量的维度用来表示张量具有的轴数。
+在这个意义上，张量的某个轴的维数就是这个轴的长度。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h1><span class="section-number">2.16. </span>矩阵<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
+<p>正如向量将标量从零阶推广到一阶，矩阵将向量从一阶推广到二阶。
+矩阵，我们通常用粗体、大写字母来表示
+（例如，<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>、<span class="math notranslate nohighlight">\(\mathbf{Y}\)</span>和<span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>），
+在代码中表示为具有两个轴的张量。</p>
+<p>在数学表示法中，我们使用<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>
+来表示矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>，其由<span class="math notranslate nohighlight">\(m\)</span>行和<span class="math notranslate nohighlight">\(n\)</span>列的实值标量组成。
+我们可以将任意矩阵<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>视为一个表格，
+其中每个元素<span class="math notranslate nohighlight">\(a_{ij}\)</span>属于第<span class="math notranslate nohighlight">\(i\)</span>行第<span class="math notranslate nohighlight">\(j\)</span>列：</p>
+<div class="math notranslate nohighlight" id="equation-eq-matrix-def">
+<span class="eqno">(2.16.1)<a class="headerlink" href="#equation-eq-matrix-def" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A}=\begin{bmatrix} a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\ a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ a_{m1} &amp; a_{m2} &amp; \cdots &amp; a_{mn} \\ \end{bmatrix}.\end{split}\]</div>
+<p>对于任意<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>，
+<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>的形状是（<span class="math notranslate nohighlight">\(m\)</span>,<span class="math notranslate nohighlight">\(n\)</span>）或<span class="math notranslate nohighlight">\(m \times n\)</span>。
+当矩阵具有相同数量的行和列时，其形状将变为正方形；
+因此，它被称为<em>方阵</em>（square matrix）。</p>
+<p>当调用函数来实例化张量时，
+我们可以通过指定两个分量<span class="math notranslate nohighlight">\(m\)</span>和<span class="math notranslate nohighlight">\(n\)</span>来创建一个形状为<span class="math notranslate nohighlight">\(m \times n\)</span>的矩阵。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">A</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>我们可以通过行索引（<span class="math notranslate nohighlight">\(i\)</span>）和列索引（<span class="math notranslate nohighlight">\(j\)</span>）来访问矩阵中的标量元素<span class="math notranslate nohighlight">\(a_{ij}\)</span>，
+例如<span class="math notranslate nohighlight">\([\mathbf{A}]_{ij}\)</span>。
+如果没有给出矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>的标量元素，如在
+<a class="reference internal" href="#equation-eq-matrix-def">(2.16.1)</a>那样，
+我们可以简单地使用矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>的小写字母索引下标<span class="math notranslate nohighlight">\(a_{ij}\)</span>
+来引用<span class="math notranslate nohighlight">\([\mathbf{A}]_{ij}\)</span>。
+为了表示起来简单，只有在必要时才会将逗号插入到单独的索引中，
+例如<span class="math notranslate nohighlight">\(a_{2,3j}\)</span>和<span class="math notranslate nohighlight">\([\mathbf{A}]_{2i-1,3}\)</span>。</p>
+<p>当我们交换矩阵的行和列时，结果称为矩阵的<em>转置</em>（transpose）。
+我们用<span class="math notranslate nohighlight">\(\mathbf{a}^\top\)</span>来表示矩阵的转置，如果<span class="math notranslate nohighlight">\(\mathbf{B}=\mathbf{A}^\top\)</span>，
+则对于任意<span class="math notranslate nohighlight">\(i\)</span>和<span class="math notranslate nohighlight">\(j\)</span>，都有<span class="math notranslate nohighlight">\(b_{ij}=a_{ji}\)</span>。
+因此，在
+<a class="reference internal" href="#equation-eq-matrix-def">(2.16.1)</a>中的转置是一个形状为<span class="math notranslate nohighlight">\(n \times m\)</span>的矩阵：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-0">
+<span class="eqno">(2.16.2)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-0" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A}^\top =
+\begin{bmatrix}
+    a_{11} &amp; a_{21} &amp; \dots  &amp; a_{m1} \\
+    a_{12} &amp; a_{22} &amp; \dots  &amp; a_{m2} \\
+    \vdots &amp; \vdots &amp; \ddots  &amp; \vdots \\
+    a_{1n} &amp; a_{2n} &amp; \dots  &amp; a_{mn}
+\end{bmatrix}.\end{split}\]</div>
+<p>现在我们在代码中访问矩阵的转置。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">16.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>作为方阵的一种特殊类型，<em>对称矩阵</em>（symmetric
+matrix）<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>等于其转置：<span class="math notranslate nohighlight">\(\mathbf{A} = \mathbf{A}^\top\)</span>。
+这里我们定义一个对称矩阵<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+<span class="n">B</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>现在我们将<code class="docutils literal notranslate"><span class="pre">B</span></code>与它的转置进行比较。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">==</span> <span class="n">B</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">],</span>
+       <span class="p">[</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">],</span>
+       <span class="p">[</span> <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">,</span>  <span class="kc">True</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>矩阵是有用的数据结构：它们允许我们组织具有不同模式的数据。
+例如，我们矩阵中的行可能对应于不同的房屋（数据样本），而列可能对应于不同的属性。
+如果你曾经使用过电子表格软件或已阅读过
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_pandas</span></code>，这应该听起来很熟悉。
+因此，尽管单个向量的默认方向是列向量，但在表示表格数据集的矩阵中，
+将每个数据样本作为矩阵中的行向量更为常见。
+我们将在后面的章节中讲到这点，这种约定将支持常见的深度学习实践。
+例如，沿着张量的最外轴，我们可以访问或遍历小批量的数据样本。</p>
+</div>
+<div class="section" id="id5">
+<h1><span class="section-number">2.17. </span>张量<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
+<p>就像向量是标量的推广，矩阵是向量的推广一样，我们可以构建具有更多轴的数据结构。
+张量（本小节中的“张量”指代数对象）为我们提供了描述具有任意数量轴的<span class="math notranslate nohighlight">\(n\)</span>维数组的通用方法。
+例如，向量是一阶张量，矩阵是二阶张量。
+张量用特殊字体的大写字母表示（例如，<span class="math notranslate nohighlight">\(\mathsf{X}\)</span>、<span class="math notranslate nohighlight">\(\mathsf{Y}\)</span>和<span class="math notranslate nohighlight">\(\mathsf{Z}\)</span>），
+它们的索引机制（例如<span class="math notranslate nohighlight">\(x_{ijk}\)</span>和<span class="math notranslate nohighlight">\([\mathsf{X}]_{1,2i-1,3}\)</span>）与矩阵类似。</p>
+<p>当我们开始处理图像时，张量将变得更加重要，图像以<span class="math notranslate nohighlight">\(n\)</span>维数组形式出现，
+其中3个轴对应于高度、宽度，以及一个<em>通道</em>（channel）轴，
+用于表示颜色通道（红色、绿色和蓝色）。
+现在，我们先将高阶张量暂放一边，而是专注学习其基础知识。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">X</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]],</span>
+
+       <span class="p">[[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">23.</span><span class="p">]]])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h1><span class="section-number">2.18. </span>张量算法的基本性质<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<p>标量、向量、矩阵和任意数量轴的张量（本小节中的“张量”指代数对象）有一些实用的属性。
+例如，你可能已经从按元素操作的定义中注意到，任何按元素的一元运算都不会改变其操作数的形状。
+同样，给定具有相同形状的任意两个张量，任何按元素二元运算的结果都将是相同形状的张量。
+例如，将两个相同形状的矩阵相加，会在这两个矩阵上执行元素加法。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># 通过分配新内存，将A的一个副本分配给B</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">]]),</span>
+ <span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">14.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">16.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">24.</span><span class="p">,</span> <span class="mf">26.</span><span class="p">,</span> <span class="mf">28.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">32.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">]]))</span>
+</pre></div>
+</div>
+<p>具体而言，两个矩阵的按元素乘法称为<em>Hadamard积</em>（Hadamard
+product）（数学符号<span class="math notranslate nohighlight">\(\odot\)</span>）。
+对于矩阵<span class="math notranslate nohighlight">\(\mathbf{B} \in \mathbb{R}^{m \times n}\)</span>，
+其中第<span class="math notranslate nohighlight">\(i\)</span>行和第<span class="math notranslate nohighlight">\(j\)</span>列的元素是<span class="math notranslate nohighlight">\(b_{ij}\)</span>。
+矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>（在
+<a class="reference internal" href="#equation-eq-matrix-def">(2.16.1)</a>中定义）和<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>的Hadamard积为：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-1">
+<span class="eqno">(2.18.1)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-1" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A} \odot \mathbf{B} =
+\begin{bmatrix}
+    a_{11}  b_{11} &amp; a_{12}  b_{12} &amp; \dots  &amp; a_{1n}  b_{1n} \\
+    a_{21}  b_{21} &amp; a_{22}  b_{22} &amp; \dots  &amp; a_{2n}  b_{2n} \\
+    \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+    a_{m1}  b_{m1} &amp; a_{m2}  b_{m2} &amp; \dots  &amp; a_{mn}  b_{mn}
+\end{bmatrix}.\end{split}\]</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">*</span> <span class="n">B</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span>  <span class="mf">0.</span><span class="p">,</span>   <span class="mf">1.</span><span class="p">,</span>   <span class="mf">4.</span><span class="p">,</span>   <span class="mf">9.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">16.</span><span class="p">,</span>  <span class="mf">25.</span><span class="p">,</span>  <span class="mf">36.</span><span class="p">,</span>  <span class="mf">49.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">64.</span><span class="p">,</span>  <span class="mf">81.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">,</span> <span class="mf">121.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">144.</span><span class="p">,</span> <span class="mf">169.</span><span class="p">,</span> <span class="mf">196.</span><span class="p">,</span> <span class="mf">225.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">256.</span><span class="p">,</span> <span class="mf">289.</span><span class="p">,</span> <span class="mf">324.</span><span class="p">,</span> <span class="mf">361.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>将张量乘以或加上一个标量不会改变张量的形状，其中张量的每个元素都将与标量相加或相乘。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">+</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([[[</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">],</span>
+         <span class="p">[</span> <span class="mf">6.</span><span class="p">,</span>  <span class="mf">7.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">]],</span>
+
+        <span class="p">[[</span><span class="mf">14.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">16.</span><span class="p">,</span> <span class="mf">17.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">18.</span><span class="p">,</span> <span class="mf">19.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">22.</span><span class="p">,</span> <span class="mf">23.</span><span class="p">,</span> <span class="mf">24.</span><span class="p">,</span> <span class="mf">25.</span><span class="p">]]]),</span>
+ <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="subseq-lin-alg-reduction">
+<span id="id7"></span><h1><span class="section-number">2.19. </span>降维<a class="headerlink" href="#subseq-lin-alg-reduction" title="Permalink to this headline">¶</a></h1>
+<p>我们可以对任意张量进行的一个有用的操作是计算其元素的和。
+在数学表示法中，我们使用<span class="math notranslate nohighlight">\(\sum\)</span>符号表示求和。
+为了表示长度为<span class="math notranslate nohighlight">\(d\)</span>的向量中元素的总和，可以记为<span class="math notranslate nohighlight">\(\sum_{i=1}^dx_i\)</span>。
+在代码中，我们可以调用计算求和的函数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>我们可以表示任意形状张量的元素和。
+例如，矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>中元素的和可以记为<span class="math notranslate nohighlight">\(\sum_{i=1}^{m} \sum_{j=1}^{n} a_{ij}\)</span>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">190.</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>默认情况下，调用求和函数会沿所有的轴降低张量的维度，使它变为一个标量。
+我们还可以指定张量沿哪一个轴来通过求和降低维度。
+以矩阵为例，为了通过求和所有行的元素来降维（轴0），我们可以在调用函数时指定<code class="docutils literal notranslate"><span class="pre">axis=0</span></code>。
+由于输入矩阵沿0轴降维以生成输出向量，因此输入轴0的维数在输出形状中消失。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A_sum_axis0</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">A_sum_axis0</span><span class="p">,</span> <span class="n">A_sum_axis0</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">40.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">55.</span><span class="p">]),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
+</pre></div>
+</div>
+<p>指定<code class="docutils literal notranslate"><span class="pre">axis=1</span></code>将通过汇总所有列的元素降维（轴1）。因此，输入轴1的维数在输出形状中消失。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A_sum_axis1</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">A_sum_axis1</span><span class="p">,</span> <span class="n">A_sum_axis1</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,))</span>
+</pre></div>
+</div>
+<p>沿着行和列对矩阵求和，等价于对矩阵的所有元素进行求和。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># SameasA.sum()</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">190.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>一个与求和相关的量是<em>平均值</em>（mean或average）。
+我们通过将总和除以元素总数来计算平均值。
+在代码中，我们可以调用函数来计算任意形状张量的平均值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="mf">9.5</span><span class="p">),</span> <span class="n">array</span><span class="p">(</span><span class="mf">9.5</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>同样，计算平均值的函数也可以沿指定轴降低张量的维度。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span> <span class="mf">8.</span><span class="p">,</span>  <span class="mf">9.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">]))</span>
+</pre></div>
+</div>
+<div class="section" id="subseq-lin-alg-non-reduction">
+<span id="id8"></span><h2><span class="section-number">2.19.1. </span>非降维求和<a class="headerlink" href="#subseq-lin-alg-non-reduction" title="Permalink to this headline">¶</a></h2>
+<p>但是，有时在调用函数来计算总和或均值时保持轴数不变会很有用。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sum_A</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sum_A</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">6.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">22.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">38.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">54.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">70.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>例如，由于<code class="docutils literal notranslate"><span class="pre">sum_A</span></code>在对每行进行求和后仍保持两个轴，我们可以通过广播将<code class="docutils literal notranslate"><span class="pre">A</span></code>除以<code class="docutils literal notranslate"><span class="pre">sum_A</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">/</span> <span class="n">sum_A</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span>        <span class="p">,</span> <span class="mf">0.16666667</span><span class="p">,</span> <span class="mf">0.33333334</span><span class="p">,</span> <span class="mf">0.5</span>       <span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.18181819</span><span class="p">,</span> <span class="mf">0.22727273</span><span class="p">,</span> <span class="mf">0.27272728</span><span class="p">,</span> <span class="mf">0.3181818</span> <span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.21052632</span><span class="p">,</span> <span class="mf">0.23684211</span><span class="p">,</span> <span class="mf">0.2631579</span> <span class="p">,</span> <span class="mf">0.28947368</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.22222222</span><span class="p">,</span> <span class="mf">0.24074075</span><span class="p">,</span> <span class="mf">0.25925925</span><span class="p">,</span> <span class="mf">0.2777778</span> <span class="p">],</span>
+       <span class="p">[</span><span class="mf">0.22857143</span><span class="p">,</span> <span class="mf">0.24285714</span><span class="p">,</span> <span class="mf">0.25714287</span><span class="p">,</span> <span class="mf">0.27142859</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>如果我们想沿某个轴计算<code class="docutils literal notranslate"><span class="pre">A</span></code>元素的累积总和，
+比如<code class="docutils literal notranslate"><span class="pre">axis=0</span></code>（按行计算），我们可以调用<code class="docutils literal notranslate"><span class="pre">cumsum</span></code>函数。
+此函数不会沿任何轴降低输入张量的维度。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">3.</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mf">4.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">8.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">18.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">24.</span><span class="p">,</span> <span class="mf">28.</span><span class="p">,</span> <span class="mf">32.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">40.</span><span class="p">,</span> <span class="mf">45.</span><span class="p">,</span> <span class="mf">50.</span><span class="p">,</span> <span class="mf">55.</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dot-product">
+<h1><span class="section-number">2.20. </span>点积（Dot Product）<a class="headerlink" href="#dot-product" title="Permalink to this headline">¶</a></h1>
+<p>我们已经学习了按元素操作、求和及平均值。 另一个最基本的操作之一是点积。
+给定两个向量<span class="math notranslate nohighlight">\(\mathbf{x},\mathbf{y}\in\mathbb{R}^d\)</span>，
+它们的<em>点积</em>（dot product）<span class="math notranslate nohighlight">\(\mathbf{x}^\top\mathbf{y}\)</span>
+（或<span class="math notranslate nohighlight">\(\langle\mathbf{x},\mathbf{y}\rangle\)</span>）
+是相同位置的按元素乘积的和：<span class="math notranslate nohighlight">\(\mathbf{x}^\top \mathbf{y} = \sum_{i=1}^{d} x_i y_i\)</span>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span> <span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>注意，我们可以通过执行按元素乘法，然后进行求和来表示两个向量的点积：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>点积在很多场合都很有用。
+例如，给定一组由向量<span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^d\)</span>表示的值，
+和一组由<span class="math notranslate nohighlight">\(\mathbf{w} \in \mathbb{R}^d\)</span>表示的权重。
+<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>中的值根据权重<span class="math notranslate nohighlight">\(\mathbf{w}\)</span>的加权和，
+可以表示为点积<span class="math notranslate nohighlight">\(\mathbf{x}^\top \mathbf{w}\)</span>。
+当权重为非负数且和为1（即<span class="math notranslate nohighlight">\(\left(\sum_{i=1}^{d}{w_i}=1\right)\)</span>）时，
+点积表示<em>加权平均</em>（weighted average）。
+将两个向量规范化得到单位长度后，点积表示它们夹角的余弦。
+我们将在本节的后面正式介绍<em>长度</em>（length）的概念。</p>
+</div>
+<div class="section" id="id9">
+<h1><span class="section-number">2.21. </span>矩阵-向量积<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
+<p>现在我们知道如何计算点积，我们可以开始理解<em>矩阵-向量积</em>（matrix-vector
+product）。 回顾分别在 <a class="reference internal" href="#equation-eq-matrix-def">(2.16.1)</a>和
+<a class="reference internal" href="#equation-eq-vec-def">(2.15.1)</a>中定义的矩阵<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>和向量<span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^n\)</span>。
+让我们将矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>用它的行向量表示：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-2">
+<span class="eqno">(2.21.1)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-2" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A}=
+\begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_m \\
+\end{bmatrix},\end{split}\]</div>
+<p>其中每个<span class="math notranslate nohighlight">\(\mathbf{a}^\top_{i} \in \mathbb{R}^n\)</span>都是行向量，表示矩阵的第<span class="math notranslate nohighlight">\(i\)</span>行。
+矩阵向量积<span class="math notranslate nohighlight">\(\mathbf{A}\mathbf{x}\)</span>是一个长度为<span class="math notranslate nohighlight">\(m\)</span>的列向量，
+其第<span class="math notranslate nohighlight">\(i\)</span>个元素是点积<span class="math notranslate nohighlight">\(\mathbf{a}^\top_i \mathbf{x}\)</span>：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-3">
+<span class="eqno">(2.21.2)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-3" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A}\mathbf{x}
+= \begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_m \\
+\end{bmatrix}\mathbf{x}
+= \begin{bmatrix}
+ \mathbf{a}^\top_{1} \mathbf{x}  \\
+ \mathbf{a}^\top_{2} \mathbf{x} \\
+\vdots\\
+ \mathbf{a}^\top_{m} \mathbf{x}\\
+\end{bmatrix}.\end{split}\]</div>
+<p>我们可以把一个矩阵<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{m \times n}\)</span>乘法看作是一个从<span class="math notranslate nohighlight">\(\mathbb{R}^{n}\)</span>到<span class="math notranslate nohighlight">\(\mathbb{R}^{m}\)</span>向量的转换。
+这些转换是非常有用的。例如，我们可以用方阵的乘法来表示旋转。
+我们将在后续章节中讲到，我们也可以使用矩阵-向量积来描述在给定前一层的值时，
+求解神经网络每一层所需的复杂计算。</p>
+<p>在代码中使用张量表示矩阵-向量积，我们使用与点积相同的<code class="docutils literal notranslate"><span class="pre">dot</span></code>函数。
+当我们为矩阵<code class="docutils literal notranslate"><span class="pre">A</span></code>和向量<code class="docutils literal notranslate"><span class="pre">x</span></code>调用<code class="docutils literal notranslate"><span class="pre">np.dot(A,x)</span></code>时，会执行矩阵-向量积。
+注意，<code class="docutils literal notranslate"><span class="pre">A</span></code>的列维数（沿轴1的长度）必须与<code class="docutils literal notranslate"><span class="pre">x</span></code>的维数（其长度）相同。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="n">array</span><span class="p">([</span> <span class="mf">14.</span><span class="p">,</span>  <span class="mf">38.</span><span class="p">,</span>  <span class="mf">62.</span><span class="p">,</span>  <span class="mf">86.</span><span class="p">,</span> <span class="mf">110.</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h1><span class="section-number">2.22. </span>矩阵-矩阵乘法<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h1>
+<p>如果你已经掌握了点积和矩阵-向量积的知识，
+那么<strong>矩阵-矩阵乘法</strong>（matrix-matrix multiplication）应该很简单。</p>
+<p>假设我们有两个矩阵<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{n \times k}\)</span>和<span class="math notranslate nohighlight">\(\mathbf{B} \in \mathbb{R}^{k \times m}\)</span>：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-4">
+<span class="eqno">(2.22.1)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-4" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A}=\begin{bmatrix}
+ a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1k} \\
+ a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2k} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+ a_{n1} &amp; a_{n2} &amp; \cdots &amp; a_{nk} \\
+\end{bmatrix},\quad
+\mathbf{B}=\begin{bmatrix}
+ b_{11} &amp; b_{12} &amp; \cdots &amp; b_{1m} \\
+ b_{21} &amp; b_{22} &amp; \cdots &amp; b_{2m} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+ b_{k1} &amp; b_{k2} &amp; \cdots &amp; b_{km} \\
+\end{bmatrix}.\end{split}\]</div>
+<p>用行向量<span class="math notranslate nohighlight">\(\mathbf{a}^\top_{i} \in \mathbb{R}^k\)</span>表示矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>的第<span class="math notranslate nohighlight">\(i\)</span>行，并让列向量<span class="math notranslate nohighlight">\(\mathbf{b}_{j} \in \mathbb{R}^k\)</span>作为矩阵<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>的第<span class="math notranslate nohighlight">\(j\)</span>列。要生成矩阵积<span class="math notranslate nohighlight">\(\mathbf{C} = \mathbf{A}\mathbf{B}\)</span>，最简单的方法是考虑<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>的行向量和<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>的列向量:</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-5">
+<span class="eqno">(2.22.2)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-5" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{A}=
+\begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_n \\
+\end{bmatrix},
+\quad \mathbf{B}=\begin{bmatrix}
+ \mathbf{b}_{1} &amp; \mathbf{b}_{2} &amp; \cdots &amp; \mathbf{b}_{m} \\
+\end{bmatrix}.\end{split}\]</div>
+<p>当我们简单地将每个元素<span class="math notranslate nohighlight">\(c_{ij}\)</span>计算为点积<span class="math notranslate nohighlight">\(\mathbf{a}^\top_i \mathbf{b}_j\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-6">
+<span class="eqno">(2.22.3)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-6" title="Permalink to this equation">¶</a></span>\[\begin{split}\mathbf{C} = \mathbf{AB} = \begin{bmatrix}
+\mathbf{a}^\top_{1} \\
+\mathbf{a}^\top_{2} \\
+\vdots \\
+\mathbf{a}^\top_n \\
+\end{bmatrix}
+\begin{bmatrix}
+ \mathbf{b}_{1} &amp; \mathbf{b}_{2} &amp; \cdots &amp; \mathbf{b}_{m} \\
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf{a}^\top_{1} \mathbf{b}_1 &amp; \mathbf{a}^\top_{1}\mathbf{b}_2&amp; \cdots &amp; \mathbf{a}^\top_{1} \mathbf{b}_m \\
+ \mathbf{a}^\top_{2}\mathbf{b}_1 &amp; \mathbf{a}^\top_{2} \mathbf{b}_2 &amp; \cdots &amp; \mathbf{a}^\top_{2} \mathbf{b}_m \\
+ \vdots &amp; \vdots &amp; \ddots &amp;\vdots\\
+\mathbf{a}^\top_{n} \mathbf{b}_1 &amp; \mathbf{a}^\top_{n}\mathbf{b}_2&amp; \cdots&amp; \mathbf{a}^\top_{n} \mathbf{b}_m
+\end{bmatrix}.\end{split}\]</div>
+<p>我们可以将矩阵-矩阵乘法<span class="math notranslate nohighlight">\(\mathbf{AB}\)</span>看作是简单地执行<span class="math notranslate nohighlight">\(m\)</span>次矩阵-向量积，并将结果拼接在一起，形成一个<span class="math notranslate nohighlight">\(n \times m\)</span>矩阵。
+在下面的代码中，我们在<code class="docutils literal notranslate"><span class="pre">A</span></code>和<code class="docutils literal notranslate"><span class="pre">B</span></code>上执行矩阵乘法。
+这里的<code class="docutils literal notranslate"><span class="pre">A</span></code>是一个5行4列的矩阵，<code class="docutils literal notranslate"><span class="pre">B</span></code>是一个4行3列的矩阵。
+两者相乘后，我们得到了一个5行3列的矩阵。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mf">6.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">,</span>  <span class="mf">6.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">22.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">,</span> <span class="mf">22.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">38.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">,</span> <span class="mf">38.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">54.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">,</span> <span class="mf">54.</span><span class="p">],</span>
+       <span class="p">[</span><span class="mf">70.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">,</span> <span class="mf">70.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>矩阵-矩阵乘法可以简单地称为<strong>矩阵乘法</strong>，不应与“Hadamard积”混淆。</p>
+</div>
+<div class="section" id="subsec-lin-algebra-norms">
+<span id="id11"></span><h1><span class="section-number">2.23. </span>范数<a class="headerlink" href="#subsec-lin-algebra-norms" title="Permalink to this headline">¶</a></h1>
+<p>线性代数中最有用的一些运算符是<em>范数</em>（norm）。
+非正式地说，一个向量的<em>范数</em>告诉我们一个向量有多大。
+这里考虑的<em>大小</em>（size）概念不涉及维度，而是分量的大小。</p>
+<p>在线性代数中，向量范数是将向量映射到标量的函数<span class="math notranslate nohighlight">\(f\)</span>。
+给定任意向量<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>，向量范数要满足一些属性。
+第一个性质是：如果我们按常数因子<span class="math notranslate nohighlight">\(\alpha\)</span>缩放向量的所有元素，
+其范数也会按相同常数因子的<em>绝对值</em>缩放：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-7">
+<span class="eqno">(2.23.1)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-7" title="Permalink to this equation">¶</a></span>\[f(\alpha \mathbf{x}) = |\alpha| f(\mathbf{x}).\]</div>
+<p>第二个性质是我们熟悉的三角不等式:</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-8">
+<span class="eqno">(2.23.2)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-8" title="Permalink to this equation">¶</a></span>\[f(\mathbf{x} + \mathbf{y}) \leq f(\mathbf{x}) + f(\mathbf{y}).\]</div>
+<p>第三个性质简单地说范数必须是非负的:</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-9">
+<span class="eqno">(2.23.3)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-9" title="Permalink to this equation">¶</a></span>\[f(\mathbf{x}) \geq 0.\]</div>
+<p>这是有道理的。因为在大多数情况下，任何东西的最小的<em>大小</em>是0。
+最后一个性质要求范数最小为0，当且仅当向量全由0组成。</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-10">
+<span class="eqno">(2.23.4)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-10" title="Permalink to this equation">¶</a></span>\[\forall i, [\mathbf{x}]_i = 0 \Leftrightarrow f(\mathbf{x})=0.\]</div>
+<p>你可能会注意到，范数听起来很像距离的度量。
+如果你还记得欧几里得距离和毕达哥拉斯定理，那么非负性的概念和三角不等式可能会给你一些启发。
+事实上，欧几里得距离是一个<span class="math notranslate nohighlight">\(L_2\)</span>范数：
+假设<span class="math notranslate nohighlight">\(n\)</span>维向量<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>中的元素是<span class="math notranslate nohighlight">\(x_1,\ldots,x_n\)</span>，其<span class="math notranslate nohighlight">\(L_2\)</span><em>范数</em>是向量元素平方和的平方根：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-11">
+<span class="eqno">(2.23.5)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-11" title="Permalink to this equation">¶</a></span>\[\|\mathbf{x}\|_2 = \sqrt{\sum_{i=1}^n x_i^2},\]</div>
+<p>其中，在<span class="math notranslate nohighlight">\(L_2\)</span>范数中常常省略下标<span class="math notranslate nohighlight">\(2\)</span>，也就是说<span class="math notranslate nohighlight">\(\|\mathbf{x}\|\)</span>等同于<span class="math notranslate nohighlight">\(\|\mathbf{x}\|_2\)</span>。
+在代码中，我们可以按如下方式计算向量的<span class="math notranslate nohighlight">\(L_2\)</span>范数。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">5.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在深度学习中，我们更经常地使用<span class="math notranslate nohighlight">\(L_2\)</span>范数的平方。
+你还会经常遇到<span class="math notranslate nohighlight">\(L_1\)</span>范数，它表示为向量元素的绝对值之和：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-12">
+<span class="eqno">(2.23.6)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-12" title="Permalink to this equation">¶</a></span>\[\|\mathbf{x}\|_1 = \sum_{i=1}^n \left|x_i \right|.\]</div>
+<p>与<span class="math notranslate nohighlight">\(L_2\)</span>范数相比，<span class="math notranslate nohighlight">\(L_1\)</span>范数受异常值的影响较小。
+为了计算<span class="math notranslate nohighlight">\(L_1\)</span>范数，我们将绝对值函数和按元素求和组合起来。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">7.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><span class="math notranslate nohighlight">\(L_2\)</span>范数和<span class="math notranslate nohighlight">\(L_1\)</span>范数都是更一般的<span class="math notranslate nohighlight">\(L_p\)</span>范数的特例：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-13">
+<span class="eqno">(2.23.7)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-13" title="Permalink to this equation">¶</a></span>\[\|\mathbf{x}\|_p = \left(\sum_{i=1}^n \left|x_i \right|^p \right)^{1/p}.\]</div>
+<p>类似于向量的<span class="math notranslate nohighlight">\(L_2\)</span>范数，矩阵<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{m \times n}\)</span>的<em>Frobenius范数</em>（Frobenius
+norm）是矩阵元素平方和的平方根：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-preliminaries-linear-algebra-14">
+<span class="eqno">(2.23.8)<a class="headerlink" href="#equation-chapter-preliminaries-linear-algebra-14" title="Permalink to this equation">¶</a></span>\[\|\mathbf{X}\|_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n x_{ij}^2}.\]</div>
+<p>Frobenius范数满足向量范数的所有性质，它就像是矩阵形向量的<span class="math notranslate nohighlight">\(L_2\)</span>范数。
+调用以下函数将计算矩阵的Frobenius范数。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">(</span><span class="mf">6.</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="subsec-norms-and-objectives">
+<span id="id12"></span><h2><span class="section-number">2.23.1. </span>范数和目标<a class="headerlink" href="#subsec-norms-and-objectives" title="Permalink to this headline">¶</a></h2>
+<p>在深度学习中，我们经常试图解决优化问题： <em>最大化</em>分配给观测数据的概率;
+<em>最小化</em>预测和真实观测之间的距离。
+用向量表示物品（如单词、产品或新闻文章），以便最小化相似项目之间的距离，最大化不同项目之间的距离。
+目标，或许是深度学习算法最重要的组成部分（除了数据），通常被表达为范数。</p>
+</div>
+</div>
+<div class="section" id="id13">
+<h1><span class="section-number">2.24. </span>关于线性代数的更多信息<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h1>
+<p>仅用一节，我们就教会了你所需的、用以理解现代深度学习的线性代数。
+线性代数还有很多，其中很多数学对于机器学习非常有用。
+例如，矩阵可以分解为因子，这些分解可以显示真实世界数据集中的低维结构。
+机器学习的整个子领域都侧重于使用矩阵分解及其向高阶张量的泛化，来发现数据集中的结构并解决预测问题。
+我们相信，一旦你开始动手尝试并在真实数据集上应用了有效的机器学习模型，你会更倾向于学习更多数学。
+因此，这一节到此结束，我们保留在后面介绍更多数学知识的权利。</p>
+<p>如果你渴望了解有关线性代数的更多信息，你可以参考<a class="reference external" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html">线性代数运算的在线附录</a>或其他优秀资源
+<a class="bibtex reference internal" href="../chapter_references/zreferences.html#strang-1993" id="id14">[Strang, 1993]</a><a class="bibtex reference internal" href="../chapter_references/zreferences.html#kolter-2008" id="id15">[Kolter, 2008]</a><a class="bibtex reference internal" href="../chapter_references/zreferences.html#petersen-pedersen-ea-2008" id="id16">[Petersen et al., 2008]</a>。</p>
+</div>
+<div class="section" id="id17">
+<h1><span class="section-number">2.25. </span>小结<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>标量、向量、矩阵和张量是线性代数中的基本数学对象。</p></li>
+<li><p>向量泛化自标量，矩阵泛化自向量。</p></li>
+<li><p>标量、向量、矩阵和张量分别具有零、一、二和任意数量的轴。</p></li>
+<li><p>一个张量可以通过<code class="docutils literal notranslate"><span class="pre">sum</span></code>和<code class="docutils literal notranslate"><span class="pre">mean</span></code>沿指定的轴降低维度。</p></li>
+<li><p>两个矩阵的按元素乘法被称为他们的Hadamard积。它与矩阵乘法不同。</p></li>
+<li><p>在深度学习中，我们经常使用范数，如<span class="math notranslate nohighlight">\(L_1\)</span>范数、<span class="math notranslate nohighlight">\(L_2\)</span>范数和Frobenius范数。</p></li>
+<li><p>我们可以对标量、向量、矩阵和张量执行各种操作。</p></li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h1><span class="section-number">2.26. </span>练习<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li><p>证明一个矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>的转置的转置是<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>，即<span class="math notranslate nohighlight">\((\mathbf{A}^\top)^\top = \mathbf{A}\)</span>。</p></li>
+<li><p>给出两个矩阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>和<span class="math notranslate nohighlight">\(\mathbf{B}\)</span>，证明“它们转置的和”等于“它们和的转置”，即<span class="math notranslate nohighlight">\(\mathbf{A}^\top + \mathbf{B}^\top = (\mathbf{A} + \mathbf{B})^\top\)</span>。</p></li>
+<li><p>给定任意方阵<span class="math notranslate nohighlight">\(\mathbf{A}\)</span>，<span class="math notranslate nohighlight">\(\mathbf{A} + \mathbf{A}^\top\)</span>总是对称的吗?为什么?</p></li>
+<li><p>我们在本节中定义了形状<span class="math notranslate nohighlight">\((2,3,4)\)</span>的张量<code class="docutils literal notranslate"><span class="pre">X</span></code>。<code class="docutils literal notranslate"><span class="pre">len(X)</span></code>的输出结果是什么？</p></li>
+<li><p>对于任意形状的张量<code class="docutils literal notranslate"><span class="pre">X</span></code>,<code class="docutils literal notranslate"><span class="pre">len(X)</span></code>是否总是对应于<code class="docutils literal notranslate"><span class="pre">X</span></code>特定轴的长度?这个轴是什么?</p></li>
+<li><p>运行<code class="docutils literal notranslate"><span class="pre">A/A.sum(axis=1)</span></code>，看看会发生什么。你能分析原因吗？</p></li>
+<li><p>考虑一个具有形状<span class="math notranslate nohighlight">\((2,3,4)\)</span>的张量，在轴0、1、2上的求和输出是什么形状?</p></li>
+<li><p>为<code class="docutils literal notranslate"><span class="pre">linalg.norm</span></code>函数提供3个或更多轴的张量，并观察其输出。对于任意形状的张量这个函数计算得到什么?</p></li>
+</ol>
+<p><a class="reference external" href="https://discuss.d2l.ai/t/1752">Discussions</a></p>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">2.14. 标量</a></li>
+<li><a class="reference internal" href="#id2">2.15. 向量</a><ul>
+<li><a class="reference internal" href="#id3">2.15.1. 长度、维度和形状</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">2.16. 矩阵</a></li>
+<li><a class="reference internal" href="#id5">2.17. 张量</a></li>
+<li><a class="reference internal" href="#id6">2.18. 张量算法的基本性质</a></li>
+<li><a class="reference internal" href="#subseq-lin-alg-reduction">2.19. 降维</a><ul>
+<li><a class="reference internal" href="#subseq-lin-alg-non-reduction">2.19.1. 非降维求和</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dot-product">2.20. 点积（Dot Product）</a></li>
+<li><a class="reference internal" href="#id9">2.21. 矩阵-向量积</a></li>
+<li><a class="reference internal" href="#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li><a class="reference internal" href="#subsec-lin-algebra-norms">2.23. 范数</a><ul>
+<li><a class="reference internal" href="#subsec-norms-and-objectives">2.23.1. 范数和目标</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id13">2.24. 关于线性代数的更多信息</a></li>
+<li><a class="reference internal" href="#id17">2.25. 小结</a></li>
+<li><a class="reference internal" href="#id18">2.26. 练习</a></li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="pandas.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>2.9. 读取数据集</div>
+         </div>
+     </a>
+     <a id="button-next" href="calculus.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>2.27. 导数和微分</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>

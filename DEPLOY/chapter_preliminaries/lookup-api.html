@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>2.44. 查找模块中的所有函数和类 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. 线性神经网络" href="../chapter_linear-networks/index.html" />
+    <link rel="prev" title="2.39. 基本概率论" href="probability.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">2. </span>预备知识</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">2.44. </span>查找模块中的所有函数和类</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_preliminaries/lookup-api.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  MXNet
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-pytorch.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  PyTorch
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-paddle.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  Paddle
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.zip">
+                  <i class="fas fa-download"></i>
+                  Jupyter 记事本
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://courses.d2l.ai/zh-v2/">
+                  <i class="fas fa-user-graduate"></i>
+                  课程
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/0x00A0/d2l-zh_paddle">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://d2l.ai">
+                  <i class="fas fa-external-link-alt"></i>
+                  English
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. 预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. 预备知识</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <p>None # 查阅文档</p>
+<div class="section" id="id1">
+<h1><span class="section-number">2.44. </span>查找模块中的所有函数和类<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>为了知道模块中可以调用哪些函数和类，我们调用<code class="docutils literal notranslate"><span class="pre">dir</span></code>函数。
+例如，我们可以查询随机数生成模块中的所有属性：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;__all__&#39;</span><span class="p">,</span> <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;_mx_nd_np&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;chisquare&#39;</span><span class="p">,</span> <span class="s1">&#39;choice&#39;</span><span class="p">,</span> <span class="s1">&#39;exponential&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;gumbel&#39;</span><span class="p">,</span> <span class="s1">&#39;logistic&#39;</span><span class="p">,</span> <span class="s1">&#39;lognormal&#39;</span><span class="p">,</span> <span class="s1">&#39;multinomial&#39;</span><span class="p">,</span> <span class="s1">&#39;multivariate_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;pareto&#39;</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">,</span> <span class="s1">&#39;rand&#39;</span><span class="p">,</span> <span class="s1">&#39;randint&#39;</span><span class="p">,</span> <span class="s1">&#39;randn&#39;</span><span class="p">,</span> <span class="s1">&#39;rayleigh&#39;</span><span class="p">,</span> <span class="s1">&#39;shuffle&#39;</span><span class="p">,</span> <span class="s1">&#39;uniform&#39;</span><span class="p">,</span> <span class="s1">&#39;weibull&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paddle</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">paddle</span><span class="o">.</span><span class="n">distribution</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;Categorical&#39;</span><span class="p">,</span> <span class="s1">&#39;Distribution&#39;</span><span class="p">,</span> <span class="s1">&#39;Normal&#39;</span><span class="p">,</span> <span class="s1">&#39;Uniform&#39;</span><span class="p">,</span> <span class="s1">&#39;_C_ops&#39;</span><span class="p">,</span> <span class="s1">&#39;__all__&#39;</span><span class="p">,</span> <span class="s1">&#39;__builtins__&#39;</span><span class="p">,</span> <span class="s1">&#39;__cached__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__file__&#39;</span><span class="p">,</span> <span class="s1">&#39;__loader__&#39;</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s1">&#39;__package__&#39;</span><span class="p">,</span> <span class="s1">&#39;__spec__&#39;</span><span class="p">,</span> <span class="s1">&#39;arange&#39;</span><span class="p">,</span> <span class="s1">&#39;check_dtype&#39;</span><span class="p">,</span> <span class="s1">&#39;check_type&#39;</span><span class="p">,</span> <span class="s1">&#39;check_variable_and_dtype&#39;</span><span class="p">,</span> <span class="s1">&#39;concat&#39;</span><span class="p">,</span> <span class="s1">&#39;control_flow&#39;</span><span class="p">,</span> <span class="s1">&#39;convert_dtype&#39;</span><span class="p">,</span> <span class="s1">&#39;core&#39;</span><span class="p">,</span> <span class="s1">&#39;elementwise_add&#39;</span><span class="p">,</span> <span class="s1">&#39;elementwise_div&#39;</span><span class="p">,</span> <span class="s1">&#39;elementwise_mul&#39;</span><span class="p">,</span> <span class="s1">&#39;elementwise_sub&#39;</span><span class="p">,</span> <span class="s1">&#39;gather_nd&#39;</span><span class="p">,</span> <span class="s1">&#39;in_dygraph_mode&#39;</span><span class="p">,</span> <span class="s1">&#39;math&#39;</span><span class="p">,</span> <span class="s1">&#39;multinomial&#39;</span><span class="p">,</span> <span class="s1">&#39;nn&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;ops&#39;</span><span class="p">,</span> <span class="s1">&#39;print_function&#39;</span><span class="p">,</span> <span class="s1">&#39;tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;warnings&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>通常，我们可以忽略以“<code class="docutils literal notranslate"><span class="pre">__</span></code>”（双下划线）开始和结束的函数（它们是Python中的特殊对象），
+或以单个“<code class="docutils literal notranslate"><span class="pre">_</span></code>”（单下划线）开始的函数（它们通常是内部函数）。
+根据剩余的函数名或属性名，我们可能会猜测这个模块提供了各种生成随机数的方法，
+包括从均匀分布（<code class="docutils literal notranslate"><span class="pre">uniform</span></code>）、正态分布（<code class="docutils literal notranslate"><span class="pre">normal</span></code>）和多项分布（<code class="docutils literal notranslate"><span class="pre">multinomial</span></code>）中采样。</p>
+</div>
+<div class="section" id="id2">
+<h1><span class="section-number">2.45. </span>查找特定函数和类的用法<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<p>有关如何使用给定函数或类的更具体说明，我们可以调用<code class="docutils literal notranslate"><span class="pre">help</span></code>函数。
+例如，我们来查看张量<code class="docutils literal notranslate"><span class="pre">ones</span></code>函数的用法。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre class="output literal-block">Help on function ones in module mxnet.numpy:
+
+ones(shape, dtype=&lt;class 'numpy.float32'&gt;, order='C', ctx=None)
+    Return a new array of given shape and type, filled with ones.
+    This function currently only supports storing multi-dimensional data
+    in row-major (C-style).
+
+    Parameters
+    ----------
+    shape : int or tuple of int
+        The shape of the empty array.
+    dtype : str or numpy.dtype, optional
+        An optional value type. Default is <cite>numpy.float32</cite>. Note that this
+        behavior is different from NumPy's <cite>ones</cite> function where <cite>float64</cite>
+        is the default value, because <cite>float32</cite> is considered as the default
+        data type in deep learning.
+    order : {'C'}, optional, default: 'C'
+        How to store multi-dimensional data in memory, currently only row-major
+        (C-style) is supported.
+    ctx : Context, optional
+        An optional device context (default is the current default context).
+
+    Returns
+    -------
+    out : ndarray
+        Array of ones with the given shape, dtype, and ctx.
+
+    Examples
+    --------
+    &gt;&gt;&gt; np.ones(5)
+    array([1., 1., 1., 1., 1.])
+
+    &gt;&gt;&gt; np.ones((5,), dtype=int)
+    array([1, 1, 1, 1, 1], dtype=int64)
+
+    &gt;&gt;&gt; np.ones((2, 1))
+    array([[1.],
+           [1.]])
+
+    &gt;&gt;&gt; s = (2,2)
+    &gt;&gt;&gt; np.ones(s)
+    array([[1., 1.],
+           [1., 1.]])</pre>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre class="output literal-block">Help on function ones in module paddle.tensor.creation:
+
+ones(shape, dtype=None, name=None)
+    The OP creates a tensor of specified <code class="xref py py-attr docutils literal notranslate"><span class="pre">shape</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">dtype</span></code>, and fills it with 1.
+
+    Args:
+        shape(tuple|list|Tensor): Shape of the Tensor to be created, the data type of shape is int32 or int64.
+        dtype(np.dtype|str, optional): Data type of output Tensor, it supports
+            bool, float16, float32, float64, int32 and int64. Default: if None, the data type is 'float32'.
+        name(str, optional): The default value is None. Normally there is no need for user to set this property. For more information, please refer to <span class="xref std std-ref">api_guide_Name</span>
+
+    Returns:
+        Tensor: A tensor of data type <code class="xref py py-attr docutils literal notranslate"><span class="pre">dtype</span></code> with shape <code class="xref py py-attr docutils literal notranslate"><span class="pre">shape</span></code> and all elements set to 1.
+
+    Examples:
+        .. code-block:: python
+
+          import paddle
+
+          # default dtype for ones OP
+          data1 = paddle.ones(shape=[3, 2])
+          # [[1. 1.]
+          #  [1. 1.]
+          #  [1. 1.]]
+
+          data2 = paddle.ones(shape=[2, 2], dtype='int32')
+          # [[1 1]
+          #  [1 1]]
+
+          # shape is a Tensor
+          shape = paddle.full(shape=[2], dtype='int32', fill_value=2)
+          data3 = paddle.ones(shape=shape, dtype='int32')
+          # [[1 1]
+          #  [1 1]]</pre>
+<p>从文档中，我们可以看到<code class="docutils literal notranslate"><span class="pre">ones</span></code>函数创建一个具有指定形状的新张量，并将所有元素值设置为1。
+让我们来运行一个快速测试来确认这一解释：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">paddle</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">float32</span><span class="p">,</span> <span class="n">place</span><span class="o">=</span><span class="n">CPUPlace</span><span class="p">,</span> <span class="n">stop_gradient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+       <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>在Jupyter记事本中，我们可以使用<code class="docutils literal notranslate"><span class="pre">?</span></code>指令在另一个浏览器窗口中显示文档。
+例如，<code class="docutils literal notranslate"><span class="pre">list?</span></code>指令将创建与<code class="docutils literal notranslate"><span class="pre">help(list)</span></code>指令几乎相同的内容，并在新的浏览器窗口中显示它。
+此外，如果我们使用两个问号，如<code class="docutils literal notranslate"><span class="pre">list??</span></code>，将显示实现该函数的Python代码。</p>
+</div>
+<div class="section" id="id3">
+<h1><span class="section-number">2.46. </span>小结<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>官方文档提供了本书之外的大量描述和示例。</p></li>
+<li><p>我们可以通过调用<code class="docutils literal notranslate"><span class="pre">dir</span></code>和<code class="docutils literal notranslate"><span class="pre">help</span></code>函数或在Jupyter记事本中使用<code class="docutils literal notranslate"><span class="pre">?</span></code>和<code class="docutils literal notranslate"><span class="pre">??</span></code>查看API的用法文档。</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h1><span class="section-number">2.47. </span>练习<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li><p>在深度学习框架中查找任何函数或类的文档。你能在这个框架的官方网站上找到文档吗?</p></li>
+</ol>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">2.44. 查找模块中的所有函数和类</a></li>
+<li><a class="reference internal" href="#id2">2.45. 查找特定函数和类的用法</a></li>
+<li><a class="reference internal" href="#id3">2.46. 小结</a></li>
+<li><a class="reference internal" href="#id4">2.47. 练习</a></li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="probability.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>2.39. 基本概率论</div>
+         </div>
+     </a>
+     <a id="button-next" href="../chapter_linear-networks/index.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>3. 线性神经网络</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>

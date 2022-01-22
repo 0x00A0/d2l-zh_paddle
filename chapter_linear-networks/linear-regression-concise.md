@@ -1,3 +1,5 @@
+None
+None
 # 线性回归的简洁实现
 :label:`sec_linear_concise`
 
@@ -38,7 +40,15 @@ import numpy as np
 import tensorflow as tf
 ```
 
-```{.python .input}
+```{.python .input  n=1}
+#@tab paddle
+from d2l import paddle as d2l
+import numpy as np
+import paddle
+from paddle import io
+```
+
+```{.python .input  n=4}
 #@tab all
 true_w = d2l.tensor([2, -3.4])
 true_b = 4.2
@@ -77,7 +87,15 @@ def load_array(data_arrays, batch_size, is_train=True):  #@save
     return dataset
 ```
 
-```{.python .input}
+```{.python .input  n=6}
+#@tab paddle
+def load_array(data_arrays, batch_size, is_train=True):  #@save
+    """构造一个PyTorch数据迭代器"""
+    dataset = io.TensorDataset(data_arrays)
+    return io.DataLoader(dataset, batch_size=batch_size, shuffle=is_train)
+```
+
+```{.python .input  n=7}
 #@tab all
 batch_size = 10
 data_iter = load_array((features, labels), batch_size)
@@ -86,9 +104,22 @@ data_iter = load_array((features, labels), batch_size)
 使用`data_iter`的方式与我们在 :numref:`sec_linear_scratch`中使用`data_iter`函数的方式相同。为了验证是否正常工作，让我们读取并打印第一个小批量样本。
 与 :numref:`sec_linear_scratch`不同，这里我们使用`iter`构造Python迭代器，并使用`next`从迭代器中获取第一项。
 
-```{.python .input}
+```{.python .input  n=8}
 #@tab all
 next(iter(data_iter))
+```
+
+```{.json .output n=8}
+[
+ {
+  "data": {
+   "text/plain": "[Tensor(shape=[10, 2], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [[ 1.04019213, -0.02315369],\n         [ 1.16532743,  1.21684146],\n         [-0.90626717,  0.78390872],\n         [ 0.81118333, -0.64054519],\n         [-1.08125949,  0.07232276],\n         [ 0.89474297, -0.45927131],\n         [-1.02331173,  0.43982279],\n         [-1.46017110,  0.33680791],\n         [ 0.55200386, -0.75445944],\n         [-0.52099532,  0.60156858]]),\n Tensor(shape=[10, 1], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [[ 6.33935261],\n         [ 2.40169907],\n         [-0.27392665],\n         [ 7.98243666],\n         [ 1.81197047],\n         [ 7.55296421],\n         [ 0.65290368],\n         [ 0.12115881],\n         [ 7.88047218],\n         [ 1.10364699]])]"
+  },
+  "execution_count": 8,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
 ```
 
 ## 定义模型
@@ -139,6 +170,12 @@ Keras会自动推断每个层输入的形状。
 我们稍后将详细介绍这种工作机制。
 :end_tab:
 
+:begin_tab:`paddle`
+在Paddle中，全连接层在`Linear`类中定义。
+值得注意的是，我们将两个参数传递到`nn.Linear`中。
+第一个指定输入特征形状，即2，第二个指定输出特征形状，输出特征形状为单个标量，因此为1。
+:end_tab:
+
 ```{.python .input}
 # nn是神经网络的缩写
 from mxnet.gluon import nn
@@ -158,6 +195,13 @@ net = nn.Sequential(nn.Linear(2, 1))
 # keras是TensorFlow的高级API
 net = tf.keras.Sequential()
 net.add(tf.keras.layers.Dense(1))
+```
+
+```{.python .input  n=171}
+#@tab paddle
+# nn是神经网络的缩写
+from paddle import nn
+net = nn.Sequential(nn.Linear(2, 1))
 ```
 
 ## (**初始化模型参数**)
@@ -189,6 +233,12 @@ TensorFlow中的`initializers`模块提供了多种模型参数初始化方法�
 在这里，我们重新创建了`net`。
 :end_tab:
 
+:begin_tab:`paddle`
+paddle`initializers`模块提供了多种模型参数初始化方法。
+在paddle中最简单的指定初始化方法是在创建层时指定参数,参数由`ParamAttr`方法生成
+在这里，我们通过`net[0]`选择网络中的第一个图层，然后重新创建了它
+:end_tab:
+
 ```{.python .input}
 from mxnet import init
 net.initialize(init.Normal(sigma=0.01))
@@ -205,6 +255,15 @@ net[0].bias.data.fill_(0)
 initializer = tf.initializers.RandomNormal(stddev=0.01)
 net = tf.keras.Sequential()
 net.add(tf.keras.layers.Dense(1, kernel_initializer=initializer))
+```
+
+```{.python .input  n=172}
+#@tab paddle
+weight_attr = paddle.ParamAttr(
+    initializer=paddle.nn.initializer.Normal(0, 0.01))
+bias_attr = paddle.ParamAttr(
+    initializer=paddle.nn.initializer.Constant(0))
+net[0] = nn.Linear(2, 1, weight_attr=weight_attr, bias_attr=bias_attr)
 ```
 
 :begin_tab:`mxnet`
@@ -229,6 +288,10 @@ Keras让我们避免了这个问题，在后端执行时，初始化实际上是
 请注意，因为参数还没有初始化，所以我们不能访问或操作它们。
 :end_tab:
 
+:begin_tab:`paddle`
+
+:end_tab:
+
 ## 定义损失函数
 
 :begin_tab:`mxnet`
@@ -246,6 +309,11 @@ Keras让我们避免了这个问题，在后端执行时，初始化实际上是
 默认情况下，它返回所有样本损失的平均值。
 :end_tab:
 
+:begin_tab:`paddle`
+计算均方误差使用的是`MSELoss`类，也称为平方$L_2$范数。
+默认情况下，它返回所有样本损失的平均值。
+:end_tab:
+
 ```{.python .input}
 loss = gluon.loss.L2Loss()
 ```
@@ -258,6 +326,11 @@ loss = nn.MSELoss()
 ```{.python .input}
 #@tab tensorflow
 loss = tf.keras.losses.MeanSquaredError()
+```
+
+```{.python .input  n=173}
+#@tab paddle
+loss = nn.MSELoss()
 ```
 
 ## 定义优化算法
@@ -285,6 +358,14 @@ Keras在`optimizers`模块中实现了该算法的许多变种。
 小批量随机梯度下降只需要设置`learning_rate`值，这里设置为0.03。
 :end_tab:
 
+:begin_tab:`paddle`
+小批量随机梯度下降算法是一种优化神经网络的标准工具，
+Paddle在`optimizer`模块中实现了该算法的许多变种。
+动态图模式下,当我们(**实例化一个`SGD`实例**)时，我们要指定优化的参数
+（可通过`net.parameters()`从我们的模型中获得）以及优化算法所需的超参数字典。
+小批量随机梯度下降只需要设置`lr`值，这里设置为0.03。
+:end_tab:
+
 ```{.python .input}
 from mxnet import gluon
 trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': 0.03})
@@ -298,6 +379,11 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.03)
 ```{.python .input}
 #@tab tensorflow
 trainer = tf.keras.optimizers.SGD(learning_rate=0.03)
+```
+
+```{.python .input  n=174}
+#@tab paddle
+trainer = paddle.optimizer.SGD(learning_rate=0.03, parameters=net[0].parameters())
 ```
 
 ## 训练
@@ -355,6 +441,29 @@ for epoch in range(num_epochs):
     print(f'epoch {epoch + 1}, loss {l:f}')
 ```
 
+```{.python .input  n=175}
+#@tab paddle
+num_epochs = 3
+for epoch in range(num_epochs):
+    for X, y in data_iter:
+        l = loss(net(X) ,y)
+        trainer.clear_grad()
+        l.backward()
+        trainer.step()
+    l = loss(net(features), labels)
+    print(f'epoch {epoch + 1}, loss {l.numpy()}')
+```
+
+```{.json .output n=175}
+[
+ {
+  "name": "stdout",
+  "output_type": "stream",
+  "text": "epoch 1, loss [0.00022802]\nepoch 2, loss [0.00010025]\nepoch 3, loss [0.00010098]\n"
+ }
+]
+```
+
 下面我们[**比较生成数据集的真实参数和通过有限数据训练获得的模型参数**]。
 要访问参数，我们首先从`net`访问所需的层，然后读取该层的权重和偏置。
 正如在从零开始实现中一样，我们估计得到的参数与生成数据的真实参数非常接近。
@@ -382,6 +491,24 @@ b = net.get_weights()[1]
 print('b的估计误差：', true_b - b)
 ```
 
+```{.python .input  n=176}
+#@tab paddle
+w = net[0].weight
+print('w的估计误差：', true_w - d2l.reshape(w, true_w.shape))
+b = net[0].bias
+print('b的估计误差：', true_b - b)
+```
+
+```{.json .output n=176}
+[
+ {
+  "name": "stdout",
+  "output_type": "stream",
+  "text": "w\u7684\u4f30\u8ba1\u8bef\u5dee\uff1a Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=False,\n       [-0.00052762, -0.00014281])\nb\u7684\u4f30\u8ba1\u8bef\u5dee\uff1a Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=False,\n       [0.00068951])\n"
+ }
+]
+```
+
 ## 小结
 
 :begin_tab:`mxnet`
@@ -402,6 +529,11 @@ print('b的估计误差：', true_b - b)
 * 在TensorFlow中，`data`模块提供了数据处理工具，`keras`模块定义了大量神经网络层和常见损耗函数。
 * TensorFlow的`initializers`模块提供了多种模型参数初始化方法。
 * 维度和存储可以自动推断，但注意不要在初始化参数之前尝试访问参数。
+:end_tab:
+
+:begin_tab:`Paddle`
+* 我们可以使用Paddle的高级API更简洁地实现模型。
+* 在Paddle中，`io`模块提供了数据处理工具，`nn`模块定义了大量的神经网络层和常见损失函数，`initializers`模块提供了多种模型参数初始化方法。
 :end_tab:
 
 ## 练习

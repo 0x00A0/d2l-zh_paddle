@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>3.16. 生成数据集 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.25. softmax回归" href="softmax-regression.html" />
+    <link rel="prev" title="3.7. 生成数据集" href="linear-regression-scratch.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">3. </span>线性神经网络</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">3.16. </span>生成数据集</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_linear-networks/linear-regression-concise.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  MXNet
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-pytorch.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  PyTorch
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-paddle.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  Paddle
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.zip">
+                  <i class="fas fa-download"></i>
+                  Jupyter 记事本
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://courses.d2l.ai/zh-v2/">
+                  <i class="fas fa-user-graduate"></i>
+                  课程
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/0x00A0/d2l-zh_paddle">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://d2l.ai">
+                  <i class="fas fa-external-link-alt"></i>
+                  English
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. 线性神经网络</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id11">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id12">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id13">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. 线性神经网络</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.30. 练习</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <p>None None # 线性回归的简洁实现</p>
+<p id="sec-linear-concise">在过去的几年里，出于对深度学习强烈的兴趣，
+许多公司、学者和业余爱好者开发了各种成熟的开源框架。
+这些框架可以自动化基于梯度的学习算法中重复性的工作。 在
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中，我们只运用了：
+（1）通过张量来进行数据存储和线性代数； （2）通过自动微分来计算梯度。
+实际上，由于数据迭代器、损失函数、优化器和神经网络层很常用，
+现代深度学习库也为我们实现了这些组件。</p>
+<p>在本节中，我们将介绍如何通过使用深度学习框架来简洁地实现
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中的线性回归模型。</p>
+<div class="section" id="id1">
+<h1><span class="section-number">3.16. </span>生成数据集<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>与 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中类似，我们首先生成数据集。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">autograd</span><span class="p">,</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
+
+<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Matplotlib</span> <span class="n">created</span> <span class="n">a</span> <span class="n">temporary</span> <span class="n">config</span><span class="o">/</span><span class="n">cache</span> <span class="n">directory</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">matplotlib</span><span class="o">-</span><span class="mi">7</span><span class="n">rl_wppt</span> <span class="n">because</span> <span class="n">the</span> <span class="n">default</span> <span class="n">path</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">wan</span><span class="o">/.</span><span class="n">config</span><span class="o">/</span><span class="n">matplotlib</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">;</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">highly</span> <span class="n">recommended</span> <span class="n">to</span> <span class="nb">set</span> <span class="n">the</span> <span class="n">MPLCONFIGDIR</span> <span class="n">environment</span> <span class="n">variable</span> <span class="n">to</span> <span class="n">a</span> <span class="n">writable</span> <span class="n">directory</span><span class="p">,</span> <span class="ow">in</span> <span class="n">particular</span> <span class="n">to</span> <span class="n">speed</span> <span class="n">up</span> <span class="n">the</span> <span class="kn">import</span> <span class="nn">of</span> <span class="n">Matplotlib</span> <span class="ow">and</span> <span class="n">to</span> <span class="n">better</span> <span class="n">support</span> <span class="n">multiprocessing</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">true_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.4</span><span class="p">])</span>
+<span class="n">true_b</span> <span class="o">=</span> <span class="mf">4.2</span>
+<span class="n">features</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">synthetic_data</span><span class="p">(</span><span class="n">true_w</span><span class="p">,</span> <span class="n">true_b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h1><span class="section-number">3.17. </span>读取数据集<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<p>我们可以调用框架中现有的API来读取数据。
+我们将<code class="docutils literal notranslate"><span class="pre">features</span></code>和<code class="docutils literal notranslate"><span class="pre">labels</span></code>作为API的参数传递，并通过数据迭代器指定<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>。
+此外，布尔值<code class="docutils literal notranslate"><span class="pre">is_train</span></code>表示是否希望数据迭代器对象在每个迭代周期内打乱数据。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_array</span><span class="p">(</span><span class="n">data_arrays</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">is_train</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1">#@save</span>
+    <span class="sd">&quot;&quot;&quot;构造一个Gluon数据迭代器&quot;&quot;&quot;</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ArrayDataset</span><span class="p">(</span><span class="o">*</span><span class="n">data_arrays</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gluon</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">is_train</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">data_iter</span> <span class="o">=</span> <span class="n">load_array</span><span class="p">((</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>使用<code class="docutils literal notranslate"><span class="pre">data_iter</span></code>的方式与我们在
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中使用<code class="docutils literal notranslate"><span class="pre">data_iter</span></code>函数的方式相同。为了验证是否正常工作，让我们读取并打印第一个小批量样本。
+与
+<code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>不同，这里我们使用<code class="docutils literal notranslate"><span class="pre">iter</span></code>构造Python迭代器，并使用<code class="docutils literal notranslate"><span class="pre">next</span></code>从迭代器中获取第一项。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_iter</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.25945112</span><span class="p">,</span>  <span class="mf">0.4179527</span> <span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">2.0447428</span> <span class="p">,</span>  <span class="mf">0.74624586</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.06807706</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.13130364</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">1.0227915</span> <span class="p">,</span>  <span class="mf">0.05346791</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.74539703</span><span class="p">,</span>  <span class="mf">0.38242742</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">1.3002341</span> <span class="p">,</span>  <span class="mf">1.1119636</span> <span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">0.51751894</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5553699</span> <span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">1.4760977</span> <span class="p">,</span> <span class="o">-</span><span class="mf">0.18857454</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">0.54560065</span><span class="p">,</span>  <span class="mf">0.10940859</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">0.09016981</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5549816</span> <span class="p">]]),</span>
+ <span class="n">array</span><span class="p">([[</span> <span class="mf">3.300429</span> <span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">2.4220822</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">4.5233345</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">1.9630948</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">1.4026579</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">2.1769006</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">5.0592566</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">1.8882915</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">4.9092207</span><span class="p">],</span>
+        <span class="p">[</span> <span class="mf">6.2645936</span><span class="p">]])]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h1><span class="section-number">3.18. </span>定义模型<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<p>当我们在 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中实现线性回归时，
+我们明确定义了模型参数变量，并编写了计算的代码，这样通过基本的线性代数运算得到输出。
+但是，如果模型变得更加复杂，且当你几乎每天都需要实现模型时，你会想简化这个过程。
+这种情况类似于为自己的博客从零开始编写网页。
+做一两次是有益的，但如果每个新博客你就花一个月的时间重新开始编写网页，那并不高效。</p>
+<p>对于标准深度学习模型，我们可以使用框架的预定义好的层。这使我们只需关注使用哪些层来构造模型，而不必关注层的实现细节。
+我们首先定义一个模型变量<code class="docutils literal notranslate"><span class="pre">net</span></code>，它是一个<code class="docutils literal notranslate"><span class="pre">Sequential</span></code>类的实例。
+<code class="docutils literal notranslate"><span class="pre">Sequential</span></code>类将多个层串联在一起。
+当给定输入数据时，<code class="docutils literal notranslate"><span class="pre">Sequential</span></code>实例将数据传入到第一层，
+然后将第一层的输出作为第二层的输入，以此类推。
+在下面的例子中，我们的模型只包含一个层，因此实际上不需要<code class="docutils literal notranslate"><span class="pre">Sequential</span></code>。
+但是由于以后几乎所有的模型都是多层的，在这里使用<code class="docutils literal notranslate"><span class="pre">Sequential</span></code>会让你熟悉“标准的流水线”。</p>
+<p>回顾 <a class="reference internal" href="linear-regression.html#fig-single-neuron"><span class="std std-numref">图3.4.1</span></a>中的单层网络架构，
+这一单层被称为<em>全连接层</em>（fully-connected layer），
+因为它的每一个输入都通过矩阵-向量乘法得到它的每个输出。</p>
+<p>在Gluon中，全连接层在<code class="docutils literal notranslate"><span class="pre">Dense</span></code>类中定义。
+由于我们只想得到一个标量输出，所以我们将该数字设置为1。</p>
+<p>值得注意的是，为了方便使用，Gluon并不要求我们为每个层指定输入的形状。
+所以在这里，我们不需要告诉Gluon有多少输入进入这一层。
+当我们第一次尝试通过我们的模型传递数据时，例如，当后面执行<code class="docutils literal notranslate"><span class="pre">net(X)</span></code>时，
+Gluon会自动推断每个层输入的形状。 我们稍后将详细介绍这种工作机制。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># nn是神经网络的缩写</span>
+<span class="kn">from</span> <span class="nn">mxnet.gluon</span> <span class="kn">import</span> <span class="n">nn</span>
+
+<span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">net</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h1><span class="section-number">3.19. </span>初始化模型参数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
+<p>在使用<code class="docutils literal notranslate"><span class="pre">net</span></code>之前，我们需要初始化模型参数。
+如在线性回归模型中的权重和偏置。
+深度学习框架通常有预定义的方法来初始化参数。
+在这里，我们指定每个权重参数应该从均值为0、标准差为0.01的正态分布中随机采样，
+偏置参数将初始化为零。</p>
+<p>我们从MXNet导入<code class="docutils literal notranslate"><span class="pre">initializer</span></code>模块，这个模块提供了各种模型参数初始化方法。
+Gluon将<code class="docutils literal notranslate"><span class="pre">init</span></code>作为访问<code class="docutils literal notranslate"><span class="pre">initializer</span></code>包的快捷方式。
+我们可以通过调用<code class="docutils literal notranslate"><span class="pre">init.Normal(sigma=0.01)</span></code>来指定初始化权重的方法。
+默认情况下，偏置参数初始化为零。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">init</span>
+
+<span class="n">net</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">init</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>上面的代码可能看起来很简单，但是你应该注意到这里的一个细节：
+我们正在为网络初始化参数，而Gluon还不知道输入将有多少维!
+网络的输入可能有2维，也可能有2000维。
+Gluon让我们避免了这个问题，在后端执行时，初始化实际上是<em>推迟</em>（deferred）执行的，
+只有在我们第一次尝试通过网络传递数据时才会进行真正的初始化。
+请注意，因为参数还没有初始化，所以我们不能访问或操作它们。</p>
+</div>
+<div class="section" id="id5">
+<h1><span class="section-number">3.20. </span>定义损失函数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
+<p>在Gluon中，<code class="docutils literal notranslate"><span class="pre">loss</span></code>模块定义了各种损失函数。
+在这个例子中，我们将使用Gluon中的均方误差（<code class="docutils literal notranslate"><span class="pre">L2Loss</span></code>）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">L2Loss</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h1><span class="section-number">3.21. </span>定义优化算法<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<p>小批量随机梯度下降算法是一种优化神经网络的标准工具，
+Gluon通过<code class="docutils literal notranslate"><span class="pre">Trainer</span></code>类支持该算法的许多变种。
+当我们实例化<code class="docutils literal notranslate"><span class="pre">Trainer</span></code>时，我们要指定优化的参数
+（可通过<code class="docutils literal notranslate"><span class="pre">net.collect_params()</span></code>从我们的模型<code class="docutils literal notranslate"><span class="pre">net</span></code>中获得）、
+我们希望使用的优化算法（<code class="docutils literal notranslate"><span class="pre">sgd</span></code>）以及优化算法所需的超参数字典。
+小批量随机梯度下降只需要设置<code class="docutils literal notranslate"><span class="pre">learning_rate</span></code>值，这里设置为0.03。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">gluon</span><span class="o">.</span><span class="n">Trainer</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">collect_params</span><span class="p">(),</span> <span class="s1">&#39;sgd&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h1><span class="section-number">3.22. </span>训练<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h1>
+<p>通过深度学习框架的高级API来实现我们的模型只需要相对较少的代码。
+我们不必单独分配参数、不必定义我们的损失函数，也不必手动实现小批量随机梯度下降。
+当我们需要更复杂的模型时，高级API的优势将大大增加。
+当我们有了所有的基本组件，训练过程代码与我们从零开始实现时所做的非常相似。</p>
+<p>回顾一下：在每个迭代周期里，我们将完整遍历一次数据集（<code class="docutils literal notranslate"><span class="pre">train_data</span></code>），
+不停地从中获取一个小批量的输入和相应的标签。
+对于每一个小批量，我们会进行以下步骤:</p>
+<ul class="simple">
+<li><p>通过调用<code class="docutils literal notranslate"><span class="pre">net(X)</span></code>生成预测并计算损失<code class="docutils literal notranslate"><span class="pre">l</span></code>（前向传播）。</p></li>
+<li><p>通过进行反向传播来计算梯度。</p></li>
+<li><p>通过调用优化器来更新模型参数。</p></li>
+</ul>
+<p>为了更好的衡量训练效果，我们计算每个迭代周期后的损失，并打印它来监控训练过程。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">autograd</span><span class="o">.</span><span class="n">record</span><span class="p">():</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">trainer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">features</span><span class="p">),</span> <span class="n">labels</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;epoch </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">, loss </span><span class="si">{</span><span class="n">l</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span><span class="si">:</span><span class="s1">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.025170</span>
+<span class="n">epoch</span> <span class="mi">2</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.000089</span>
+<span class="n">epoch</span> <span class="mi">3</span><span class="p">,</span> <span class="n">loss</span> <span class="mf">0.000051</span>
+</pre></div>
+</div>
+<p>下面我们比较生成数据集的真实参数和通过有限数据训练获得的模型参数。
+要访问参数，我们首先从<code class="docutils literal notranslate"><span class="pre">net</span></code>访问所需的层，然后读取该层的权重和偏置。
+正如在从零开始实现中一样，我们估计得到的参数与生成数据的真实参数非常接近。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;w的估计误差： </span><span class="si">{</span><span class="n">true_w</span> <span class="o">-</span> <span class="n">w</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">true_w</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">net</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;b的估计误差： </span><span class="si">{</span><span class="n">true_b</span> <span class="o">-</span> <span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span>w的估计误差： [ 6.5875053e-04 -8.0585480e-05]
+b的估计误差： [0.00037432]
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h1><span class="section-number">3.23. </span>小结<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>我们可以使用Gluon更简洁地实现模型。</p></li>
+<li><p>在Gluon中，<code class="docutils literal notranslate"><span class="pre">data</span></code>模块提供了数据处理工具，<code class="docutils literal notranslate"><span class="pre">nn</span></code>模块定义了大量的神经网络层，<code class="docutils literal notranslate"><span class="pre">loss</span></code>模块定义了许多常见的损失函数。</p></li>
+<li><p>MXNet的<code class="docutils literal notranslate"><span class="pre">initializer</span></code>模块提供了各种模型参数初始化方法。</p></li>
+<li><p>维度和存储可以自动推断，但注意不要在初始化参数之前尝试访问参数。</p></li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h1><span class="section-number">3.24. </span>练习<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic">
+<li><p>如果将小批量的总损失替换为小批量损失的平均值，你需要如何更改学习率？</p></li>
+<li><p>查看深度学习框架文档，它们提供了哪些损失函数和初始化方法？用Huber损失代替原损失，即</p>
+<div class="math notranslate nohighlight" id="equation-chapter-linear-networks-linear-regression-concise-0">
+<span class="eqno">(3.24.1)<a class="headerlink" href="#equation-chapter-linear-networks-linear-regression-concise-0" title="Permalink to this equation">¶</a></span>\[\begin{split}l(y,y') = \begin{cases}|y-y'| -\frac{\sigma}{2} &amp; \text{ if } |y-y'| &gt; \sigma \\ \frac{1}{2 \sigma} (y-y')^2 &amp; \text{ 其它情况}\end{cases}\end{split}\]</div>
+</li>
+<li><p>你如何访问线性回归的梯度？</p></li>
+</ol>
+<p><a class="reference external" href="https://discuss.d2l.ai/t/1782">Discussions</a></p>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">3.16. 生成数据集</a></li>
+<li><a class="reference internal" href="#id2">3.17. 读取数据集</a></li>
+<li><a class="reference internal" href="#id3">3.18. 定义模型</a></li>
+<li><a class="reference internal" href="#id4">3.19. 初始化模型参数</a></li>
+<li><a class="reference internal" href="#id5">3.20. 定义损失函数</a></li>
+<li><a class="reference internal" href="#id6">3.21. 定义优化算法</a></li>
+<li><a class="reference internal" href="#id7">3.22. 训练</a></li>
+<li><a class="reference internal" href="#id8">3.23. 小结</a></li>
+<li><a class="reference internal" href="#id9">3.24. 练习</a></li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="linear-regression-scratch.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>3.7. 生成数据集</div>
+         </div>
+     </a>
+     <a id="button-next" href="softmax-regression.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>3.25. softmax回归</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>
