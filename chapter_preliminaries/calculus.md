@@ -1,7 +1,6 @@
 None
 None
 None
-None
 # 微积分
 :label:`sec_calculus`
 
@@ -103,9 +102,11 @@ def f(x):
     return 3 * x ** 2 - 4 * x
 ```
 
-```{.python .input  n=1}
+```{.python .input  n=3}
 #@tab paddle
 %matplotlib inline
+import sys
+sys.path.append("E:\\Codes\\d2l-zh_paddle")
 from d2l import paddle as d2l
 from IPython import display
 import numpy as np

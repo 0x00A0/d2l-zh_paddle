@@ -1,7 +1,4 @@
 None
-None
-None
-None
 # 概率
 :label:`sec_prob`
 
@@ -86,13 +83,13 @@ import tensorflow_probability as tfp
 import numpy as np
 ```
 
-```{.python .input  n=3}
-#@tab paddle
+```{.python .input  n=1}
+#@tab pytorch
 %matplotlib inline
 import sys
+sys.path.append("E:\Codes\d2l-zh_paddle")
 from d2l import paddle as d2l
 import paddle
-import numpy as np
 ```
 
 在统计学中，我们把从概率分布中抽取样本的过程称为*抽样*（sampling）。
@@ -133,19 +130,19 @@ fair_probs = tf.ones(6) / 6
 tfp.distributions.Multinomial(1, fair_probs).sample()
 ```
 
-```{.python .input  n=2}
+```{.python .input  n=24}
 #@tab paddle
 fair_probs = [1.0 / 6] * 6
 paddle.to_tensor(np.random.multinomial(1, fair_probs))
 ```
 
-```{.json .output n=2}
+```{.json .output n=24}
 [
  {
   "data": {
-   "text/plain": "Tensor(shape=[6], dtype=int32, place=CPUPlace, stop_gradient=True,\n       [0, 0, 0, 0, 1, 0])"
+   "text/plain": "Tensor(shape=[6], dtype=int32, place=CPUPlace, stop_gradient=True,\n       [0, 1, 0, 0, 0, 0])"
   },
-  "execution_count": 2,
+  "execution_count": 24,
   "metadata": {},
   "output_type": "execute_result"
  }

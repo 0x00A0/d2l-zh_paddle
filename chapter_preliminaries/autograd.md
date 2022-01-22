@@ -1,6 +1,4 @@
 None
-None
-None
 # 自动微分
 :label:`sec_autograd`
 
@@ -19,29 +17,12 @@ None
 作为一个演示例子，(**假设我们想对函数$y=2\mathbf{x}^{\top}\mathbf{x}$关于列向量$\mathbf{x}$求导**)。
 首先，我们创建变量`x`并为其分配一个初始值。
 
-```{.python .input  n=1}
-#@tab mxnet
+```{.python .input}
 from mxnet import autograd, np, npx
 npx.set_np()
 
 x = np.arange(4.0)
 x
-```
-
-```{.json .output n=1}
-[
- {
-  "ename": "ModuleNotFoundError",
-  "evalue": "No module named 'mxnet'",
-  "output_type": "error",
-  "traceback": [
-   "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
-   "\u001b[1;31mModuleNotFoundError\u001b[0m                       Traceback (most recent call last)",
-   "\u001b[1;32m~\\AppData\\Local\\Temp/ipykernel_20936/4172158855.py\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[1;32m----> 1\u001b[1;33m \u001b[1;32mfrom\u001b[0m \u001b[0mmxnet\u001b[0m \u001b[1;32mimport\u001b[0m \u001b[0mautograd\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnp\u001b[0m\u001b[1;33m,\u001b[0m \u001b[0mnpx\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m\u001b[0;32m      2\u001b[0m \u001b[0mnpx\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0mset_np\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      3\u001b[0m \u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      4\u001b[0m \u001b[0mx\u001b[0m \u001b[1;33m=\u001b[0m \u001b[0mnp\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0marange\u001b[0m\u001b[1;33m(\u001b[0m\u001b[1;36m4.0\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0;32m      5\u001b[0m \u001b[0mx\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n",
-   "\u001b[1;31mModuleNotFoundError\u001b[0m: No module named 'mxnet'"
-  ]
- }
-]
 ```
 
 ```{.python .input}
@@ -60,7 +41,7 @@ x = tf.range(4, dtype=tf.float32)
 x
 ```
 
-```{.python .input  n=1}
+```{.python .input  n=2}
 #@tab paddle
 import paddle
 
@@ -68,18 +49,13 @@ x=paddle.arange(4.0,dtype="float32")
 x
 ```
 
-```{.json .output n=1}
+```{.json .output n=2}
 [
- {
-  "name": "stderr",
-  "output_type": "stream",
-  "text": "D:\\Anaconda3\\envs\\d2l\\lib\\site-packages\\urllib3\\util\\selectors.py:14: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working\n  from collections import namedtuple, Mapping\nD:\\Anaconda3\\envs\\d2l\\lib\\site-packages\\urllib3\\_collections.py:2: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working\n  from collections import Mapping, MutableMapping\n"
- },
  {
   "data": {
    "text/plain": "Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [0., 1., 2., 3.])"
   },
-  "execution_count": 1,
+  "execution_count": 2,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -92,7 +68,6 @@ x
 注意，一个标量函数关于向量$\mathbf{x}$的梯度是向量，并且与$\mathbf{x}$具有相同的形状。
 
 ```{.python .input}
-#@tab mxnet
 # 我们通过调用attach_grad来为一个张量的梯度分配内存
 x.attach_grad()
 # 在我们计算关于x的梯度后，我们将能够通过'grad'属性访问它，它的值被初始化为0
@@ -110,7 +85,7 @@ x.grad  # 默认值是None
 x = tf.Variable(x)
 ```
 
-```{.python .input  n=2}
+```{.python .input  n=3}
 #@tab paddle
 x.stop_gradient=False  # 将stop_gradient设为False以计算梯度
 ```
@@ -138,19 +113,19 @@ with tf.GradientTape() as t:
 y
 ```
 
-```{.python .input  n=3}
+```{.python .input  n=4}
 #@tab paddle
 y = 2 * paddle.dot(x, x)
 y
 ```
 
-```{.json .output n=3}
+```{.json .output n=4}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=False,\n       [28.])"
   },
-  "execution_count": 3,
+  "execution_count": 4,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -177,13 +152,13 @@ x_grad = t.gradient(y, x)
 x_grad
 ```
 
-```{.python .input  n=4}
+```{.python .input  n=5}
 #@tab paddle
 y.backward()
 x.grad
 ```
 
-```{.json .output n=4}
+```{.json .output n=5}
 [
  {
   "name": "stderr",
@@ -194,7 +169,7 @@ x.grad
   "data": {
    "text/plain": "Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=False,\n       [0. , 4. , 8. , 12.])"
   },
-  "execution_count": 4,
+  "execution_count": 5,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -208,18 +183,18 @@ x.grad
 x.grad == 4 * x
 ```
 
-```{.python .input  n=5}
+```{.python .input  n=6}
 #@tab pytorch, paddle
 x.grad == 4 * x
 ```
 
-```{.json .output n=5}
+```{.json .output n=6}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[4], dtype=bool, place=CPUPlace, stop_gradient=False,\n       [True, True, True, True])"
   },
-  "execution_count": 5,
+  "execution_count": 6,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -256,22 +231,22 @@ with tf.GradientTape() as t:
 t.gradient(y, x)  # 被新计算的梯度覆盖
 ```
 
-```{.python .input  n=6}
+```{.python .input  n=7}
 #@tab paddle
 # 在默认情况下，Paddle会累积梯度，我们需要清除之前的值
-x.clear_grad()
+x.grad.zero_()
 y = x.sum()
 y.backward()
 x.grad
 ```
 
-```{.json .output n=6}
+```{.json .output n=7}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=False,\n       [1., 1., 1., 1.])"
   },
-  "execution_count": 6,
+  "execution_count": 7,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -314,24 +289,24 @@ with tf.GradientTape() as t:
 t.gradient(y, x)  # 等价于y=tf.reduce_sum(x*x)
 ```
 
-```{.python .input  n=7}
+```{.python .input  n=8}
 #@tab paddle
 # 对非标量调用backward需要传入一个gradient参数，该参数指定微分函数关于self的梯度。
 # 在我们的例子中，我们只想求偏导数的和，所以传递一个1的梯度是合适的
-x.clear_grad()
+x.grad.zero_()
 y = x * x
 # 等价于y.backward(paddle.ones(len(x)))
 y.sum().backward()
 x.grad
 ```
 
-```{.json .output n=7}
+```{.json .output n=8}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=False,\n       [0., 2., 4., 6.])"
   },
-  "execution_count": 7,
+  "execution_count": 8,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -361,7 +336,7 @@ x.grad == u
 ```
 
 ```{.python .input  n=9}
-#@tab pytorch
+#@tab pytorch, paddle
 x.grad.zero_()
 y = x * x
 u = y.detach()
@@ -396,30 +371,6 @@ x_grad = t.gradient(z, x)
 x_grad == u
 ```
 
-```{.python .input  n=8}
-#@tab paddle
-x.clear_grad()
-y = x * x
-u = y.detach()
-z = u * x
-
-z.sum().backward()
-x.grad == u
-```
-
-```{.json .output n=8}
-[
- {
-  "data": {
-   "text/plain": "Tensor(shape=[4], dtype=bool, place=CPUPlace, stop_gradient=False,\n       [True, True, True, True])"
-  },
-  "execution_count": 8,
-  "metadata": {},
-  "output_type": "execute_result"
- }
-]
-```
-
 由于记录了`y`的计算结果，我们可以随后在`y`上调用反向传播，
 得到`y=x*x`关于的`x`的导数，即`2*x`。
 
@@ -429,7 +380,7 @@ x.grad == 2 * x
 ```
 
 ```{.python .input  n=10}
-#@tab pytorch
+#@tab pytorch, paddle
 x.grad.zero_()
 y.sum().backward()
 x.grad == 2 * x
@@ -453,26 +404,6 @@ x.grad == 2 * x
 t.gradient(y, x) == 2 * x
 ```
 
-```{.python .input  n=9}
-#@tab paddle
-x.clear_grad()
-y.sum().backward()
-x.grad == 2 * x
-```
-
-```{.json .output n=9}
-[
- {
-  "data": {
-   "text/plain": "Tensor(shape=[4], dtype=bool, place=CPUPlace, stop_gradient=False,\n       [True, True, True, True])"
-  },
-  "execution_count": 9,
-  "metadata": {},
-  "output_type": "execute_result"
- }
-]
-```
-
 ## Python控制流的梯度计算
 
 使用自动微分的一个好处是：
@@ -491,7 +422,7 @@ def f(a):
     return c
 ```
 
-```{.python .input  n=10}
+```{.python .input  n=11}
 #@tab pytorch, paddle
 def f(a):
     b = a * 2
@@ -520,7 +451,6 @@ def f(a):
 让我们计算梯度。
 
 ```{.python .input}
-#@tab mxnet
 a = np.random.normal()
 a.attach_grad()
 with autograd.record():
@@ -544,9 +474,9 @@ d_grad = t.gradient(d, a)
 d_grad
 ```
 
-```{.python .input  n=12}
+```{.python .input}
 #@tab paddle
-a = paddle.randn(shape=[1])
+a = paddle.randn(shape=[0])
 a.stop_gradient=False
 d = f(a)
 d.backward()
@@ -561,22 +491,9 @@ d.backward()
 a.grad == d / a
 ```
 
-```{.python .input  n=13}
+```{.python .input}
 #@tab pytorch, paddle
 a.grad == d / a
-```
-
-```{.json .output n=13}
-[
- {
-  "data": {
-   "text/plain": "Tensor(shape=[1], dtype=bool, place=CPUPlace, stop_gradient=False,\n       [True])"
-  },
-  "execution_count": 13,
-  "metadata": {},
-  "output_type": "execute_result"
- }
-]
 ```
 
 ```{.python .input}

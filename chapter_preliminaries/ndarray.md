@@ -1,7 +1,6 @@
 None
 None
 None
-None
 # 数据操作
 :label:`sec_ndarray`
 
@@ -61,19 +60,9 @@ import torch
 import tensorflow as tf
 ```
 
-```{.python .input  n=1}
+```{.python .input  n=2}
 #@tab paddle
 import paddle
-```
-
-```{.json .output n=1}
-[
- {
-  "name": "stderr",
-  "output_type": "stream",
-  "text": "D:\\Anaconda3\\envs\\d2l\\lib\\site-packages\\urllib3\\util\\selectors.py:14: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working\n  from collections import namedtuple, Mapping\nD:\\Anaconda3\\envs\\d2l\\lib\\site-packages\\urllib3\\_collections.py:2: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working\n  from collections import Mapping, MutableMapping\n"
- }
-]
 ```
 
 [**张量表示由一个数值组成的数组，这个数组可能有多个维度**]。
@@ -104,25 +93,38 @@ x = torch.arange(12)
 x
 ```
 
+```{.json .output n=6}
+[
+ {
+  "data": {
+   "text/plain": "tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])"
+  },
+  "execution_count": 6,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
+```
+
 ```{.python .input}
 #@tab tensorflow
 x = tf.range(12)
 x
 ```
 
-```{.python .input  n=2}
+```{.python .input  n=11}
 #@tab paddle
 x=paddle.arange(12)
 x
 ```
 
-```{.json .output n=2}
+```{.json .output n=11}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[12], dtype=int64, place=CPUPlace, stop_gradient=True,\n       [0 , 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10, 11])"
   },
-  "execution_count": 2,
+  "execution_count": 11,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -149,23 +151,52 @@ x.size
 x.numel()
 ```
 
-```{.python .input  n=8}
-#@tab tensorflow
-tf.size(x)
-```
-
-```{.python .input  n=3}
-#@tab paddle
-x.size
-```
-
-```{.json .output n=3}
+```{.json .output n=7}
 [
  {
   "data": {
    "text/plain": "12"
   },
-  "execution_count": 3,
+  "execution_count": 7,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
+```
+
+```{.python .input  n=8}
+#@tab tensorflow
+tf.size(x)
+```
+
+```{.json .output n=8}
+[
+ {
+  "ename": "NameError",
+  "evalue": "name 'tf' is not defined",
+  "output_type": "error",
+  "traceback": [
+   "\u001b[1;31m---------------------------------------------------------------------------\u001b[0m",
+   "\u001b[1;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+   "\u001b[1;32m~\\AppData\\Local\\Temp/ipykernel_22480/2771511755.py\u001b[0m in \u001b[0;36m<module>\u001b[1;34m\u001b[0m\n\u001b[0;32m      1\u001b[0m \u001b[1;31m#@tab tensorflow\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[1;32m----> 2\u001b[1;33m \u001b[0mtf\u001b[0m\u001b[1;33m.\u001b[0m\u001b[0msize\u001b[0m\u001b[1;33m(\u001b[0m\u001b[0mx\u001b[0m\u001b[1;33m)\u001b[0m\u001b[1;33m\u001b[0m\u001b[1;33m\u001b[0m\u001b[0m\n\u001b[0m",
+   "\u001b[1;31mNameError\u001b[0m: name 'tf' is not defined"
+  ]
+ }
+]
+```
+
+```{.python .input  n=13}
+#@tab paddle
+x.size
+```
+
+```{.json .output n=13}
+[
+ {
+  "data": {
+   "text/plain": "12"
+  },
+  "execution_count": 13,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -214,18 +245,18 @@ torch.zeros((2, 3, 4))
 tf.zeros((2, 3, 4))
 ```
 
-```{.python .input  n=4}
+```{.python .input  n=14}
 #@tab paddle
 paddle.zeros((2,3,4))
 ```
 
-```{.json .output n=4}
+```{.json .output n=14}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[2, 3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [[[0., 0., 0., 0.],\n         [0., 0., 0., 0.],\n         [0., 0., 0., 0.]],\n\n        [[0., 0., 0., 0.],\n         [0., 0., 0., 0.],\n         [0., 0., 0., 0.]]])"
   },
-  "execution_count": 4,
+  "execution_count": 14,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -248,18 +279,18 @@ torch.ones((2, 3, 4))
 tf.ones((2, 3, 4))
 ```
 
-```{.python .input  n=5}
+```{.python .input  n=15}
 #@tab paddle
 paddle.ones((2,3,4))
 ```
 
-```{.json .output n=5}
+```{.json .output n=15}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[2, 3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [[[1., 1., 1., 1.],\n         [1., 1., 1., 1.],\n         [1., 1., 1., 1.]],\n\n        [[1., 1., 1., 1.],\n         [1., 1., 1., 1.],\n         [1., 1., 1., 1.]]])"
   },
-  "execution_count": 5,
+  "execution_count": 15,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -285,18 +316,18 @@ torch.randn(3, 4)
 tf.random.normal(shape=[3, 4])
 ```
 
-```{.python .input  n=6}
+```{.python .input  n=16}
 #@tab paddle
 paddle.rand((3,4))
 ```
 
-```{.json .output n=6}
+```{.json .output n=16}
 [
  {
   "data": {
-   "text/plain": "Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [[0.54371762, 0.17123738, 0.29180291, 0.34769088],\n        [0.80222756, 0.20036095, 0.00074775, 0.99627811],\n        [0.04067819, 0.38802725, 0.66672325, 0.14595976]])"
+   "text/plain": "Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [[0.71911931, 0.29882237, 0.91152048, 0.07011165],\n        [0.89618963, 0.97379881, 0.36827922, 0.20663998],\n        [0.93936932, 0.07247019, 0.05130878, 0.67434549]])"
   },
-  "execution_count": 6,
+  "execution_count": 16,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -320,18 +351,18 @@ torch.tensor([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 tf.constant([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 ```
 
-```{.python .input  n=7}
+```{.python .input  n=17}
 #@tab paddle
 paddle.to_tensor([[2, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 ```
 
-```{.json .output n=7}
+```{.json .output n=17}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[3, 4], dtype=int32, place=CPUPlace, stop_gradient=True,\n       [[2, 1, 4, 3],\n        [1, 2, 3, 4],\n        [4, 3, 2, 1]])"
   },
-  "execution_count": 7,
+  "execution_count": 17,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -383,20 +414,20 @@ y = tf.constant([2.0, 2, 2, 2])
 x + y, x - y, x * y, x / y, x ** y  # **运算符是求幂运算
 ```
 
-```{.python .input  n=8}
+```{.python .input  n=19}
 #@tab paddle
 x = paddle.to_tensor([1.0, 2, 4, 8])
 y = paddle.to_tensor([2.0, 2, 2, 2])
 x + y, x - y, x * y, x / y, x ** y  # **运算符是求幂运算
 ```
 
-```{.json .output n=8}
+```{.json .output n=19}
 [
  {
   "data": {
    "text/plain": "(Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [3. , 4. , 6. , 10.]),\n Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [-1.,  0.,  2.,  6.]),\n Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [2. , 4. , 8. , 16.]),\n Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [0.50000000, 1.        , 2.        , 4.        ]),\n Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [1. , 4. , 16., 64.]))"
   },
-  "execution_count": 8,
+  "execution_count": 19,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -419,18 +450,18 @@ torch.exp(x)
 tf.exp(x)
 ```
 
-```{.python .input  n=9}
+```{.python .input  n=20}
 #@tab paddle
 paddle.exp(x)
 ```
 
-```{.json .output n=9}
+```{.json .output n=20}
 [
  {
   "data": {
    "text/plain": "Tensor(shape=[4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [2.71828175   , 7.38905621   , 54.59815216  , 2980.95800781])"
   },
-  "execution_count": 9,
+  "execution_count": 20,
   "metadata": {},
   "output_type": "execute_result"
  }
@@ -475,6 +506,19 @@ Y = paddle.to_tensor([[2.0, 1, 4, 3], [1, 2, 3, 4], [4, 3, 2, 1]])
 paddle.concat((X, Y), axis=0), paddle.concat((X, Y), axis=1)
 ```
 
+```{.json .output n=22}
+[
+ {
+  "data": {
+   "text/plain": "(Tensor(shape=[6, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [[0. , 1. , 2. , 3. ],\n         [4. , 5. , 6. , 7. ],\n         [8. , 9. , 10., 11.],\n         [2. , 1. , 4. , 3. ],\n         [1. , 2. , 3. , 4. ],\n         [4. , 3. , 2. , 1. ]]),\n Tensor(shape=[3, 8], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [[0. , 1. , 2. , 3. , 2. , 1. , 4. , 3. ],\n         [4. , 5. , 6. , 7. , 1. , 2. , 3. , 4. ],\n         [8. , 9. , 10., 11., 4. , 3. , 2. , 1. ]]))"
+  },
+  "execution_count": 22,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
+```
+
 有时，我们想[**通过*逻辑运算符*构建二元张量**]。
 以`X == Y`为例：
 对于每个位置，如果`X`和`Y`在该位置相等，则新张量中相应项的值为1。
@@ -500,6 +544,19 @@ tf.reduce_sum(X)
 ```{.python .input  n=23}
 #@tab paddle
 X.sum()
+```
+
+```{.json .output n=23}
+[
+ {
+  "data": {
+   "text/plain": "Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [66.])"
+  },
+  "execution_count": 23,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
 ```
 
 ## 广播机制
@@ -539,6 +596,19 @@ a, b
 a = paddle.arange(3).reshape((3, 1))
 b = paddle.arange(2).reshape((1, 2))
 a, b
+```
+
+```{.json .output n=24}
+[
+ {
+  "data": {
+   "text/plain": "(Tensor(shape=[3, 1], dtype=int64, place=CPUPlace, stop_gradient=True,\n        [[0],\n         [1],\n         [2]]),\n Tensor(shape=[1, 2], dtype=int64, place=CPUPlace, stop_gradient=True,\n        [[0, 1]]))"
+  },
+  "execution_count": 24,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
 ```
 
 由于`a`和`b`分别是$3\times1$和$1\times2$矩阵，如果让它们相加，它们的形状不匹配。
@@ -581,6 +651,19 @@ X[1, 2] = 9
 X
 ```
 
+```{.json .output n=25}
+[
+ {
+  "data": {
+   "text/plain": "Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [[0. , 1. , 2. , 3. ],\n        [4. , 5. , 9. , 7. ],\n        [8. , 9. , 10., 11.]])"
+  },
+  "execution_count": 25,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
+```
+
 ```{.python .input}
 #@tab tensorflow
 X_var = tf.Variable(X)
@@ -596,6 +679,19 @@ X_var
 #@tab mxnet, pytorch, paddle
 X[0:2, :] = 12
 X
+```
+
+```{.json .output n=26}
+[
+ {
+  "data": {
+   "text/plain": "Tensor(shape=[3, 4], dtype=float32, place=CPUPlace, stop_gradient=True,\n       [[12., 12., 12., 12.],\n        [12., 12., 12., 12.],\n        [8. , 9. , 10., 11.]])"
+  },
+  "execution_count": 26,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
 ```
 
 ```{.python .input}
@@ -620,6 +716,19 @@ X_var
 before = id(Y)
 Y = Y + X
 id(Y) == before
+```
+
+```{.json .output n=27}
+[
+ {
+  "data": {
+   "text/plain": "False"
+  },
+  "execution_count": 27,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
 ```
 
 这可能是不可取的，原因有两个：首先，我们不想总是不必要地分配内存。
@@ -671,6 +780,16 @@ Z = paddle.zeros_like(Y)
 print('id(Z):', id(Z))
 Z[:] = X + Y
 print('id(Z):', id(Z))
+```
+
+```{.json .output n=28}
+[
+ {
+  "name": "stdout",
+  "output_type": "stream",
+  "text": "id(Z): 2293854617328\nid(Z): 2293854617328\n"
+ }
+]
 ```
 
 :begin_tab:`mxnet, pytorch, paddle`
@@ -751,6 +870,19 @@ B = paddle.to_tensor(A)
 type(A), type(B)
 ```
 
+```{.json .output n=29}
+[
+ {
+  "data": {
+   "text/plain": "(numpy.ndarray, paddle.Tensor)"
+  },
+  "execution_count": 29,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
+```
+
 要(**将大小为1的张量转换为Python标量**)，我们可以调用`item`函数或Python的内置函数。
 
 ```{.python .input}
@@ -774,6 +906,19 @@ a, a.item(), float(a), int(a)
 #@tab paddle
 a = paddle.to_tensor([3.5])
 a, a.item(), float(a), int(a)
+```
+
+```{.json .output n=30}
+[
+ {
+  "data": {
+   "text/plain": "(Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,\n        [3.50000000]),\n 3.5,\n 3.5,\n 3)"
+  },
+  "execution_count": 30,
+  "metadata": {},
+  "output_type": "execute_result"
+ }
+]
 ```
 
 ## 小结

@@ -3,21 +3,49 @@
 #    d2lbook build lib
 # Don't edit it directly
 
+import collections
+import hashlib
+import math
+import os
+import random
+import re
+import shutil
+import sys
+import tarfile
+import time
+import zipfile
+from collections import defaultdict
+import pandas as pd
+import requests
+from IPython import display
+from matplotlib import pyplot as plt
+
+d2l = sys.modules[__name__]
+
+import numpy as np
+import torch
+import torchvision
+from PIL import Image
+from torch import nn
+from torch.nn import functional as F
+from torch.utils import data
+from torchvision import transforms
+
 def use_svg_display():
-    """Ê¹ÓÃsvg¸ñÊ½ÔÚJupyterÖĞÏÔÊ¾»æÍ¼
+    """ä½¿ç”¨svgæ ¼å¼åœ¨Jupyterä¸­æ˜¾ç¤ºç»˜å›¾
 
     Defined in :numref:`sec_calculus`"""
     display.set_matplotlib_formats('svg')
 
 def set_figsize(figsize=(3.5, 2.5)):
-    """ÉèÖÃmatplotlibµÄÍ¼±í´óĞ¡
+    """è®¾ç½®matplotlibçš„å›¾è¡¨å¤§å°
 
     Defined in :numref:`sec_calculus`"""
     use_svg_display()
     d2l.plt.rcParams['figure.figsize'] = figsize
 
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
-    """ÉèÖÃmatplotlibµÄÖá
+    """è®¾ç½®matplotlibçš„è½´
 
     Defined in :numref:`sec_calculus`"""
     axes.set_xlabel(xlabel)
@@ -33,7 +61,7 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
          ylim=None, xscale='linear', yscale='linear',
          fmts=('-', 'm--', 'g-.', 'r:'), figsize=(3.5, 2.5), axes=None):
-    """»æÖÆÊı¾İµã
+    """ç»˜åˆ¶æ•°æ®ç‚¹
 
     Defined in :numref:`sec_calculus`"""
     if legend is None:
@@ -42,7 +70,7 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_figsize(figsize)
     axes = axes if axes else d2l.plt.gca()
 
-    # Èç¹ûXÓĞÒ»¸öÖá£¬Êä³öTrue
+    # å¦‚æœ`X`æœ‰ä¸€ä¸ªè½´ï¼Œè¾“å‡ºTrue
     def has_one_axis(X):
         return (hasattr(X, "ndim") and X.ndim == 1 or isinstance(X, list)
                 and not hasattr(X[0], "__len__"))
@@ -64,35 +92,35 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=None, xlim=None,
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
 
 class Timer:
-    """¼ÇÂ¼¶à´ÎÔËĞĞÊ±¼ä"""
+    """è®°å½•å¤šæ¬¡è¿è¡Œæ—¶é—´"""
     def __init__(self):
         """Defined in :numref:`subsec_linear_model`"""
         self.times = []
         self.start()
 
     def start(self):
-        """Æô¶¯¼ÆÊ±Æ÷"""
+        """å¯åŠ¨è®¡æ—¶å™¨"""
         self.tik = time.time()
 
     def stop(self):
-        """Í£Ö¹¼ÆÊ±Æ÷²¢½«Ê±¼ä¼ÇÂ¼ÔÚÁĞ±íÖĞ"""
+        """åœæ­¢è®¡æ—¶å™¨å¹¶å°†æ—¶é—´è®°å½•åœ¨åˆ—è¡¨ä¸­"""
         self.times.append(time.time() - self.tik)
         return self.times[-1]
 
     def avg(self):
-        """·µ»ØÆ½¾ùÊ±¼ä"""
+        """è¿”å›å¹³å‡æ—¶é—´"""
         return sum(self.times) / len(self.times)
 
     def sum(self):
-        """·µ»ØÊ±¼ä×ÜºÍ"""
+        """è¿”å›æ—¶é—´æ€»å’Œ"""
         return sum(self.times)
 
     def cumsum(self):
-        """·µ»ØÀÛ¼ÆÊ±¼ä"""
+        """è¿”å›ç´¯è®¡æ—¶é—´"""
         return np.array(self.times).cumsum().tolist()
 
 def synthetic_data(w, b, num_examples):
-    """Éú³Éy=Xw+b+ÔëÉù
+    """ç”Ÿæˆy=Xw+b+å™ªå£°
 
     Defined in :numref:`sec_linear_scratch`"""
     X = d2l.normal(0, 1, (num_examples, len(w)))
@@ -101,19 +129,19 @@ def synthetic_data(w, b, num_examples):
     return X, d2l.reshape(y, (-1, 1))
 
 def linreg(X, w, b):
-    """ÏßĞÔ»Ø¹éÄ£ĞÍ
+    """çº¿æ€§å›å½’æ¨¡å‹
 
     Defined in :numref:`sec_linear_scratch`"""
     return d2l.matmul(X, w) + b
 
 def squared_loss(y_hat, y):
-    """¾ù·½ËğÊ§
+    """å‡æ–¹æŸå¤±
 
     Defined in :numref:`sec_linear_scratch`"""
     return (y_hat - d2l.reshape(y, y_hat.shape)) ** 2 / 2
 
 def sgd(params, lr, batch_size):
-    """Ğ¡ÅúÁ¿Ëæ»úÌİ¶ÈÏÂ½µ
+    """å°æ‰¹é‡éšæœºæ¢¯åº¦ä¸‹é™
 
     Defined in :numref:`sec_linear_scratch`"""
     with torch.no_grad():
@@ -122,14 +150,14 @@ def sgd(params, lr, batch_size):
             param.grad.zero_()
 
 def load_array(data_arrays, batch_size, is_train=True):
-    """¹¹ÔìÒ»¸öPyTorchÊı¾İµü´úÆ÷
+    """æ„é€ ä¸€ä¸ªPyTorchæ•°æ®è¿­ä»£å™¨
 
     Defined in :numref:`sec_linear_concise`"""
     dataset = data.TensorDataset(*data_arrays)
     return data.DataLoader(dataset, batch_size, shuffle=is_train)
 
 def get_fashion_mnist_labels(labels):
-    """·µ»ØFashion-MNISTÊı¾İ¼¯µÄÎÄ±¾±êÇ©
+    """è¿”å›Fashion-MNISTæ•°æ®é›†çš„æ–‡æœ¬æ ‡ç­¾
 
     Defined in :numref:`sec_fashion_mnist`"""
     text_labels = ['t-shirt', 'trouser', 'pullover', 'dress', 'coat',
@@ -137,7 +165,7 @@ def get_fashion_mnist_labels(labels):
     return [text_labels[int(i)] for i in labels]
 
 def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
-    """»æÖÆÍ¼ÏñÁĞ±í
+    """ç»˜åˆ¶å›¾åƒåˆ—è¡¨
 
     Defined in :numref:`sec_fashion_mnist`"""
     figsize = (num_cols * scale, num_rows * scale)
@@ -145,10 +173,10 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     axes = axes.flatten()
     for i, (ax, img) in enumerate(zip(axes, imgs)):
         if torch.is_tensor(img):
-            # Í¼Æ¬ÕÅÁ¿
+            # å›¾ç‰‡å¼ é‡
             ax.imshow(img.numpy())
         else:
-            # PILÍ¼Æ¬
+            # PILå›¾ç‰‡
             ax.imshow(img)
         ax.axes.get_xaxis().set_visible(False)
         ax.axes.get_yaxis().set_visible(False)
@@ -157,13 +185,13 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     return axes
 
 def get_dataloader_workers():
-    """Ê¹ÓÃ4¸ö½ø³ÌÀ´¶ÁÈ¡Êı¾İ
+    """ä½¿ç”¨4ä¸ªè¿›ç¨‹æ¥è¯»å–æ•°æ®
 
     Defined in :numref:`sec_fashion_mnist`"""
     return 4
 
 def load_data_fashion_mnist(batch_size, resize=None):
-    """ÏÂÔØFashion-MNISTÊı¾İ¼¯£¬È»ºó½«Æä¼ÓÔØµ½ÄÚ´æÖĞ
+    """ä¸‹è½½Fashion-MNISTæ•°æ®é›†ï¼Œç„¶åå°†å…¶åŠ è½½åˆ°å†…å­˜ä¸­
 
     Defined in :numref:`sec_fashion_mnist`"""
     trans = [transforms.ToTensor()]
@@ -180,7 +208,7 @@ def load_data_fashion_mnist(batch_size, resize=None):
                             num_workers=get_dataloader_workers()))
 
 def accuracy(y_hat, y):
-    """¼ÆËãÔ¤²âÕıÈ·µÄÊıÁ¿
+    """è®¡ç®—é¢„æµ‹æ­£ç¡®çš„æ•°é‡
 
     Defined in :numref:`sec_softmax_scratch`"""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:
@@ -189,19 +217,19 @@ def accuracy(y_hat, y):
     return float(d2l.reduce_sum(d2l.astype(cmp, y.dtype)))
 
 def evaluate_accuracy(net, data_iter):
-    """¼ÆËãÔÚÖ¸¶¨Êı¾İ¼¯ÉÏÄ£ĞÍµÄ¾«¶È
+    """è®¡ç®—åœ¨æŒ‡å®šæ•°æ®é›†ä¸Šæ¨¡å‹çš„ç²¾åº¦
 
     Defined in :numref:`sec_softmax_scratch`"""
     if isinstance(net, torch.nn.Module):
-        net.eval()  # ½«Ä£ĞÍÉèÖÃÎªÆÀ¹ÀÄ£Ê½
-    metric = Accumulator(2)  # ÕıÈ·Ô¤²âÊı¡¢Ô¤²â×ÜÊı
+        net.eval()  # å°†æ¨¡å‹è®¾ç½®ä¸ºè¯„ä¼°æ¨¡å¼
+    metric = Accumulator(2)  # æ­£ç¡®é¢„æµ‹æ•°ã€é¢„æµ‹æ€»æ•°
     with torch.no_grad():
         for X, y in data_iter:
             metric.add(accuracy(net(X), y), d2l.size(y))
     return metric[0] / metric[1]
 
 class Accumulator:
-    """ÔÚn¸ö±äÁ¿ÉÏÀÛ¼Ó"""
+    """åœ¨`n`ä¸ªå˜é‡ä¸Šç´¯åŠ """
     def __init__(self, n):
         """Defined in :numref:`sec_softmax_scratch`"""
         self.data = [0.0] * n
@@ -216,52 +244,52 @@ class Accumulator:
         return self.data[idx]
 
 def train_epoch_ch3(net, train_iter, loss, updater):
-    """ÑµÁ·Ä£ĞÍÒ»¸öµü´úÖÜÆÚ£¨¶¨Òå¼ûµÚ3ÕÂ£©
+    """è®­ç»ƒæ¨¡å‹ä¸€ä¸ªè¿­ä»£å‘¨æœŸï¼ˆå®šä¹‰è§ç¬¬3ç« ï¼‰
 
     Defined in :numref:`sec_softmax_scratch`"""
-    # ½«Ä£ĞÍÉèÖÃÎªÑµÁ·Ä£Ê½
+    # å°†æ¨¡å‹è®¾ç½®ä¸ºè®­ç»ƒæ¨¡å¼
     if isinstance(net, torch.nn.Module):
         net.train()
-    # ÑµÁ·ËğÊ§×ÜºÍ¡¢ÑµÁ·×¼È·¶È×ÜºÍ¡¢Ñù±¾Êı
+    # è®­ç»ƒæŸå¤±æ€»å’Œã€è®­ç»ƒå‡†ç¡®åº¦æ€»å’Œã€æ ·æœ¬æ•°
     metric = Accumulator(3)
     for X, y in train_iter:
-        # ¼ÆËãÌİ¶È²¢¸üĞÂ²ÎÊı
+        # è®¡ç®—æ¢¯åº¦å¹¶æ›´æ–°å‚æ•°
         y_hat = net(X)
         l = loss(y_hat, y)
         if isinstance(updater, torch.optim.Optimizer):
-            # Ê¹ÓÃPyTorchÄÚÖÃµÄÓÅ»¯Æ÷ºÍËğÊ§º¯Êı
+            # ä½¿ç”¨PyTorchå†…ç½®çš„ä¼˜åŒ–å™¨å’ŒæŸå¤±å‡½æ•°
             updater.zero_grad()
             l.sum().backward()
             updater.step()
         else:
-            # Ê¹ÓÃ¶¨ÖÆµÄÓÅ»¯Æ÷ºÍËğÊ§º¯Êı
+            # ä½¿ç”¨å®šåˆ¶çš„ä¼˜åŒ–å™¨å’ŒæŸå¤±å‡½æ•°
             l.sum().backward()
             updater(X.shape[0])
         metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
-    # ·µ»ØÑµÁ·ËğÊ§ºÍÑµÁ·¾«¶È
+    # è¿”å›è®­ç»ƒæŸå¤±å’Œè®­ç»ƒç²¾åº¦
     return metric[0] / metric[2], metric[1] / metric[2]
 
 class Animator:
-    """ÔÚ¶¯»­ÖĞ»æÖÆÊı¾İ"""
+    """åœ¨åŠ¨ç”»ä¸­ç»˜åˆ¶æ•°æ®"""
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear',
                  fmts=('-', 'm--', 'g-.', 'r:'), nrows=1, ncols=1,
                  figsize=(3.5, 2.5)):
         """Defined in :numref:`sec_softmax_scratch`"""
-        # ÔöÁ¿µØ»æÖÆ¶àÌõÏß
+        # å¢é‡åœ°ç»˜åˆ¶å¤šæ¡çº¿
         if legend is None:
             legend = []
         d2l.use_svg_display()
         self.fig, self.axes = d2l.plt.subplots(nrows, ncols, figsize=figsize)
         if nrows * ncols == 1:
             self.axes = [self.axes, ]
-        # Ê¹ÓÃlambdaº¯Êı²¶»ñ²ÎÊı
+        # ä½¿ç”¨lambdaå‡½æ•°æ•è·å‚æ•°
         self.config_axes = lambda: d2l.set_axes(
             self.axes[0], xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
         self.X, self.Y, self.fmts = None, None, fmts
 
     def add(self, x, y):
-        # ÏòÍ¼±íÖĞÌí¼Ó¶à¸öÊı¾İµã
+        # å‘å›¾è¡¨ä¸­æ·»åŠ å¤šä¸ªæ•°æ®ç‚¹
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
@@ -283,7 +311,7 @@ class Animator:
         display.clear_output(wait=True)
 
 def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
-    """ÑµÁ·Ä£ĞÍ£¨¶¨Òå¼ûµÚ3ÕÂ£©
+    """è®­ç»ƒæ¨¡å‹ï¼ˆå®šä¹‰è§ç¬¬3ç« ï¼‰
 
     Defined in :numref:`sec_softmax_scratch`"""
     animator = Animator(xlabel='epoch', xlim=[1, num_epochs], ylim=[0.3, 0.9],
@@ -298,7 +326,7 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     assert test_acc <= 1 and test_acc > 0.7, test_acc
 
 def predict_ch3(net, test_iter, n=6):
-    """Ô¤²â±êÇ©£¨¶¨Òå¼ûµÚ3ÕÂ£©
+    """é¢„æµ‹æ ‡ç­¾ï¼ˆå®šä¹‰è§ç¬¬3ç« ï¼‰
 
     Defined in :numref:`sec_softmax_scratch`"""
     for X, y in test_iter:
@@ -310,10 +338,10 @@ def predict_ch3(net, test_iter, n=6):
         d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
 
 def evaluate_loss(net, data_iter, loss):
-    """ÆÀ¹À¸ø¶¨Êı¾İ¼¯ÉÏÄ£ĞÍµÄËğÊ§
+    """è¯„ä¼°ç»™å®šæ•°æ®é›†ä¸Šæ¨¡å‹çš„æŸå¤±
 
     Defined in :numref:`sec_model_selection`"""
-    metric = d2l.Accumulator(2)  # ËğÊ§µÄ×ÜºÍ,Ñù±¾ÊıÁ¿
+    metric = d2l.Accumulator(2)  # æŸå¤±çš„æ€»å’Œ,æ ·æœ¬æ•°é‡
     for X, y in data_iter:
         out = net(X)
         y = d2l.reshape(y, out.shape)
@@ -325,10 +353,10 @@ DATA_HUB = dict()
 DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 
 def download(name, cache_dir=os.path.join('..', 'data')):
-    """ÏÂÔØÒ»¸öDATA_HUBÖĞµÄÎÄ¼ş£¬·µ»Ø±¾µØÎÄ¼şÃû
+    """ä¸‹è½½ä¸€ä¸ªDATA_HUBä¸­çš„æ–‡ä»¶ï¼Œè¿”å›æœ¬åœ°æ–‡ä»¶å
 
     Defined in :numref:`sec_kaggle_house`"""
-    assert name in DATA_HUB, f"{name} ²»´æÔÚÓÚ {DATA_HUB}"
+    assert name in DATA_HUB, f"{name} ä¸å­˜åœ¨äº {DATA_HUB}"
     url, sha1_hash = DATA_HUB[name]
     os.makedirs(cache_dir, exist_ok=True)
     fname = os.path.join(cache_dir, url.split('/')[-1])
@@ -341,15 +369,15 @@ def download(name, cache_dir=os.path.join('..', 'data')):
                     break
                 sha1.update(data)
         if sha1.hexdigest() == sha1_hash:
-            return fname  # ÃüÖĞ»º´æ
-    print(f'ÕıÔÚ´Ó{url}ÏÂÔØ{fname}...')
+            return fname  # å‘½ä¸­ç¼“å­˜
+    print(f'æ­£åœ¨ä»{url}ä¸‹è½½{fname}...')
     r = requests.get(url, stream=True, verify=True)
     with open(fname, 'wb') as f:
         f.write(r.content)
     return fname
 
 def download_extract(name, folder=None):
-    """ÏÂÔØ²¢½âÑ¹zip/tarÎÄ¼ş
+    """ä¸‹è½½å¹¶è§£å‹zip/taræ–‡ä»¶
 
     Defined in :numref:`sec_kaggle_house`"""
     fname = download(name)
@@ -360,12 +388,12 @@ def download_extract(name, folder=None):
     elif ext in ('.tar', '.gz'):
         fp = tarfile.open(fname, 'r')
     else:
-        assert False, 'Ö»ÓĞzip/tarÎÄ¼ş¿ÉÒÔ±»½âÑ¹Ëõ'
+        assert False, 'åªæœ‰zip/taræ–‡ä»¶å¯ä»¥è¢«è§£å‹ç¼©'
     fp.extractall(base_dir)
     return os.path.join(base_dir, folder) if folder else data_dir
 
 def download_all():
-    """ÏÂÔØDATA_HUBÖĞµÄËùÓĞÎÄ¼ş
+    """ä¸‹è½½DATA_HUBä¸­çš„æ‰€æœ‰æ–‡ä»¶
 
     Defined in :numref:`sec_kaggle_house`"""
     for name in DATA_HUB:
@@ -380,7 +408,7 @@ DATA_HUB['kaggle_house_test'] = (
     'fa19780a7b011d9b009e8bff8e99922a8ee2eb90')
 
 def try_gpu(i=0):
-    """Èç¹û´æÔÚ£¬Ôò·µ»Øgpu(i)£¬·ñÔò·µ»Øcpu()
+    """å¦‚æœå­˜åœ¨ï¼Œåˆ™è¿”å›gpu(i)ï¼Œå¦åˆ™è¿”å›cpu()
 
     Defined in :numref:`sec_use_gpu`"""
     if torch.cuda.device_count() >= i + 1:
@@ -388,7 +416,7 @@ def try_gpu(i=0):
     return torch.device('cpu')
 
 def try_all_gpus():
-    """·µ»ØËùÓĞ¿ÉÓÃµÄGPU£¬Èç¹ûÃ»ÓĞGPU£¬Ôò·µ»Ø[cpu(),]
+    """è¿”å›æ‰€æœ‰å¯ç”¨çš„GPUï¼Œå¦‚æœæ²¡æœ‰GPUï¼Œåˆ™è¿”å›[cpu(),]
 
     Defined in :numref:`sec_use_gpu`"""
     devices = [torch.device(f'cuda:{i}')
@@ -396,7 +424,7 @@ def try_all_gpus():
     return devices if devices else [torch.device('cpu')]
 
 def corr2d(X, K):
-    """¼ÆËã¶şÎ¬»¥Ïà¹ØÔËËã
+    """è®¡ç®—äºŒç»´äº’ç›¸å…³è¿ç®—
 
     Defined in :numref:`sec_conv_layer`"""
     h, w = K.shape
@@ -407,19 +435,19 @@ def corr2d(X, K):
     return Y
 
 def evaluate_accuracy_gpu(net, data_iter, device=None):
-    """Ê¹ÓÃGPU¼ÆËãÄ£ĞÍÔÚÊı¾İ¼¯ÉÏµÄ¾«¶È
+    """ä½¿ç”¨GPUè®¡ç®—æ¨¡å‹åœ¨æ•°æ®é›†ä¸Šçš„ç²¾åº¦
 
     Defined in :numref:`sec_lenet`"""
     if isinstance(net, nn.Module):
-        net.eval()  # ÉèÖÃÎªÆÀ¹ÀÄ£Ê½
+        net.eval()  # è®¾ç½®ä¸ºè¯„ä¼°æ¨¡å¼
         if not device:
             device = next(iter(net.parameters())).device
-    # ÕıÈ·Ô¤²âµÄÊıÁ¿£¬×ÜÔ¤²âµÄÊıÁ¿
+    # æ­£ç¡®é¢„æµ‹çš„æ•°é‡ï¼Œæ€»é¢„æµ‹çš„æ•°é‡
     metric = d2l.Accumulator(2)
     with torch.no_grad():
         for X, y in data_iter:
             if isinstance(X, list):
-                # BERTÎ¢µ÷ËùĞèµÄ£¨Ö®ºó½«½éÉÜ£©
+                # BERTå¾®è°ƒæ‰€éœ€çš„ï¼ˆä¹‹åå°†ä»‹ç»ï¼‰
                 X = [x.to(device) for x in X]
             else:
                 X = X.to(device)
@@ -428,7 +456,7 @@ def evaluate_accuracy_gpu(net, data_iter, device=None):
     return metric[0] / metric[1]
 
 def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
-    """ÓÃGPUÑµÁ·Ä£ĞÍ(ÔÚµÚÁùÕÂ¶¨Òå)
+    """ç”¨GPUè®­ç»ƒæ¨¡å‹(åœ¨ç¬¬å…­ç« å®šä¹‰)
 
     Defined in :numref:`sec_lenet`"""
     def init_weights(m):
@@ -443,7 +471,7 @@ def train_ch6(net, train_iter, test_iter, num_epochs, lr, device):
                             legend=['train loss', 'train acc', 'test acc'])
     timer, num_batches = d2l.Timer(), len(train_iter)
     for epoch in range(num_epochs):
-        # ÑµÁ·ËğÊ§Ö®ºÍ£¬ÑµÁ·×¼È·ÂÊÖ®ºÍ£¬Ñù±¾Êı
+        # è®­ç»ƒæŸå¤±ä¹‹å’Œï¼Œè®­ç»ƒå‡†ç¡®ç‡ä¹‹å’Œï¼ŒèŒƒä¾‹æ•°
         metric = d2l.Accumulator(3)
         net.train()
         for i, (X, y) in enumerate(train_iter):
@@ -497,7 +525,7 @@ d2l.DATA_HUB['time_machine'] = (d2l.DATA_URL + 'timemachine.txt',
                                 '090b5e7e70c295757f55df93cb0a180b9691891a')
 
 def read_time_machine():
-    """½«Ê±¼ä»úÆ÷Êı¾İ¼¯¼ÓÔØµ½ÎÄ±¾ĞĞµÄÁĞ±íÖĞ
+    """å°†æ—¶é—´æœºå™¨æ•°æ®é›†åŠ è½½åˆ°æ–‡æœ¬è¡Œçš„åˆ—è¡¨ä¸­
 
     Defined in :numref:`sec_text_preprocessing`"""
     with open(d2l.download('time_machine'), 'r') as f:
@@ -505,7 +533,7 @@ def read_time_machine():
     return [re.sub('[^A-Za-z]+', ' ', line).strip().lower() for line in lines]
 
 def tokenize(lines, token='word'):
-    """½«ÎÄ±¾ĞĞ²ğ·ÖÎªµ¥´Ê»ò×Ö·û´ÊÔª
+    """å°†æ–‡æœ¬è¡Œæ‹†åˆ†ä¸ºå•è¯æˆ–å­—ç¬¦è¯å…ƒ
 
     Defined in :numref:`sec_text_preprocessing`"""
     if token == 'word':
@@ -513,21 +541,21 @@ def tokenize(lines, token='word'):
     elif token == 'char':
         return [list(line) for line in lines]
     else:
-        print('´íÎó£ºÎ´Öª´ÊÔªÀàĞÍ£º' + token)
+        print('é”™è¯¯ï¼šæœªçŸ¥è¯å…ƒç±»å‹ï¼š' + token)
 
 class Vocab:
-    """ÎÄ±¾´Ê±í"""
+    """æ–‡æœ¬è¯è¡¨"""
     def __init__(self, tokens=None, min_freq=0, reserved_tokens=None):
         """Defined in :numref:`sec_text_preprocessing`"""
         if tokens is None:
             tokens = []
         if reserved_tokens is None:
             reserved_tokens = []
-        # °´³öÏÖÆµÂÊÅÅĞò
+        # æŒ‰å‡ºç°é¢‘ç‡æ’åº
         counter = count_corpus(tokens)
         self._token_freqs = sorted(counter.items(), key=lambda x: x[1],
                                    reverse=True)
-        # Î´Öª´ÊÔªµÄË÷ÒıÎª0
+        # æœªçŸ¥è¯å…ƒçš„ç´¢å¼•ä¸º0
         self.idx_to_token = ['<unk>'] + reserved_tokens
         self.token_to_idx = {token: idx
                              for idx, token in enumerate(self.idx_to_token)}
@@ -553,7 +581,7 @@ class Vocab:
         return [self.idx_to_token[index] for index in indices]
 
     @property
-    def unk(self):  # Î´Öª´ÊÔªµÄË÷ÒıÎª0
+    def unk(self):  # æœªçŸ¥è¯å…ƒçš„ç´¢å¼•ä¸º0
         return 0
 
     @property
@@ -561,60 +589,60 @@ class Vocab:
         return self._token_freqs
 
 def count_corpus(tokens):
-    """Í³¼Æ´ÊÔªµÄÆµÂÊ
+    """ç»Ÿè®¡è¯å…ƒçš„é¢‘ç‡
 
     Defined in :numref:`sec_text_preprocessing`"""
-    # ÕâÀïµÄtokensÊÇ1DÁĞ±í»ò2DÁĞ±í
+    # è¿™é‡Œçš„`tokens`æ˜¯1Dåˆ—è¡¨æˆ–2Dåˆ—è¡¨
     if len(tokens) == 0 or isinstance(tokens[0], list):
-        # ½«´ÊÔªÁĞ±íÕ¹Æ½³ÉÒ»¸öÁĞ±í
+        # å°†è¯å…ƒåˆ—è¡¨å±•å¹³æˆä¸€ä¸ªåˆ—è¡¨
         tokens = [token for line in tokens for token in line]
     return collections.Counter(tokens)
 
 def load_corpus_time_machine(max_tokens=-1):
-    """·µ»ØÊ±¹â»úÆ÷Êı¾İ¼¯µÄ´ÊÔªË÷ÒıÁĞ±íºÍ´Ê±í
+    """è¿”å›æ—¶å…‰æœºå™¨æ•°æ®é›†çš„è¯å…ƒç´¢å¼•åˆ—è¡¨å’Œè¯è¡¨
 
     Defined in :numref:`sec_text_preprocessing`"""
     lines = read_time_machine()
     tokens = tokenize(lines, 'char')
     vocab = Vocab(tokens)
-    # ÒòÎªÊ±¹â»úÆ÷Êı¾İ¼¯ÖĞµÄÃ¿¸öÎÄ±¾ĞĞ²»Ò»¶¨ÊÇÒ»¸ö¾ä×Ó»òÒ»¸ö¶ÎÂä£¬
-    # ËùÒÔ½«ËùÓĞÎÄ±¾ĞĞÕ¹Æ½µ½Ò»¸öÁĞ±íÖĞ
+    # å› ä¸ºæ—¶å…‰æœºå™¨æ•°æ®é›†ä¸­çš„æ¯ä¸ªæ–‡æœ¬è¡Œä¸ä¸€å®šæ˜¯ä¸€ä¸ªå¥å­æˆ–ä¸€ä¸ªæ®µè½ï¼Œ
+    # æ‰€ä»¥å°†æ‰€æœ‰æ–‡æœ¬è¡Œå±•å¹³åˆ°ä¸€ä¸ªåˆ—è¡¨ä¸­
     corpus = [vocab[token] for line in tokens for token in line]
     if max_tokens > 0:
         corpus = corpus[:max_tokens]
     return corpus, vocab
 
 def seq_data_iter_random(corpus, batch_size, num_steps):
-    """Ê¹ÓÃËæ»ú³éÑùÉú³ÉÒ»¸öĞ¡ÅúÁ¿×ÓĞòÁĞ
+    """ä½¿ç”¨éšæœºæŠ½æ ·ç”Ÿæˆä¸€ä¸ªå°æ‰¹é‡å­åºåˆ—
 
     Defined in :numref:`sec_language_model`"""
-    # ´ÓËæ»úÆ«ÒÆÁ¿¿ªÊ¼¶ÔĞòÁĞ½øĞĞ·ÖÇø£¬Ëæ»ú·¶Î§°üÀ¨num_steps-1
+    # ä»éšæœºåç§»é‡å¼€å§‹å¯¹åºåˆ—è¿›è¡Œåˆ†åŒºï¼ŒéšæœºèŒƒå›´åŒ…æ‹¬`num_steps-1`
     corpus = corpus[random.randint(0, num_steps - 1):]
-    # ¼õÈ¥1£¬ÊÇÒòÎªÎÒÃÇĞèÒª¿¼ÂÇ±êÇ©
+    # å‡å»1ï¼Œæ˜¯å› ä¸ºæˆ‘ä»¬éœ€è¦è€ƒè™‘æ ‡ç­¾
     num_subseqs = (len(corpus) - 1) // num_steps
-    # ³¤¶ÈÎªnum_stepsµÄ×ÓĞòÁĞµÄÆğÊ¼Ë÷Òı
+    # é•¿åº¦ä¸º`num_steps`çš„å­åºåˆ—çš„èµ·å§‹ç´¢å¼•
     initial_indices = list(range(0, num_subseqs * num_steps, num_steps))
-    # ÔÚËæ»ú³éÑùµÄµü´ú¹ı³ÌÖĞ£¬
-    # À´×ÔÁ½¸öÏàÁÚµÄ¡¢Ëæ»úµÄ¡¢Ğ¡ÅúÁ¿ÖĞµÄ×ÓĞòÁĞ²»Ò»¶¨ÔÚÔ­Ê¼ĞòÁĞÉÏÏàÁÚ
+    # åœ¨éšæœºæŠ½æ ·çš„è¿­ä»£è¿‡ç¨‹ä¸­ï¼Œ
+    # æ¥è‡ªä¸¤ä¸ªç›¸é‚»çš„ã€éšæœºçš„ã€å°æ‰¹é‡ä¸­çš„å­åºåˆ—ä¸ä¸€å®šåœ¨åŸå§‹åºåˆ—ä¸Šç›¸é‚»
     random.shuffle(initial_indices)
 
     def data(pos):
-        # ·µ»Ø´ÓposÎ»ÖÃ¿ªÊ¼µÄ³¤¶ÈÎªnum_stepsµÄĞòÁĞ
+        # è¿”å›ä»`pos`ä½ç½®å¼€å§‹çš„é•¿åº¦ä¸º`num_steps`çš„åºåˆ—
         return corpus[pos: pos + num_steps]
 
     num_batches = num_subseqs // batch_size
     for i in range(0, batch_size * num_batches, batch_size):
-        # ÔÚÕâÀï£¬initial_indices°üº¬×ÓĞòÁĞµÄËæ»úÆğÊ¼Ë÷Òı
+        # åœ¨è¿™é‡Œï¼Œ`initial_indices`åŒ…å«å­åºåˆ—çš„éšæœºèµ·å§‹ç´¢å¼•
         initial_indices_per_batch = initial_indices[i: i + batch_size]
         X = [data(j) for j in initial_indices_per_batch]
         Y = [data(j + 1) for j in initial_indices_per_batch]
         yield d2l.tensor(X), d2l.tensor(Y)
 
 def seq_data_iter_sequential(corpus, batch_size, num_steps):
-    """Ê¹ÓÃË³Ğò·ÖÇøÉú³ÉÒ»¸öĞ¡ÅúÁ¿×ÓĞòÁĞ
+    """ä½¿ç”¨é¡ºåºåˆ†åŒºç”Ÿæˆä¸€ä¸ªå°æ‰¹é‡å­åºåˆ—
 
     Defined in :numref:`sec_language_model`"""
-    # ´ÓËæ»úÆ«ÒÆÁ¿¿ªÊ¼»®·ÖĞòÁĞ
+    # ä»éšæœºåç§»é‡å¼€å§‹åˆ’åˆ†åºåˆ—
     offset = random.randint(0, num_steps)
     num_tokens = ((len(corpus) - offset - 1) // batch_size) * batch_size
     Xs = d2l.tensor(corpus[offset: offset + num_tokens])
@@ -627,7 +655,7 @@ def seq_data_iter_sequential(corpus, batch_size, num_steps):
         yield X, Y
 
 class SeqDataLoader:
-    """¼ÓÔØĞòÁĞÊı¾İµÄµü´úÆ÷"""
+    """åŠ è½½åºåˆ—æ•°æ®çš„è¿­ä»£å™¨"""
     def __init__(self, batch_size, num_steps, use_random_iter, max_tokens):
         """Defined in :numref:`sec_language_model`"""
         if use_random_iter:
@@ -642,7 +670,7 @@ class SeqDataLoader:
 
 def load_data_time_machine(batch_size, num_steps,
                            use_random_iter=False, max_tokens=10000):
-    """·µ»ØÊ±¹â»úÆ÷Êı¾İ¼¯µÄµü´úÆ÷ºÍ´Ê±í
+    """è¿”å›æ—¶å…‰æœºå™¨æ•°æ®é›†çš„è¿­ä»£å™¨å’Œè¯è¡¨
 
     Defined in :numref:`sec_language_model`"""
     data_iter = SeqDataLoader(
@@ -650,7 +678,7 @@ def load_data_time_machine(batch_size, num_steps,
     return data_iter, data_iter.vocab
 
 class RNNModelScratch:
-    """´ÓÁã¿ªÊ¼ÊµÏÖµÄÑ­»·Éñ¾­ÍøÂçÄ£ĞÍ"""
+    """ä»é›¶å¼€å§‹å®ç°çš„å¾ªç¯ç¥ç»ç½‘ç»œæ¨¡å‹"""
     def __init__(self, vocab_size, num_hiddens, device,
                  get_params, init_state, forward_fn):
         """Defined in :numref:`sec_rnn_scratch`"""
@@ -666,23 +694,23 @@ class RNNModelScratch:
         return self.init_state(batch_size, self.num_hiddens, device)
 
 def predict_ch8(prefix, num_preds, net, vocab, device):
-    """ÔÚprefixºóÃæÉú³ÉĞÂ×Ö·û
+    """åœ¨`prefix`åé¢ç”Ÿæˆæ–°å­—ç¬¦
 
     Defined in :numref:`sec_rnn_scratch`"""
     state = net.begin_state(batch_size=1, device=device)
     outputs = [vocab[prefix[0]]]
     get_input = lambda: d2l.reshape(d2l.tensor(
         [outputs[-1]], device=device), (1, 1))
-    for y in prefix[1:]:  # Ô¤ÈÈÆÚ
+    for y in prefix[1:]:  # é¢„çƒ­æœŸ
         _, state = net(get_input(), state)
         outputs.append(vocab[y])
-    for _ in range(num_preds):  # Ô¤²ânum_preds²½
+    for _ in range(num_preds):  # é¢„æµ‹`num_preds`æ­¥
         y, state = net(get_input(), state)
         outputs.append(int(y.argmax(dim=1).reshape(1)))
     return ''.join([vocab.idx_to_token[i] for i in outputs])
 
 def grad_clipping(net, theta):
-    """²Ã¼ôÌİ¶È
+    """è£å‰ªæ¢¯åº¦
 
     Defined in :numref:`sec_rnn_scratch`"""
     if isinstance(net, nn.Module):
@@ -695,21 +723,21 @@ def grad_clipping(net, theta):
             param.grad[:] *= theta / norm
 
 def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
-    """ÑµÁ·ÍøÂçÒ»¸öµü´úÖÜÆÚ£¨¶¨Òå¼ûµÚ8ÕÂ£©
+    """è®­ç»ƒç½‘ç»œä¸€ä¸ªè¿­ä»£å‘¨æœŸï¼ˆå®šä¹‰è§ç¬¬8ç« ï¼‰
 
     Defined in :numref:`sec_rnn_scratch`"""
     state, timer = None, d2l.Timer()
-    metric = d2l.Accumulator(2)  # ÑµÁ·ËğÊ§Ö®ºÍ,´ÊÔªÊıÁ¿
+    metric = d2l.Accumulator(2)  # è®­ç»ƒæŸå¤±ä¹‹å’Œ,è¯å…ƒæ•°é‡
     for X, Y in train_iter:
         if state is None or use_random_iter:
-            # ÔÚµÚÒ»´Îµü´ú»òÊ¹ÓÃËæ»ú³éÑùÊ±³õÊ¼»¯state
+            # åœ¨ç¬¬ä¸€æ¬¡è¿­ä»£æˆ–ä½¿ç”¨éšæœºæŠ½æ ·æ—¶åˆå§‹åŒ–`state`
             state = net.begin_state(batch_size=X.shape[0], device=device)
         else:
             if isinstance(net, nn.Module) and not isinstance(state, tuple):
-                # state¶ÔÓÚnn.GRUÊÇ¸öÕÅÁ¿
+                # `state`å¯¹äº`nn.GRU`æ˜¯ä¸ªå¼ é‡
                 state.detach_()
             else:
-                # state¶ÔÓÚnn.LSTM»ò¶ÔÓÚÎÒÃÇ´ÓÁã¿ªÊ¼ÊµÏÖµÄÄ£ĞÍÊÇ¸öÕÅÁ¿
+                # `state`å¯¹äº`nn.LSTM`æˆ–å¯¹äºæˆ‘ä»¬ä»é›¶å¼€å§‹å®ç°çš„æ¨¡å‹æ˜¯ä¸ªå¼ é‡
                 for s in state:
                     s.detach_()
         y = Y.T.reshape(-1)
@@ -724,38 +752,38 @@ def train_epoch_ch8(net, train_iter, loss, updater, device, use_random_iter):
         else:
             l.backward()
             grad_clipping(net, 1)
-            # ÒòÎªÒÑ¾­µ÷ÓÃÁËmeanº¯Êı
+            # å› ä¸ºå·²ç»è°ƒç”¨äº†`mean`å‡½æ•°
             updater(batch_size=1)
         metric.add(l * d2l.size(y), d2l.size(y))
     return math.exp(metric[0] / metric[1]), metric[1] / timer.stop()
 
 def train_ch8(net, train_iter, vocab, lr, num_epochs, device,
               use_random_iter=False):
-    """ÑµÁ·Ä£ĞÍ£¨¶¨Òå¼ûµÚ8ÕÂ£©
+    """è®­ç»ƒæ¨¡å‹ï¼ˆå®šä¹‰è§ç¬¬8ç« ï¼‰
 
     Defined in :numref:`sec_rnn_scratch`"""
     loss = nn.CrossEntropyLoss()
     animator = d2l.Animator(xlabel='epoch', ylabel='perplexity',
                             legend=['train'], xlim=[10, num_epochs])
-    # ³õÊ¼»¯
+    # åˆå§‹åŒ–
     if isinstance(net, nn.Module):
         updater = torch.optim.SGD(net.parameters(), lr)
     else:
         updater = lambda batch_size: d2l.sgd(net.params, lr, batch_size)
     predict = lambda prefix: predict_ch8(prefix, 50, net, vocab, device)
-    # ÑµÁ·ºÍÔ¤²â
+    # è®­ç»ƒå’Œé¢„æµ‹
     for epoch in range(num_epochs):
         ppl, speed = train_epoch_ch8(
             net, train_iter, loss, updater, device, use_random_iter)
         if (epoch + 1) % 10 == 0:
             print(predict('time traveller'))
             animator.add(epoch + 1, [ppl])
-    print(f'À§»ó¶È {ppl:.1f}, {speed:.1f} ´ÊÔª/Ãë {str(device)}')
+    print(f'å›°æƒ‘åº¦ {ppl:.1f}, {speed:.1f} è¯å…ƒ/ç§’ {str(device)}')
     print(predict('time traveller'))
     print(predict('traveller'))
 
 class RNNModel(nn.Module):
-    """Ñ­»·Éñ¾­ÍøÂçÄ£ĞÍ
+    """å¾ªç¯ç¥ç»ç½‘ç»œæ¨¡å‹
 
     Defined in :numref:`sec_rnn-concise`"""
     def __init__(self, rnn_layer, vocab_size, **kwargs):
@@ -763,7 +791,7 @@ class RNNModel(nn.Module):
         self.rnn = rnn_layer
         self.vocab_size = vocab_size
         self.num_hiddens = self.rnn.hidden_size
-        # Èç¹ûRNNÊÇË«ÏòµÄ£¨Ö®ºó½«½éÉÜ£©£¬num_directionsÓ¦¸ÃÊÇ2£¬·ñÔòÓ¦¸ÃÊÇ1
+        # å¦‚æœRNNæ˜¯åŒå‘çš„ï¼ˆä¹‹åå°†ä»‹ç»ï¼‰ï¼Œ`num_directions`åº”è¯¥æ˜¯2ï¼Œå¦åˆ™åº”è¯¥æ˜¯1
         if not self.rnn.bidirectional:
             self.num_directions = 1
             self.linear = nn.Linear(self.num_hiddens, self.vocab_size)
@@ -775,19 +803,19 @@ class RNNModel(nn.Module):
         X = F.one_hot(inputs.T.long(), self.vocab_size)
         X = X.to(torch.float32)
         Y, state = self.rnn(X, state)
-        # È«Á¬½Ó²ãÊ×ÏÈ½«YµÄĞÎ×´¸ÄÎª(Ê±¼ä²½Êı*ÅúÁ¿´óĞ¡,Òş²Øµ¥ÔªÊı)
-        # ËüµÄÊä³öĞÎ×´ÊÇ(Ê±¼ä²½Êı*ÅúÁ¿´óĞ¡,´Ê±í´óĞ¡)¡£
+        # å…¨è¿æ¥å±‚é¦–å…ˆå°†`Y`çš„å½¢çŠ¶æ”¹ä¸º(`æ—¶é—´æ­¥æ•°`*`æ‰¹é‡å¤§å°`,`éšè—å•å…ƒæ•°`)
+        # å®ƒçš„è¾“å‡ºå½¢çŠ¶æ˜¯(`æ—¶é—´æ­¥æ•°`*`æ‰¹é‡å¤§å°`,`è¯è¡¨å¤§å°`)ã€‚
         output = self.linear(Y.reshape((-1, Y.shape[-1])))
         return output, state
 
     def begin_state(self, device, batch_size=1):
         if not isinstance(self.rnn, nn.LSTM):
-            # nn.GRUÒÔÕÅÁ¿×÷ÎªÒş×´Ì¬
+            # `nn.GRU`ä»¥å¼ é‡ä½œä¸ºéšçŠ¶æ€
             return  torch.zeros((self.num_directions * self.rnn.num_layers,
                                  batch_size, self.num_hiddens),
                                 device=device)
         else:
-            # nn.LSTMÒÔÔª×é×÷ÎªÒş×´Ì¬
+            # `nn.LSTM`ä»¥å…ƒç»„ä½œä¸ºéšçŠ¶æ€
             return (torch.zeros((
                 self.num_directions * self.rnn.num_layers,
                 batch_size, self.num_hiddens), device=device),
@@ -799,7 +827,7 @@ d2l.DATA_HUB['fra-eng'] = (d2l.DATA_URL + 'fra-eng.zip',
                            '94646ad1522d915e7b0f9296181140edcf86a4f5')
 
 def read_data_nmt():
-    """ÔØÈë¡°Ó¢Óï£­·¨Óï¡±Êı¾İ¼¯
+    """è½½å…¥â€œè‹±è¯­ï¼æ³•è¯­â€æ•°æ®é›†
 
     Defined in :numref:`sec_machine_translation`"""
     data_dir = d2l.download_extract('fra-eng')
@@ -808,22 +836,22 @@ def read_data_nmt():
         return f.read()
 
 def preprocess_nmt(text):
-    """Ô¤´¦Àí¡°Ó¢Óï£­·¨Óï¡±Êı¾İ¼¯
+    """é¢„å¤„ç†â€œè‹±è¯­ï¼æ³•è¯­â€æ•°æ®é›†
 
     Defined in :numref:`sec_machine_translation`"""
     def no_space(char, prev_char):
         return char in set(',.!?') and prev_char != ' '
 
-    # Ê¹ÓÃ¿Õ¸ñÌæ»»²»¼ä¶Ï¿Õ¸ñ
-    # Ê¹ÓÃĞ¡Ğ´×ÖÄ¸Ìæ»»´óĞ´×ÖÄ¸
+    # ä½¿ç”¨ç©ºæ ¼æ›¿æ¢ä¸é—´æ–­ç©ºæ ¼
+    # ä½¿ç”¨å°å†™å­—æ¯æ›¿æ¢å¤§å†™å­—æ¯
     text = text.replace('\u202f', ' ').replace('\xa0', ' ').lower()
-    # ÔÚµ¥´ÊºÍ±êµã·ûºÅÖ®¼ä²åÈë¿Õ¸ñ
+    # åœ¨å•è¯å’Œæ ‡ç‚¹ç¬¦å·ä¹‹é—´æ’å…¥ç©ºæ ¼
     out = [' ' + char if i > 0 and no_space(char, text[i - 1]) else char
            for i, char in enumerate(text)]
     return ''.join(out)
 
 def tokenize_nmt(text, num_examples=None):
-    """´ÊÔª»¯¡°Ó¢Óï£­·¨Óï¡±Êı¾İÊı¾İ¼¯
+    """è¯å…ƒåŒ–â€œè‹±è¯­ï¼æ³•è¯­â€æ•°æ®æ•°æ®é›†
 
     Defined in :numref:`sec_machine_translation`"""
     source, target = [], []
@@ -837,15 +865,15 @@ def tokenize_nmt(text, num_examples=None):
     return source, target
 
 def truncate_pad(line, num_steps, padding_token):
-    """½Ø¶Ï»òÌî³äÎÄ±¾ĞòÁĞ
+    """æˆªæ–­æˆ–å¡«å……æ–‡æœ¬åºåˆ—
 
     Defined in :numref:`sec_machine_translation`"""
     if len(line) > num_steps:
-        return line[:num_steps]  # ½Ø¶Ï
-    return line + [padding_token] * (num_steps - len(line))  # Ìî³ä
+        return line[:num_steps]  # æˆªæ–­
+    return line + [padding_token] * (num_steps - len(line))  # å¡«å……
 
 def build_array_nmt(lines, vocab, num_steps):
-    """½«»úÆ÷·­ÒëµÄÎÄ±¾ĞòÁĞ×ª»»³ÉĞ¡ÅúÁ¿
+    """å°†æœºå™¨ç¿»è¯‘çš„æ–‡æœ¬åºåˆ—è½¬æ¢æˆå°æ‰¹é‡
 
     Defined in :numref:`subsec_mt_data_loading`"""
     lines = [vocab[l] for l in lines]
@@ -857,7 +885,7 @@ def build_array_nmt(lines, vocab, num_steps):
     return array, valid_len
 
 def load_data_nmt(batch_size, num_steps, num_examples=600):
-    """·µ»Ø·­ÒëÊı¾İ¼¯µÄµü´úÆ÷ºÍ´Ê±í
+    """è¿”å›ç¿»è¯‘æ•°æ®é›†çš„è¿­ä»£å™¨å’Œè¯è¡¨
 
     Defined in :numref:`subsec_mt_data_loading`"""
     text = preprocess_nmt(read_data_nmt())
@@ -873,7 +901,7 @@ def load_data_nmt(batch_size, num_steps, num_examples=600):
     return data_iter, src_vocab, tgt_vocab
 
 class Encoder(nn.Module):
-    """±àÂëÆ÷-½âÂëÆ÷¼Ü¹¹µÄ»ù±¾±àÂëÆ÷½Ó¿Ú"""
+    """ç¼–ç å™¨-è§£ç å™¨æ¶æ„çš„åŸºæœ¬ç¼–ç å™¨æ¥å£"""
     def __init__(self, **kwargs):
         super(Encoder, self).__init__(**kwargs)
 
@@ -881,7 +909,7 @@ class Encoder(nn.Module):
         raise NotImplementedError
 
 class Decoder(nn.Module):
-    """±àÂëÆ÷-½âÂëÆ÷¼Ü¹¹µÄ»ù±¾½âÂëÆ÷½Ó¿Ú
+    """ç¼–ç å™¨-è§£ç å™¨æ¶æ„çš„åŸºæœ¬è§£ç å™¨æ¥å£
 
     Defined in :numref:`sec_encoder-decoder`"""
     def __init__(self, **kwargs):
@@ -894,7 +922,7 @@ class Decoder(nn.Module):
         raise NotImplementedError
 
 class EncoderDecoder(nn.Module):
-    """±àÂëÆ÷-½âÂëÆ÷¼Ü¹¹µÄ»ùÀà
+    """ç¼–ç å™¨-è§£ç å™¨æ¶æ„çš„åŸºç±»
 
     Defined in :numref:`sec_encoder-decoder`"""
     def __init__(self, encoder, decoder, **kwargs):
@@ -908,30 +936,30 @@ class EncoderDecoder(nn.Module):
         return self.decoder(dec_X, dec_state)
 
 class Seq2SeqEncoder(d2l.Encoder):
-    """ÓÃÓÚĞòÁĞµ½ĞòÁĞÑ§Ï°µÄÑ­»·Éñ¾­ÍøÂç±àÂëÆ÷
+    """ç”¨äºåºåˆ—åˆ°åºåˆ—å­¦ä¹ çš„å¾ªç¯ç¥ç»ç½‘ç»œç¼–ç å™¨
 
     Defined in :numref:`sec_seq2seq`"""
     def __init__(self, vocab_size, embed_size, num_hiddens, num_layers,
                  dropout=0, **kwargs):
         super(Seq2SeqEncoder, self).__init__(**kwargs)
-        # Ç¶Èë²ã
+        # åµŒå…¥å±‚
         self.embedding = nn.Embedding(vocab_size, embed_size)
         self.rnn = nn.GRU(embed_size, num_hiddens, num_layers,
                           dropout=dropout)
 
     def forward(self, X, *args):
-        # Êä³ö'X'µÄĞÎ×´£º(batch_size,num_steps,embed_size)
+        # è¾“å‡º'X'çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`,`embed_size`)
         X = self.embedding(X)
-        # ÔÚÑ­»·Éñ¾­ÍøÂçÄ£ĞÍÖĞ£¬µÚÒ»¸öÖá¶ÔÓ¦ÓÚÊ±¼ä²½
+        # åœ¨å¾ªç¯ç¥ç»ç½‘ç»œæ¨¡å‹ä¸­ï¼Œç¬¬ä¸€ä¸ªè½´å¯¹åº”äºæ—¶é—´æ­¥
         X = X.permute(1, 0, 2)
-        # Èç¹ûÎ´Ìá¼°×´Ì¬£¬ÔòÄ¬ÈÏÎª0
+        # å¦‚æœæœªæåŠçŠ¶æ€ï¼Œåˆ™é»˜è®¤ä¸º0
         output, state = self.rnn(X)
-        # outputµÄĞÎ×´:(num_steps,batch_size,num_hiddens)
-        # state[0]µÄĞÎ×´:(num_layers,batch_size,num_hiddens)
+        # `output`çš„å½¢çŠ¶:(`num_steps`,`batch_size`,`num_hiddens`)
+        # `state[0]`çš„å½¢çŠ¶:(`num_layers`,`batch_size`,`num_hiddens`)
         return output, state
 
 def sequence_mask(X, valid_len, value=0):
-    """ÔÚĞòÁĞÖĞÆÁ±Î²»Ïà¹ØµÄÏî
+    """åœ¨åºåˆ—ä¸­å±è”½ä¸ç›¸å…³çš„é¡¹
 
     Defined in :numref:`sec_seq2seq_decoder`"""
     maxlen = X.size(1)
@@ -941,12 +969,12 @@ def sequence_mask(X, valid_len, value=0):
     return X
 
 class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
-    """´øÕÚ±ÎµÄsoftmax½»²æìØËğÊ§º¯Êı
+    """å¸¦é®è”½çš„softmaxäº¤å‰ç†µæŸå¤±å‡½æ•°
 
     Defined in :numref:`sec_seq2seq_decoder`"""
-    # predµÄĞÎ×´£º(batch_size,num_steps,vocab_size)
-    # labelµÄĞÎ×´£º(batch_size,num_steps)
-    # valid_lenµÄĞÎ×´£º(batch_size,)
+    # `pred`çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`,`vocab_size`)
+    # `label`çš„å½¢çŠ¶ï¼š(`batch_size`,`num_steps`)
+    # `valid_len`çš„å½¢çŠ¶ï¼š(`batch_size`,)
     def forward(self, pred, label, valid_len):
         weights = torch.ones_like(label)
         weights = sequence_mask(weights, valid_len)
@@ -957,7 +985,7 @@ class MaskedSoftmaxCELoss(nn.CrossEntropyLoss):
         return weighted_loss
 
 def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
-    """ÑµÁ·ĞòÁĞµ½ĞòÁĞÄ£ĞÍ
+    """è®­ç»ƒåºåˆ—åˆ°åºåˆ—æ¨¡å‹
 
     Defined in :numref:`sec_seq2seq_decoder`"""
     def xavier_init_weights(m):
@@ -977,16 +1005,16 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
                      xlim=[10, num_epochs])
     for epoch in range(num_epochs):
         timer = d2l.Timer()
-        metric = d2l.Accumulator(2)  # ÑµÁ·ËğÊ§×ÜºÍ£¬´ÊÔªÊıÁ¿
+        metric = d2l.Accumulator(2)  # è®­ç»ƒæŸå¤±æ€»å’Œï¼Œè¯å…ƒæ•°é‡
         for batch in data_iter:
             optimizer.zero_grad()
             X, X_valid_len, Y, Y_valid_len = [x.to(device) for x in batch]
             bos = torch.tensor([tgt_vocab['<bos>']] * Y.shape[0],
                           device=device).reshape(-1, 1)
-            dec_input = torch.cat([bos, Y[:, :-1]], 1)  # Ç¿ÖÆ½ÌÑ§
+            dec_input = torch.cat([bos, Y[:, :-1]], 1)  # å¼ºåˆ¶æ•™å­¦
             Y_hat, _ = net(X, dec_input, X_valid_len)
             l = loss(Y_hat, Y, Y_valid_len)
-            l.sum().backward()	# ËğÊ§º¯ÊıµÄ±êÁ¿½øĞĞ¡°·´Ïò´«²¥¡±
+            l.sum().backward()	# æŸå¤±å‡½æ•°çš„æ ‡é‡è¿›è¡Œâ€œåå‘ä¼ æ’­â€
             d2l.grad_clipping(net, 1)
             num_tokens = Y_valid_len.sum()
             optimizer.step()
@@ -999,40 +1027,40 @@ def train_seq2seq(net, data_iter, lr, num_epochs, tgt_vocab, device):
 
 def predict_seq2seq(net, src_sentence, src_vocab, tgt_vocab, num_steps,
                     device, save_attention_weights=False):
-    """ĞòÁĞµ½ĞòÁĞÄ£ĞÍµÄÔ¤²â
+    """åºåˆ—åˆ°åºåˆ—æ¨¡å‹çš„é¢„æµ‹
 
     Defined in :numref:`sec_seq2seq_training`"""
-    # ÔÚÔ¤²âÊ±½«netÉèÖÃÎªÆÀ¹ÀÄ£Ê½
+    # åœ¨é¢„æµ‹æ—¶å°†`net`è®¾ç½®ä¸ºè¯„ä¼°æ¨¡å¼
     net.eval()
     src_tokens = src_vocab[src_sentence.lower().split(' ')] + [
         src_vocab['<eos>']]
     enc_valid_len = torch.tensor([len(src_tokens)], device=device)
     src_tokens = d2l.truncate_pad(src_tokens, num_steps, src_vocab['<pad>'])
-    # Ìí¼ÓÅúÁ¿Öá
+    # æ·»åŠ æ‰¹é‡è½´
     enc_X = torch.unsqueeze(
         torch.tensor(src_tokens, dtype=torch.long, device=device), dim=0)
     enc_outputs = net.encoder(enc_X, enc_valid_len)
     dec_state = net.decoder.init_state(enc_outputs, enc_valid_len)
-    # Ìí¼ÓÅúÁ¿Öá
+    # æ·»åŠ æ‰¹é‡è½´
     dec_X = torch.unsqueeze(torch.tensor(
         [tgt_vocab['<bos>']], dtype=torch.long, device=device), dim=0)
     output_seq, attention_weight_seq = [], []
     for _ in range(num_steps):
         Y, dec_state = net.decoder(dec_X, dec_state)
-        # ÎÒÃÇÊ¹ÓÃ¾ßÓĞÔ¤²â×î¸ß¿ÉÄÜĞÔµÄ´ÊÔª£¬×÷Îª½âÂëÆ÷ÔÚÏÂÒ»Ê±¼ä²½µÄÊäÈë
+        # æˆ‘ä»¬ä½¿ç”¨å…·æœ‰é¢„æµ‹æœ€é«˜å¯èƒ½æ€§çš„è¯å…ƒï¼Œä½œä¸ºè§£ç å™¨åœ¨ä¸‹ä¸€æ—¶é—´æ­¥çš„è¾“å…¥
         dec_X = Y.argmax(dim=2)
         pred = dec_X.squeeze(dim=0).type(torch.int32).item()
-        # ±£´æ×¢ÒâÁ¦È¨ÖØ£¨ÉÔºóÌÖÂÛ£©
+        # ä¿å­˜æ³¨æ„åŠ›æƒé‡ï¼ˆç¨åè®¨è®ºï¼‰
         if save_attention_weights:
             attention_weight_seq.append(net.decoder.attention_weights)
-        # Ò»µ©ĞòÁĞ½áÊø´ÊÔª±»Ô¤²â£¬Êä³öĞòÁĞµÄÉú³É¾ÍÍê³ÉÁË
+        # ä¸€æ—¦åºåˆ—ç»“æŸè¯å…ƒè¢«é¢„æµ‹ï¼Œè¾“å‡ºåºåˆ—çš„ç”Ÿæˆå°±å®Œæˆäº†
         if pred == tgt_vocab['<eos>']:
             break
         output_seq.append(pred)
     return ' '.join(tgt_vocab.to_tokens(output_seq)), attention_weight_seq
 
 def bleu(pred_seq, label_seq, k):
-    """¼ÆËãBLEU
+    """è®¡ç®—BLEU
 
     Defined in :numref:`sec_seq2seq_training`"""
     pred_tokens, label_tokens = pred_seq.split(' '), label_seq.split(' ')
@@ -1051,7 +1079,7 @@ def bleu(pred_seq, label_seq, k):
 
 def show_heatmaps(matrices, xlabel, ylabel, titles=None, figsize=(2.5, 2.5),
                   cmap='Reds'):
-    """ÏÔÊ¾¾ØÕóÈÈÍ¼
+    """æ˜¾ç¤ºçŸ©é˜µçƒ­å›¾
 
     Defined in :numref:`sec_attention-cues`"""
     d2l.use_svg_display()
@@ -1070,10 +1098,10 @@ def show_heatmaps(matrices, xlabel, ylabel, titles=None, figsize=(2.5, 2.5),
     fig.colorbar(pcm, ax=axes, shrink=0.6);
 
 def masked_softmax(X, valid_lens):
-    """Í¨¹ıÔÚ×îºóÒ»¸öÖáÉÏÑÚ±ÎÔªËØÀ´Ö´ĞĞsoftmax²Ù×÷
+    """é€šè¿‡åœ¨æœ€åä¸€ä¸ªè½´ä¸Šæ©è”½å…ƒç´ æ¥æ‰§è¡Œsoftmaxæ“ä½œ
 
     Defined in :numref:`sec_attention-scoring-functions`"""
-    # X:3DÕÅÁ¿£¬valid_lens:1D»ò2DÕÅÁ¿
+    # `X`:3Då¼ é‡ï¼Œ`valid_lens`:1Dæˆ–2Då¼ é‡
     if valid_lens is None:
         return nn.functional.softmax(X, dim=-1)
     else:
@@ -1082,13 +1110,13 @@ def masked_softmax(X, valid_lens):
             valid_lens = torch.repeat_interleave(valid_lens, shape[1])
         else:
             valid_lens = valid_lens.reshape(-1)
-        # ×îºóÒ»ÖáÉÏ±»ÑÚ±ÎµÄÔªËØÊ¹ÓÃÒ»¸ö·Ç³£´óµÄ¸ºÖµÌæ»»£¬´Ó¶øÆäsoftmaxÊä³öÎª0
+        # æœ€åä¸€è½´ä¸Šè¢«æ©è”½çš„å…ƒç´ ä½¿ç”¨ä¸€ä¸ªéå¸¸å¤§çš„è´Ÿå€¼æ›¿æ¢ï¼Œä»è€Œå…¶softmaxè¾“å‡ºä¸º0
         X = d2l.sequence_mask(X.reshape(-1, shape[-1]), valid_lens,
                               value=-1e6)
         return nn.functional.softmax(X.reshape(shape), dim=-1)
 
 class AdditiveAttention(nn.Module):
-    """¼ÓĞÔ×¢ÒâÁ¦
+    """åŠ æ€§æ³¨æ„åŠ›
 
     Defined in :numref:`sec_attention-scoring-functions`"""
     def __init__(self, key_size, query_size, num_hiddens, dropout, **kwargs):
@@ -1100,40 +1128,40 @@ class AdditiveAttention(nn.Module):
 
     def forward(self, queries, keys, values, valid_lens):
         queries, keys = self.W_q(queries), self.W_k(keys)
-        # ÔÚÎ¬¶ÈÀ©Õ¹ºó£¬
-        # queriesµÄĞÎ×´£º(batch_size£¬²éÑ¯µÄ¸öÊı£¬1£¬num_hidden)
-        # keyµÄĞÎ×´£º(batch_size£¬1£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_hiddens)
-        # Ê¹ÓÃ¹ã²¥·½Ê½½øĞĞÇóºÍ
+        # åœ¨ç»´åº¦æ‰©å±•åï¼Œ
+        # `queries`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ1ï¼Œ`num_hidden`)
+        # `key`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œ1ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
+        # ä½¿ç”¨å¹¿æ’­æ–¹å¼è¿›è¡Œæ±‚å’Œ
         features = queries.unsqueeze(2) + keys.unsqueeze(1)
         features = torch.tanh(features)
-        # self.w_v½öÓĞÒ»¸öÊä³ö£¬Òò´Ë´ÓĞÎ×´ÖĞÒÆ³ı×îºóÄÇ¸öÎ¬¶È¡£
-        # scoresµÄĞÎ×´£º(batch_size£¬²éÑ¯µÄ¸öÊı£¬¡°¼ü-Öµ¡±¶ÔµÄ¸öÊı)
+        # `self.w_v`ä»…æœ‰ä¸€ä¸ªè¾“å‡ºï¼Œå› æ­¤ä»å½¢çŠ¶ä¸­ç§»é™¤æœ€åé‚£ä¸ªç»´åº¦ã€‚
+        # `scores`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œâ€œé”®-å€¼â€å¯¹çš„ä¸ªæ•°)
         scores = self.w_v(features).squeeze(-1)
         self.attention_weights = masked_softmax(scores, valid_lens)
-        # valuesµÄĞÎ×´£º(batch_size£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬ÖµµÄÎ¬¶È)
+        # `values`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œå€¼çš„ç»´åº¦)
         return torch.bmm(self.dropout(self.attention_weights), values)
 
 class DotProductAttention(nn.Module):
-    """Ëõ·Åµã»ı×¢ÒâÁ¦
+    """ç¼©æ”¾ç‚¹ç§¯æ³¨æ„åŠ›
 
     Defined in :numref:`subsec_additive-attention`"""
     def __init__(self, dropout, **kwargs):
         super(DotProductAttention, self).__init__(**kwargs)
         self.dropout = nn.Dropout(dropout)
 
-    # queriesµÄĞÎ×´£º(batch_size£¬²éÑ¯µÄ¸öÊı£¬d)
-    # keysµÄĞÎ×´£º(batch_size£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬d)
-    # valuesµÄĞÎ×´£º(batch_size£¬¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬ÖµµÄÎ¬¶È)
-    # valid_lensµÄĞÎ×´:(batch_size£¬)»òÕß(batch_size£¬²éÑ¯µÄ¸öÊı)
+    # `queries`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ`d`)
+    # `keys`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`d`)
+    # `values`çš„å½¢çŠ¶ï¼š(`batch_size`ï¼Œâ€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œå€¼çš„ç»´åº¦)
+    # `valid_lens`çš„å½¢çŠ¶:(`batch_size`ï¼Œ)æˆ–è€…(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°)
     def forward(self, queries, keys, values, valid_lens=None):
         d = queries.shape[-1]
-        # ÉèÖÃtranspose_b=TrueÎªÁË½»»»keysµÄ×îºóÁ½¸öÎ¬¶È
+        # è®¾ç½®`transpose_b=True`ä¸ºäº†äº¤æ¢`keys`çš„æœ€åä¸¤ä¸ªç»´åº¦
         scores = torch.bmm(queries, keys.transpose(1,2)) / math.sqrt(d)
         self.attention_weights = masked_softmax(scores, valid_lens)
         return torch.bmm(self.dropout(self.attention_weights), values)
 
 class AttentionDecoder(d2l.Decoder):
-    """´øÓĞ×¢ÒâÁ¦»úÖÆ½âÂëÆ÷µÄ»ù±¾½Ó¿Ú
+    """å¸¦æœ‰æ³¨æ„åŠ›æœºåˆ¶è§£ç å™¨çš„åŸºæœ¬æ¥å£
 
     Defined in :numref:`sec_seq2seq_attention`"""
     def __init__(self, **kwargs):
@@ -1144,7 +1172,7 @@ class AttentionDecoder(d2l.Decoder):
         raise NotImplementedError
 
 class MultiHeadAttention(nn.Module):
-    """¶àÍ·×¢ÒâÁ¦
+    """å¤šå¤´æ³¨æ„åŠ›
 
     Defined in :numref:`sec_multihead-attention`"""
     def __init__(self, key_size, query_size, value_size, num_hiddens,
@@ -1158,51 +1186,51 @@ class MultiHeadAttention(nn.Module):
         self.W_o = nn.Linear(num_hiddens, num_hiddens, bias=bias)
 
     def forward(self, queries, keys, values, valid_lens):
-        # queries£¬keys£¬valuesµÄĞÎ×´:
-        # (batch_size£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_hiddens)
-        # valid_lens¡¡µÄĞÎ×´:
-        # (batch_size£¬)»ò(batch_size£¬²éÑ¯µÄ¸öÊı)
-        # ¾­¹ı±ä»»ºó£¬Êä³öµÄqueries£¬keys£¬values¡¡µÄĞÎ×´:
-        # (batch_size*num_heads£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬
-        # num_hiddens/num_heads)
+        # `queries`ï¼Œ`keys`ï¼Œ`values`çš„å½¢çŠ¶:
+        # (`batch_size`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
+        # `valid_lens`ã€€çš„å½¢çŠ¶:
+        # (`batch_size`ï¼Œ)æˆ–(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°)
+        # ç»è¿‡å˜æ¢åï¼Œè¾“å‡ºçš„`queries`ï¼Œ`keys`ï¼Œ`values`ã€€çš„å½¢çŠ¶:
+        # (`batch_size`*`num_heads`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ
+        # `num_hiddens`/`num_heads`)
         queries = transpose_qkv(self.W_q(queries), self.num_heads)
         keys = transpose_qkv(self.W_k(keys), self.num_heads)
         values = transpose_qkv(self.W_v(values), self.num_heads)
 
         if valid_lens is not None:
-            # ÔÚÖá0£¬½«µÚÒ»Ïî£¨±êÁ¿»òÕßÊ¸Á¿£©¸´ÖÆnum_heads´Î£¬
-            # È»ºóÈç´Ë¸´ÖÆµÚ¶şÏî£¬È»ºóÖîÈç´ËÀà¡£
+            # åœ¨è½´0ï¼Œå°†ç¬¬ä¸€é¡¹ï¼ˆæ ‡é‡æˆ–è€…çŸ¢é‡ï¼‰å¤åˆ¶`num_heads`æ¬¡ï¼Œ
+            # ç„¶åå¦‚æ­¤å¤åˆ¶ç¬¬äºŒé¡¹ï¼Œç„¶åè¯¸å¦‚æ­¤ç±»ã€‚
             valid_lens = torch.repeat_interleave(
                 valid_lens, repeats=self.num_heads, dim=0)
 
-        # outputµÄĞÎ×´:(batch_size*num_heads£¬²éÑ¯µÄ¸öÊı£¬
-        # num_hiddens/num_heads)
+        # `output`çš„å½¢çŠ¶:(`batch_size`*`num_heads`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ
+        # `num_hiddens`/`num_heads`)
         output = self.attention(queries, keys, values, valid_lens)
 
-        # output_concatµÄĞÎ×´:(batch_size£¬²éÑ¯µÄ¸öÊı£¬num_hiddens)
+        # `output_concat`çš„å½¢çŠ¶:(`batch_size`ï¼ŒæŸ¥è¯¢çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
         output_concat = transpose_output(output, self.num_heads)
         return self.W_o(output_concat)
 
 def transpose_qkv(X, num_heads):
-    """ÎªÁË¶à×¢ÒâÁ¦Í·µÄ²¢ĞĞ¼ÆËã¶ø±ä»»ĞÎ×´
+    """ä¸ºäº†å¤šæ³¨æ„åŠ›å¤´çš„å¹¶è¡Œè®¡ç®—è€Œå˜æ¢å½¢çŠ¶
 
     Defined in :numref:`sec_multihead-attention`"""
-    # ÊäÈëXµÄĞÎ×´:(batch_size£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_hiddens)
-    # Êä³öXµÄĞÎ×´:(batch_size£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı£¬num_heads£¬
-    # num_hiddens/num_heads)
+    # è¾“å…¥`X`çš„å½¢çŠ¶:(`batch_size`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_hiddens`)
+    # è¾“å‡º`X`çš„å½¢çŠ¶:(`batch_size`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°ï¼Œ`num_heads`ï¼Œ
+    # `num_hiddens`/`num_heads`)
     X = X.reshape(X.shape[0], X.shape[1], num_heads, -1)
 
-    # Êä³öXµÄĞÎ×´:(batch_size£¬num_heads£¬²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı,
-    # num_hiddens/num_heads)
+    # è¾“å‡º`X`çš„å½¢çŠ¶:(`batch_size`ï¼Œ`num_heads`ï¼ŒæŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°,
+    # `num_hiddens`/`num_heads`)
     X = X.permute(0, 2, 1, 3)
 
-    # ×îÖÕÊä³öµÄĞÎ×´:(batch_size*num_heads,²éÑ¯»òÕß¡°¼ü£­Öµ¡±¶ÔµÄ¸öÊı,
-    # num_hiddens/num_heads)
+    # æœ€ç»ˆè¾“å‡ºçš„å½¢çŠ¶:(`batch_size`*`num_heads`,æŸ¥è¯¢æˆ–è€…â€œé”®ï¼å€¼â€å¯¹çš„ä¸ªæ•°,
+    # `num_hiddens`/`num_heads`)
     return X.reshape(-1, X.shape[2], X.shape[3])
 
 
 def transpose_output(X, num_heads):
-    """Äæ×ªtranspose_qkvº¯ÊıµÄ²Ù×÷
+    """é€†è½¬`transpose_qkv`å‡½æ•°çš„æ“ä½œ
 
     Defined in :numref:`sec_multihead-attention`"""
     X = X.reshape(-1, num_heads, X.shape[1], X.shape[2])
@@ -1210,13 +1238,13 @@ def transpose_output(X, num_heads):
     return X.reshape(X.shape[0], X.shape[1], -1)
 
 class PositionalEncoding(nn.Module):
-    """Î»ÖÃ±àÂë
+    """ä½ç½®ç¼–ç 
 
     Defined in :numref:`sec_self-attention-and-positional-encoding`"""
     def __init__(self, num_hiddens, dropout, max_len=1000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(dropout)
-        # ´´½¨Ò»¸ö×ã¹»³¤µÄP
+        # åˆ›å»ºä¸€ä¸ªè¶³å¤Ÿé•¿çš„`P`
         self.P = d2l.zeros((1, max_len, num_hiddens))
         X = d2l.arange(max_len, dtype=torch.float32).reshape(
             -1, 1) / torch.pow(10000, torch.arange(
@@ -1229,7 +1257,7 @@ class PositionalEncoding(nn.Module):
         return self.dropout(X)
 
 class PositionWiseFFN(nn.Module):
-    """»ùÓÚÎ»ÖÃµÄÇ°À¡ÍøÂç
+    """åŸºäºä½ç½®çš„å‰é¦ˆç½‘ç»œ
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, ffn_num_input, ffn_num_hiddens, ffn_num_outputs,
@@ -1243,7 +1271,7 @@ class PositionWiseFFN(nn.Module):
         return self.dense2(self.relu(self.dense1(X)))
 
 class AddNorm(nn.Module):
-    """²Ğ²îÁ¬½Óºó½øĞĞ²ã¹æ·¶»¯
+    """æ®‹å·®è¿æ¥åè¿›è¡Œå±‚è§„èŒƒåŒ–
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, normalized_shape, dropout, **kwargs):
@@ -1255,7 +1283,7 @@ class AddNorm(nn.Module):
         return self.ln(self.dropout(Y) + X)
 
 class EncoderBlock(nn.Module):
-    """transformer±àÂëÆ÷¿é
+    """transformerç¼–ç å™¨å—
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, key_size, query_size, value_size, num_hiddens,
@@ -1275,7 +1303,7 @@ class EncoderBlock(nn.Module):
         return self.addnorm2(Y, self.ffn(Y))
 
 class TransformerEncoder(d2l.Encoder):
-    """transformer±àÂëÆ÷
+    """transformerç¼–ç å™¨
 
     Defined in :numref:`sec_transformer`"""
     def __init__(self, vocab_size, key_size, query_size, value_size,
@@ -1293,9 +1321,9 @@ class TransformerEncoder(d2l.Encoder):
                              num_heads, dropout, use_bias))
 
     def forward(self, X, valid_lens, *args):
-        # ÒòÎªÎ»ÖÃ±àÂëÖµÔÚ-1ºÍ1Ö®¼ä£¬
-        # Òò´ËÇ¶ÈëÖµ³ËÒÔÇ¶ÈëÎ¬¶ÈµÄÆ½·½¸ù½øĞĞËõ·Å£¬
-        # È»ºóÔÙÓëÎ»ÖÃ±àÂëÏà¼Ó¡£
+        # å› ä¸ºä½ç½®ç¼–ç å€¼åœ¨-1å’Œ1ä¹‹é—´ï¼Œ
+        # å› æ­¤åµŒå…¥å€¼ä¹˜ä»¥åµŒå…¥ç»´åº¦çš„å¹³æ–¹æ ¹è¿›è¡Œç¼©æ”¾ï¼Œ
+        # ç„¶åå†ä¸ä½ç½®ç¼–ç ç›¸åŠ ã€‚
         X = self.pos_encoding(self.embedding(X) * math.sqrt(self.num_hiddens))
         self.attention_weights = [None] * len(self.blks)
         for i, blk in enumerate(self.blks):
@@ -1309,10 +1337,10 @@ def annotate(text, xy, xytext):
                            arrowprops=dict(arrowstyle='->'))
 
 def train_2d(trainer, steps=20, f_grad=None):
-    """ÓÃ¶¨ÖÆµÄÑµÁ·»úÓÅ»¯2DÄ¿±êº¯Êı
+    """ç”¨å®šåˆ¶çš„è®­ç»ƒæœºä¼˜åŒ–2Dç›®æ ‡å‡½æ•°
 
     Defined in :numref:`subsec_gd-learningrate`"""
-    # s1ºÍs2ÊÇÉÔºó½«Ê¹ÓÃµÄÄÚ²¿×´Ì¬±äÁ¿
+    # `s1`å’Œ`s2`æ˜¯ç¨åå°†ä½¿ç”¨çš„å†…éƒ¨çŠ¶æ€å˜é‡
     x1, x2, s1, s2 = -5, -2, 0, 0
     results = [(x1, x2)]
     for i in range(steps):
@@ -1325,7 +1353,7 @@ def train_2d(trainer, steps=20, f_grad=None):
     return results
 
 def show_trace_2d(f, results):
-    """ÏÔÊ¾ÓÅ»¯¹ı³ÌÖĞ2D±äÁ¿µÄ¹ì¼£
+    """æ˜¾ç¤ºä¼˜åŒ–è¿‡ç¨‹ä¸­2Då˜é‡çš„è½¨è¿¹
 
     Defined in :numref:`subsec_gd-learningrate`"""
     d2l.set_figsize()
@@ -1351,12 +1379,12 @@ def get_data_ch11(batch_size=10, n=1500):
 def train_ch11(trainer_fn, states, hyperparams, data_iter,
                feature_dim, num_epochs=2):
     """Defined in :numref:`sec_minibatches`"""
-    # ³õÊ¼»¯Ä£ĞÍ
+    # åˆå§‹åŒ–æ¨¡å‹
     w = torch.normal(mean=0.0, std=0.01, size=(feature_dim, 1),
                      requires_grad=True)
     b = torch.zeros((1), requires_grad=True)
     net, loss = lambda X: d2l.linreg(X, w, b), d2l.squared_loss
-    # ÑµÁ·Ä£ĞÍ
+    # è®­ç»ƒæ¨¡å‹
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
     n, timer = 0, d2l.Timer()
@@ -1376,7 +1404,7 @@ def train_ch11(trainer_fn, states, hyperparams, data_iter,
 
 def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
     """Defined in :numref:`sec_minibatches`"""
-    # ³õÊ¼»¯Ä£ĞÍ
+    # åˆå§‹åŒ–æ¨¡å‹
     net = nn.Sequential(nn.Linear(5, 1))
     def init_weights(m):
         if type(m) == nn.Linear:
@@ -1385,7 +1413,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
 
     optimizer = trainer_fn(net.parameters(), **hyperparams)
 
-    # ×¢Òâ£ºMSELoss¼ÆËãÆ½·½Îó²îÊ±²»´øÏµÊı1/2
+    # æ³¨æ„ï¼šMSELossè®¡ç®—å¹³æ–¹è¯¯å·®æ—¶ä¸å¸¦ç³»æ•°1/2
     loss = nn.MSELoss(reduction='none')
     animator = d2l.Animator(xlabel='epoch', ylabel='loss',
                             xlim=[0, num_epochs], ylim=[0.22, 0.35])
@@ -1407,7 +1435,7 @@ def train_concise_ch11(trainer_fn, hyperparams, data_iter, num_epochs=4):
     print(f'loss: {animator.Y[0][-1]:.3f}, {timer.avg():.3f} sec/epoch')
 
 class Benchmark:
-    """ÓÃÓÚ²âÁ¿ÔËĞĞÊ±¼ä"""
+    """ç”¨äºæµ‹é‡è¿è¡Œæ—¶é—´"""
     def __init__(self, description='Done'):
         """Defined in :numref:`sec_hybridize`"""
         self.description = description
@@ -1420,7 +1448,7 @@ class Benchmark:
         print(f'{self.description}: {self.timer.stop():.4f} sec')
 
 def split_batch(X, y, devices):
-    """½«XºÍy²ğ·Öµ½¶à¸öÉè±¸ÉÏ
+    """å°†`X`å’Œ`y`æ‹†åˆ†åˆ°å¤šä¸ªè®¾å¤‡ä¸Š
 
     Defined in :numref:`sec_multi_gpu`"""
     assert X.shape[0] == y.shape[0]
@@ -1428,7 +1456,7 @@ def split_batch(X, y, devices):
             nn.parallel.scatter(y, devices))
 
 def resnet18(num_classes, in_channels=1):
-    """ÉÔ¼ÓĞŞ¸ÄµÄResNet-18Ä£ĞÍ
+    """ç¨åŠ ä¿®æ”¹çš„ResNet-18æ¨¡å‹
 
     Defined in :numref:`sec_multi_gpu_concise`"""
     def resnet_block(in_channels, out_channels, num_residuals,
@@ -1442,7 +1470,7 @@ def resnet18(num_classes, in_channels=1):
                 blk.append(d2l.Residual(out_channels, out_channels))
         return nn.Sequential(*blk)
 
-    # ¸ÃÄ£ĞÍÊ¹ÓÃÁË¸üĞ¡µÄ¾í»ıºË¡¢²½³¤ºÍÌî³ä£¬¶øÇÒÉ¾³ıÁË×î´ó»ã¾Û²ã
+    # è¯¥æ¨¡å‹ä½¿ç”¨äº†æ›´å°çš„å·ç§¯æ ¸ã€æ­¥é•¿å’Œå¡«å……ï¼Œè€Œä¸”åˆ é™¤äº†æœ€å¤§æ±‡èšå±‚
     net = nn.Sequential(
         nn.Conv2d(in_channels, 64, kernel_size=3, stride=1, padding=1),
         nn.BatchNorm2d(64),
@@ -1458,11 +1486,11 @@ def resnet18(num_classes, in_channels=1):
     return net
 
 def train_batch_ch13(net, X, y, loss, trainer, devices):
-    """ÓÃ¶àGPU½øĞĞĞ¡ÅúÁ¿ÑµÁ·
+    """ç”¨å¤šGPUè¿›è¡Œå°æ‰¹é‡è®­ç»ƒ
 
     Defined in :numref:`sec_image_augmentation`"""
     if isinstance(X, list):
-        # Î¢µ÷BERTÖĞËùĞè£¨ÉÔºóÌÖÂÛ£©
+        # å¾®è°ƒBERTä¸­æ‰€éœ€ï¼ˆç¨åè®¨è®ºï¼‰
         X = [x.to(devices[0]) for x in X]
     else:
         X = X.to(devices[0])
@@ -1479,7 +1507,7 @@ def train_batch_ch13(net, X, y, loss, trainer, devices):
 
 def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
                devices=d2l.try_all_gpus()):
-    """ÓÃ¶àGPU½øĞĞÄ£ĞÍÑµÁ·
+    """ç”¨å¤šGPUè¿›è¡Œæ¨¡å‹è®­ç»ƒ
 
     Defined in :numref:`sec_image_augmentation`"""
     timer, num_batches = d2l.Timer(), len(train_iter)
@@ -1487,7 +1515,7 @@ def train_ch13(net, train_iter, test_iter, loss, trainer, num_epochs,
                             legend=['train loss', 'train acc', 'test acc'])
     net = nn.DataParallel(net, device_ids=devices).to(devices[0])
     for epoch in range(num_epochs):
-        # 4¸öÎ¬¶È£º´¢´æÑµÁ·ËğÊ§£¬ÑµÁ·×¼È·¶È£¬ÊµÀıÊı£¬ÌØµãÊı
+        # 4ä¸ªç»´åº¦ï¼šå‚¨å­˜è®­ç»ƒæŸå¤±ï¼Œè®­ç»ƒå‡†ç¡®åº¦ï¼Œå®ä¾‹æ•°ï¼Œç‰¹ç‚¹æ•°
         metric = d2l.Accumulator(4)
         for i, (features, labels) in enumerate(train_iter):
             timer.start()
@@ -1510,7 +1538,7 @@ d2l.DATA_HUB['hotdog'] = (d2l.DATA_URL + 'hotdog.zip',
                          'fba480ffa8aa7e0febbb511d181409f899b9baa5')
 
 def box_corner_to_center(boxes):
-    """´Ó£¨×óÉÏ£¬ÓÒÏÂ£©×ª»»µ½£¨ÖĞ¼ä£¬¿í¶È£¬¸ß¶È£©
+    """ä»ï¼ˆå·¦ä¸Šï¼Œå³ä¸‹ï¼‰è½¬æ¢åˆ°ï¼ˆä¸­é—´ï¼Œå®½åº¦ï¼Œé«˜åº¦ï¼‰
 
     Defined in :numref:`sec_bbox`"""
     x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
@@ -1522,7 +1550,7 @@ def box_corner_to_center(boxes):
     return boxes
 
 def box_center_to_corner(boxes):
-    """´Ó£¨ÖĞ¼ä£¬¿í¶È£¬¸ß¶È£©×ª»»µ½£¨×óÉÏ£¬ÓÒÏÂ£©
+    """ä»ï¼ˆä¸­é—´ï¼Œå®½åº¦ï¼Œé«˜åº¦ï¼‰è½¬æ¢åˆ°ï¼ˆå·¦ä¸Šï¼Œå³ä¸‹ï¼‰
 
     Defined in :numref:`sec_bbox`"""
     cx, cy, w, h = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
@@ -1535,14 +1563,14 @@ def box_center_to_corner(boxes):
 
 def bbox_to_rect(bbox, color):
     """Defined in :numref:`sec_bbox`"""
-    # ½«±ß½ç¿ò(×óÉÏx,×óÉÏy,ÓÒÏÂx,ÓÒÏÂy)¸ñÊ½×ª»»³Ématplotlib¸ñÊ½£º
-    # ((×óÉÏx,×óÉÏy),¿í,¸ß)
+    # å°†è¾¹ç•Œæ¡†(å·¦ä¸Šx,å·¦ä¸Šy,å³ä¸‹x,å³ä¸‹y)æ ¼å¼è½¬æ¢æˆmatplotlibæ ¼å¼ï¼š
+    # ((å·¦ä¸Šx,å·¦ä¸Šy),å®½,é«˜)
     return d2l.plt.Rectangle(
         xy=(bbox[0], bbox[1]), width=bbox[2]-bbox[0], height=bbox[3]-bbox[1],
         fill=False, edgecolor=color, linewidth=2)
 
 def multibox_prior(data, sizes, ratios):
-    """Éú³ÉÒÔÃ¿¸öÏñËØÎªÖĞĞÄ¾ßÓĞ²»Í¬ĞÎ×´µÄÃª¿ò
+    """ç”Ÿæˆä»¥æ¯ä¸ªåƒç´ ä¸ºä¸­å¿ƒå…·æœ‰ä¸åŒå½¢çŠ¶çš„é”šæ¡†
 
     Defined in :numref:`sec_anchor`"""
     in_height, in_width = data.shape[-2:]
@@ -1551,38 +1579,38 @@ def multibox_prior(data, sizes, ratios):
     size_tensor = d2l.tensor(sizes, device=device)
     ratio_tensor = d2l.tensor(ratios, device=device)
 
-    # ÎªÁË½«ÃªµãÒÆ¶¯µ½ÏñËØµÄÖĞĞÄ£¬ĞèÒªÉèÖÃÆ«ÒÆÁ¿¡£
-    # ÒòÎªÒ»¸öÏñËØµÄµÄ¸ßÎª1ÇÒ¿íÎª1£¬ÎÒÃÇÑ¡ÔñÆ«ÒÆÎÒÃÇµÄÖĞĞÄ0.5
+    # ä¸ºäº†å°†é”šç‚¹ç§»åŠ¨åˆ°åƒç´ çš„ä¸­å¿ƒï¼Œéœ€è¦è®¾ç½®åç§»é‡ã€‚
+    # å› ä¸ºä¸€ä¸ªåƒç´ çš„çš„é«˜ä¸º1ä¸”å®½ä¸º1ï¼Œæˆ‘ä»¬é€‰æ‹©åç§»æˆ‘ä»¬çš„ä¸­å¿ƒ0.5
     offset_h, offset_w = 0.5, 0.5
-    steps_h = 1.0 / in_height  # ÔÚyÖáÉÏËõ·Å²½³¤
-    steps_w = 1.0 / in_width  # ÔÚxÖáÉÏËõ·Å²½³¤
+    steps_h = 1.0 / in_height  # åœ¨yè½´ä¸Šç¼©æ”¾æ­¥é•¿
+    steps_w = 1.0 / in_width  # åœ¨xè½´ä¸Šç¼©æ”¾æ­¥é•¿
 
-    # Éú³ÉÃª¿òµÄËùÓĞÖĞĞÄµã
+    # ç”Ÿæˆé”šæ¡†çš„æ‰€æœ‰ä¸­å¿ƒç‚¹
     center_h = (torch.arange(in_height, device=device) + offset_h) * steps_h
     center_w = (torch.arange(in_width, device=device) + offset_w) * steps_w
     shift_y, shift_x = torch.meshgrid(center_h, center_w)
     shift_y, shift_x = shift_y.reshape(-1), shift_x.reshape(-1)
 
-    # Éú³É¡°boxes_per_pixel¡±¸ö¸ßºÍ¿í£¬
-    # Ö®ºóÓÃÓÚ´´½¨Ãª¿òµÄËÄ½Ç×ø±ê(xmin,xmax,ymin,ymax)
+    # ç”Ÿæˆâ€œboxes_per_pixelâ€ä¸ªé«˜å’Œå®½ï¼Œ
+    # ä¹‹åç”¨äºåˆ›å»ºé”šæ¡†çš„å››è§’åæ ‡(xmin,xmax,ymin,ymax)
     w = torch.cat((size_tensor * torch.sqrt(ratio_tensor[0]),
                    sizes[0] * torch.sqrt(ratio_tensor[1:])))\
-                   * in_height / in_width  # ´¦Àí¾ØĞÎÊäÈë
+                   * in_height / in_width  # å¤„ç†çŸ©å½¢è¾“å…¥
     h = torch.cat((size_tensor / torch.sqrt(ratio_tensor[0]),
                    sizes[0] / torch.sqrt(ratio_tensor[1:])))
-    # ³ıÒÔ2À´»ñµÃ°ë¸ßºÍ°ë¿í
+    # é™¤ä»¥2æ¥è·å¾—åŠé«˜å’ŒåŠå®½
     anchor_manipulations = torch.stack((-w, -h, w, h)).T.repeat(
                                         in_height * in_width, 1) / 2
 
-    # Ã¿¸öÖĞĞÄµã¶¼½«ÓĞ¡°boxes_per_pixel¡±¸öÃª¿ò£¬
-    # ËùÒÔÉú³Éº¬ËùÓĞÃª¿òÖĞĞÄµÄÍø¸ñ£¬ÖØ¸´ÁË¡°boxes_per_pixel¡±´Î
+    # æ¯ä¸ªä¸­å¿ƒç‚¹éƒ½å°†æœ‰â€œboxes_per_pixelâ€ä¸ªé”šæ¡†ï¼Œ
+    # æ‰€ä»¥ç”Ÿæˆå«æ‰€æœ‰é”šæ¡†ä¸­å¿ƒçš„ç½‘æ ¼ï¼Œé‡å¤äº†â€œboxes_per_pixelâ€æ¬¡
     out_grid = torch.stack([shift_x, shift_y, shift_x, shift_y],
                 dim=1).repeat_interleave(boxes_per_pixel, dim=0)
     output = out_grid + anchor_manipulations
     return output.unsqueeze(0)
 
 def show_bboxes(axes, bboxes, labels=None, colors=None):
-    """ÏÔÊ¾ËùÓĞ±ß½ç¿ò
+    """æ˜¾ç¤ºæ‰€æœ‰è¾¹ç•Œæ¡†
 
     Defined in :numref:`sec_anchor`"""
     def _make_list(obj, default_values=None):
@@ -1605,39 +1633,39 @@ def show_bboxes(axes, bboxes, labels=None, colors=None):
                       bbox=dict(facecolor=color, lw=0))
 
 def box_iou(boxes1, boxes2):
-    """¼ÆËãÁ½¸öÃª¿ò»ò±ß½ç¿òÁĞ±íÖĞ³É¶ÔµÄ½»²¢±È
+    """è®¡ç®—ä¸¤ä¸ªé”šæ¡†æˆ–è¾¹ç•Œæ¡†åˆ—è¡¨ä¸­æˆå¯¹çš„äº¤å¹¶æ¯”
 
     Defined in :numref:`sec_anchor`"""
     box_area = lambda boxes: ((boxes[:, 2] - boxes[:, 0]) *
                               (boxes[:, 3] - boxes[:, 1]))
-    # boxes1,boxes2,areas1,areas2µÄĞÎ×´:
-    # boxes1£º(boxes1µÄÊıÁ¿,4),
-    # boxes2£º(boxes2µÄÊıÁ¿,4),
-    # areas1£º(boxes1µÄÊıÁ¿,),
-    # areas2£º(boxes2µÄÊıÁ¿,)
+    # `boxes1`,`boxes2`,`areas1`,`areas2`çš„å½¢çŠ¶:
+    # `boxes1`ï¼š(boxes1çš„æ•°é‡,4),
+    # `boxes2`ï¼š(boxes2çš„æ•°é‡,4),
+    # `areas1`ï¼š(boxes1çš„æ•°é‡,),
+    # `areas2`ï¼š(boxes2çš„æ•°é‡,)
     areas1 = box_area(boxes1)
     areas2 = box_area(boxes2)
-    # inter_upperlefts,inter_lowerrights,intersµÄĞÎ×´:
-    # (boxes1µÄÊıÁ¿,boxes2µÄÊıÁ¿,2)
+    # `inter_upperlefts`,`inter_lowerrights`,`inters`çš„å½¢çŠ¶:
+    # (boxes1çš„æ•°é‡,boxes2çš„æ•°é‡,2)
     inter_upperlefts = torch.max(boxes1[:, None, :2], boxes2[:, :2])
     inter_lowerrights = torch.min(boxes1[:, None, 2:], boxes2[:, 2:])
     inters = (inter_lowerrights - inter_upperlefts).clamp(min=0)
-    # inter_areasandunion_areasµÄĞÎ×´:(boxes1µÄÊıÁ¿,boxes2µÄÊıÁ¿)
+    # `inter_areas`and`union_areas`çš„å½¢çŠ¶:(boxes1çš„æ•°é‡,boxes2çš„æ•°é‡)
     inter_areas = inters[:, :, 0] * inters[:, :, 1]
     union_areas = areas1[:, None] + areas2 - inter_areas
     return inter_areas / union_areas
 
 def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
-    """½«×î½Ó½üµÄÕæÊµ±ß½ç¿ò·ÖÅä¸øÃª¿ò
+    """å°†æœ€æ¥è¿‘çš„çœŸå®è¾¹ç•Œæ¡†åˆ†é…ç»™é”šæ¡†
 
     Defined in :numref:`sec_anchor`"""
     num_anchors, num_gt_boxes = anchors.shape[0], ground_truth.shape[0]
-    # Î»ÓÚµÚiĞĞºÍµÚjÁĞµÄÔªËØx_ijÊÇÃª¿òiºÍÕæÊµ±ß½ç¿òjµÄIoU
+    # ä½äºç¬¬iè¡Œå’Œç¬¬jåˆ—çš„å…ƒç´ x_ijæ˜¯é”šæ¡†iå’ŒçœŸå®è¾¹ç•Œæ¡†jçš„IoU
     jaccard = box_iou(anchors, ground_truth)
-    # ¶ÔÓÚÃ¿¸öÃª¿ò£¬·ÖÅäµÄÕæÊµ±ß½ç¿òµÄÕÅÁ¿
+    # å¯¹äºæ¯ä¸ªé”šæ¡†ï¼Œåˆ†é…çš„çœŸå®è¾¹ç•Œæ¡†çš„å¼ é‡
     anchors_bbox_map = torch.full((num_anchors,), -1, dtype=torch.long,
                                   device=device)
-    # ¸ù¾İãĞÖµ£¬¾ö¶¨ÊÇ·ñ·ÖÅäÕæÊµ±ß½ç¿ò
+    # æ ¹æ®é˜ˆå€¼ï¼Œå†³å®šæ˜¯å¦åˆ†é…çœŸå®è¾¹ç•Œæ¡†
     max_ious, indices = torch.max(jaccard, dim=1)
     anc_i = torch.nonzero(max_ious >= 0.5).reshape(-1)
     box_j = indices[max_ious >= 0.5]
@@ -1654,7 +1682,7 @@ def assign_anchor_to_bbox(ground_truth, anchors, device, iou_threshold=0.5):
     return anchors_bbox_map
 
 def offset_boxes(anchors, assigned_bb, eps=1e-6):
-    """¶ÔÃª¿òÆ«ÒÆÁ¿µÄ×ª»»
+    """å¯¹é”šæ¡†åç§»é‡çš„è½¬æ¢
 
     Defined in :numref:`subsec_labeling-anchor-boxes`"""
     c_anc = d2l.box_corner_to_center(anchors)
@@ -1665,7 +1693,7 @@ def offset_boxes(anchors, assigned_bb, eps=1e-6):
     return offset
 
 def multibox_target(anchors, labels):
-    """Ê¹ÓÃÕæÊµ±ß½ç¿ò±ê¼ÇÃª¿ò
+    """ä½¿ç”¨çœŸå®è¾¹ç•Œæ¡†æ ‡è®°é”šæ¡†
 
     Defined in :numref:`subsec_labeling-anchor-boxes`"""
     batch_size, anchors = labels.shape[0], anchors.squeeze(0)
@@ -1677,18 +1705,18 @@ def multibox_target(anchors, labels):
             label[:, 1:], anchors, device)
         bbox_mask = ((anchors_bbox_map >= 0).float().unsqueeze(-1)).repeat(
             1, 4)
-        # ½«Àà±êÇ©ºÍ·ÖÅäµÄ±ß½ç¿ò×ø±ê³õÊ¼»¯ÎªÁã
+        # å°†ç±»æ ‡ç­¾å’Œåˆ†é…çš„è¾¹ç•Œæ¡†åæ ‡åˆå§‹åŒ–ä¸ºé›¶
         class_labels = torch.zeros(num_anchors, dtype=torch.long,
                                    device=device)
         assigned_bb = torch.zeros((num_anchors, 4), dtype=torch.float32,
                                   device=device)
-        # Ê¹ÓÃÕæÊµ±ß½ç¿òÀ´±ê¼ÇÃª¿òµÄÀà±ğ¡£
-        # Èç¹ûÒ»¸öÃª¿òÃ»ÓĞ±»·ÖÅä£¬ÎÒÃÇ±ê¼ÇÆäÎª±³¾°£¨ÖµÎªÁã£©
+        # ä½¿ç”¨çœŸå®è¾¹ç•Œæ¡†æ¥æ ‡è®°é”šæ¡†çš„ç±»åˆ«ã€‚
+        # å¦‚æœä¸€ä¸ªé”šæ¡†æ²¡æœ‰è¢«åˆ†é…ï¼Œæˆ‘ä»¬æ ‡è®°å…¶ä¸ºèƒŒæ™¯ï¼ˆå€¼ä¸ºé›¶ï¼‰
         indices_true = torch.nonzero(anchors_bbox_map >= 0)
         bb_idx = anchors_bbox_map[indices_true]
         class_labels[indices_true] = label[bb_idx, 0].long() + 1
         assigned_bb[indices_true] = label[bb_idx, 1:]
-        # Æ«ÒÆÁ¿×ª»»
+        # åç§»é‡è½¬æ¢
         offset = offset_boxes(anchors, assigned_bb) * bbox_mask
         batch_offset.append(offset.reshape(-1))
         batch_mask.append(bbox_mask.reshape(-1))
@@ -1699,7 +1727,7 @@ def multibox_target(anchors, labels):
     return (bbox_offset, bbox_mask, class_labels)
 
 def offset_inverse(anchors, offset_preds):
-    """¸ù¾İ´øÓĞÔ¤²âÆ«ÒÆÁ¿µÄÃª¿òÀ´Ô¤²â±ß½ç¿ò
+    """æ ¹æ®å¸¦æœ‰é¢„æµ‹åç§»é‡çš„é”šæ¡†æ¥é¢„æµ‹è¾¹ç•Œæ¡†
 
     Defined in :numref:`subsec_labeling-anchor-boxes`"""
     anc = d2l.box_corner_to_center(anchors)
@@ -1710,11 +1738,11 @@ def offset_inverse(anchors, offset_preds):
     return predicted_bbox
 
 def nms(boxes, scores, iou_threshold):
-    """¶ÔÔ¤²â±ß½ç¿òµÄÖÃĞÅ¶È½øĞĞÅÅĞò
+    """å¯¹é¢„æµ‹è¾¹ç•Œæ¡†çš„ç½®ä¿¡åº¦è¿›è¡Œæ’åº
 
     Defined in :numref:`subsec_predicting-bounding-boxes-nms`"""
     B = torch.argsort(scores, dim=-1, descending=True)
-    keep = []  # ±£ÁôÔ¤²â±ß½ç¿òµÄÖ¸±ê
+    keep = []  # ä¿ç•™é¢„æµ‹è¾¹ç•Œæ¡†çš„æŒ‡æ ‡
     while B.numel() > 0:
         i = B[0]
         keep.append(i)
@@ -1727,7 +1755,7 @@ def nms(boxes, scores, iou_threshold):
 
 def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
                        pos_threshold=0.009999999):
-    """Ê¹ÓÃ·Ç¼«´óÖµÒÖÖÆÀ´Ô¤²â±ß½ç¿ò
+    """ä½¿ç”¨éæå¤§å€¼æŠ‘åˆ¶æ¥é¢„æµ‹è¾¹ç•Œæ¡†
 
     Defined in :numref:`subsec_predicting-bounding-boxes-nms`"""
     device, batch_size = cls_probs.device, cls_probs.shape[0]
@@ -1740,7 +1768,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
         predicted_bb = offset_inverse(anchors, offset_pred)
         keep = nms(predicted_bb, conf, nms_threshold)
 
-        # ÕÒµ½ËùÓĞµÄnon_keepË÷Òı£¬²¢½«ÀàÉèÖÃÎª±³¾°
+        # æ‰¾åˆ°æ‰€æœ‰çš„non_keepç´¢å¼•ï¼Œå¹¶å°†ç±»è®¾ç½®ä¸ºèƒŒæ™¯
         all_idx = torch.arange(num_anchors, dtype=torch.long, device=device)
         combined = torch.cat((keep, all_idx))
         uniques, counts = combined.unique(return_counts=True)
@@ -1749,7 +1777,7 @@ def multibox_detection(cls_probs, offset_preds, anchors, nms_threshold=0.5,
         class_id[non_keep] = -1
         class_id = class_id[all_id_sorted]
         conf, predicted_bb = conf[all_id_sorted], predicted_bb[all_id_sorted]
-        # pos_thresholdÊÇÒ»¸öÓÃÓÚ·Ç±³¾°Ô¤²âµÄãĞÖµ
+        # `pos_threshold`æ˜¯ä¸€ä¸ªç”¨äºéèƒŒæ™¯é¢„æµ‹çš„é˜ˆå€¼
         below_min_idx = (conf < pos_threshold)
         class_id[below_min_idx] = -1
         conf[below_min_idx] = 1 - conf[below_min_idx]
@@ -1764,7 +1792,7 @@ d2l.DATA_HUB['banana-detection'] = (
     '5de26c8fce5ccdea9f91267273464dc968d20d72')
 
 def read_data_bananas(is_train=True):
-    """¶ÁÈ¡Ïã½¶¼ì²âÊı¾İ¼¯ÖĞµÄÍ¼ÏñºÍ±êÇ©
+    """è¯»å–é¦™è•‰æ£€æµ‹æ•°æ®é›†ä¸­çš„å›¾åƒå’Œæ ‡ç­¾
 
     Defined in :numref:`sec_object-detection-dataset`"""
     data_dir = d2l.download_extract('banana-detection')
@@ -1777,13 +1805,13 @@ def read_data_bananas(is_train=True):
         images.append(torchvision.io.read_image(
             os.path.join(data_dir, 'bananas_train' if is_train else
                          'bananas_val', 'images', f'{img_name}')))
-        # ÕâÀïµÄtarget°üº¬£¨Àà±ğ£¬×óÉÏ½Çx£¬×óÉÏ½Çy£¬ÓÒÏÂ½Çx£¬ÓÒÏÂ½Çy£©£¬
-        # ÆäÖĞËùÓĞÍ¼Ïñ¶¼¾ßÓĞÏàÍ¬µÄÏã½¶Àà£¨Ë÷ÒıÎª0£©
+        # è¿™é‡Œçš„`target`åŒ…å«ï¼ˆç±»åˆ«ï¼Œå·¦ä¸Šè§’xï¼Œå·¦ä¸Šè§’yï¼Œå³ä¸‹è§’xï¼Œå³ä¸‹è§’yï¼‰ï¼Œ
+        # å…¶ä¸­æ‰€æœ‰å›¾åƒéƒ½å…·æœ‰ç›¸åŒçš„é¦™è•‰ç±»ï¼ˆç´¢å¼•ä¸º0ï¼‰
         targets.append(list(target))
     return images, torch.tensor(targets).unsqueeze(1) / 256
 
 class BananasDataset(torch.utils.data.Dataset):
-    """Ò»¸öÓÃÓÚ¼ÓÔØÏã½¶¼ì²âÊı¾İ¼¯µÄ×Ô¶¨ÒåÊı¾İ¼¯
+    """ä¸€ä¸ªç”¨äºåŠ è½½é¦™è•‰æ£€æµ‹æ•°æ®é›†çš„è‡ªå®šä¹‰æ•°æ®é›†
 
     Defined in :numref:`sec_object-detection-dataset`"""
     def __init__(self, is_train):
@@ -1798,7 +1826,7 @@ class BananasDataset(torch.utils.data.Dataset):
         return len(self.features)
 
 def load_data_bananas(batch_size):
-    """¼ÓÔØÏã½¶¼ì²âÊı¾İ¼¯
+    """åŠ è½½é¦™è•‰æ£€æµ‹æ•°æ®é›†
 
     Defined in :numref:`sec_object-detection-dataset`"""
     train_iter = torch.utils.data.DataLoader(BananasDataset(is_train=True),
@@ -1811,7 +1839,7 @@ d2l.DATA_HUB['voc2012'] = (d2l.DATA_URL + 'VOCtrainval_11-May-2012.tar',
                            '4e443f8a2eca6b1dac8a6c57641b67dd40621a49')
 
 def read_voc_images(voc_dir, is_train=True):
-    """¶ÁÈ¡ËùÓĞVOCÍ¼Ïñ²¢±ê×¢
+    """è¯»å–æ‰€æœ‰VOCå›¾åƒå¹¶æ ‡æ³¨
 
     Defined in :numref:`sec_semantic_segmentation`"""
     txt_fname = os.path.join(voc_dir, 'ImageSets', 'Segmentation',
@@ -1840,7 +1868,7 @@ VOC_CLASSES = ['background', 'aeroplane', 'bicycle', 'bird', 'boat',
                'potted plant', 'sheep', 'sofa', 'train', 'tv/monitor']
 
 def voc_colormap2label():
-    """¹¹½¨´ÓRGBµ½VOCÀà±ğË÷ÒıµÄÓ³Éä
+    """æ„å»ºä»RGBåˆ°VOCç±»åˆ«ç´¢å¼•çš„æ˜ å°„
 
     Defined in :numref:`sec_semantic_segmentation`"""
     colormap2label = torch.zeros(256 ** 3, dtype=torch.long)
@@ -1850,7 +1878,7 @@ def voc_colormap2label():
     return colormap2label
 
 def voc_label_indices(colormap, colormap2label):
-    """½«VOC±êÇ©ÖĞµÄRGBÖµÓ³Éäµ½ËüÃÇµÄÀà±ğË÷Òı
+    """å°†VOCæ ‡ç­¾ä¸­çš„RGBå€¼æ˜ å°„åˆ°å®ƒä»¬çš„ç±»åˆ«ç´¢å¼•
 
     Defined in :numref:`sec_semantic_segmentation`"""
     colormap = colormap.permute(1, 2, 0).numpy().astype('int32')
@@ -1859,7 +1887,7 @@ def voc_label_indices(colormap, colormap2label):
     return colormap2label[idx]
 
 def voc_rand_crop(feature, label, height, width):
-    """Ëæ»ú²Ã¼ôÌØÕ÷ºÍ±êÇ©Í¼Ïñ
+    """éšæœºè£å‰ªç‰¹å¾å’Œæ ‡ç­¾å›¾åƒ
 
     Defined in :numref:`sec_semantic_segmentation`"""
     rect = torchvision.transforms.RandomCrop.get_params(
@@ -1869,7 +1897,7 @@ def voc_rand_crop(feature, label, height, width):
     return feature, label
 
 class VOCSegDataset(torch.utils.data.Dataset):
-    """Ò»¸öÓÃÓÚ¼ÓÔØVOCÊı¾İ¼¯µÄ×Ô¶¨ÒåÊı¾İ¼¯
+    """ä¸€ä¸ªç”¨äºåŠ è½½VOCæ•°æ®é›†çš„è‡ªå®šä¹‰æ•°æ®é›†
 
     Defined in :numref:`sec_semantic_segmentation`"""
 
@@ -1901,7 +1929,7 @@ class VOCSegDataset(torch.utils.data.Dataset):
         return len(self.features)
 
 def load_data_voc(batch_size, crop_size):
-    """¼ÓÔØVOCÓïÒå·Ö¸îÊı¾İ¼¯
+    """åŠ è½½VOCè¯­ä¹‰åˆ†å‰²æ•°æ®é›†
 
     Defined in :numref:`sec_semantic_segmentation`"""
     voc_dir = d2l.download_extract('voc2012', os.path.join(
@@ -1919,29 +1947,29 @@ d2l.DATA_HUB['cifar10_tiny'] = (d2l.DATA_URL + 'kaggle_cifar10_tiny.zip',
                                 '2068874e4b9a9f0fb07ebe0ad2b29754449ccacd')
 
 def read_csv_labels(fname):
-    """¶ÁÈ¡fnameÀ´¸ø±êÇ©×Öµä·µ»ØÒ»¸öÎÄ¼şÃû
+    """è¯»å–`fname`æ¥ç»™æ ‡ç­¾å­—å…¸è¿”å›ä¸€ä¸ªæ–‡ä»¶å
 
     Defined in :numref:`sec_kaggle_cifar10`"""
     with open(fname, 'r') as f:
-        # Ìø¹ıÎÄ¼şÍ·ĞĞ(ÁĞÃû)
+        # è·³è¿‡æ–‡ä»¶å¤´è¡Œ(åˆ—å)
         lines = f.readlines()[1:]
     tokens = [l.rstrip().split(',') for l in lines]
     return dict(((name, label) for name, label in tokens))
 
 def copyfile(filename, target_dir):
-    """½«ÎÄ¼ş¸´ÖÆµ½Ä¿±êÄ¿Â¼
+    """å°†æ–‡ä»¶å¤åˆ¶åˆ°ç›®æ ‡ç›®å½•
 
     Defined in :numref:`sec_kaggle_cifar10`"""
     os.makedirs(target_dir, exist_ok=True)
     shutil.copy(filename, target_dir)
 
 def reorg_train_valid(data_dir, labels, valid_ratio):
-    """½«ÑéÖ¤¼¯´ÓÔ­Ê¼µÄÑµÁ·¼¯ÖĞ²ğ·Ö³öÀ´
+    """å°†éªŒè¯é›†ä»åŸå§‹çš„è®­ç»ƒé›†ä¸­æ‹†åˆ†å‡ºæ¥
 
     Defined in :numref:`sec_kaggle_cifar10`"""
-    # ÑµÁ·Êı¾İ¼¯ÖĞÑù±¾×îÉÙµÄÀà±ğÖĞµÄÑù±¾Êı
+    # è®­ç»ƒæ•°æ®é›†ä¸­æ ·æœ¬æœ€å°‘çš„ç±»åˆ«ä¸­çš„æ ·æœ¬æ•°
     n = collections.Counter(labels.values()).most_common()[-1][1]
-    # ÑéÖ¤¼¯ÖĞÃ¿¸öÀà±ğµÄÑù±¾Êı
+    # éªŒè¯é›†ä¸­æ¯ä¸ªç±»åˆ«çš„æ ·æœ¬æ•°
     n_valid_per_label = max(1, math.floor(n * valid_ratio))
     label_count = {}
     for train_file in os.listdir(os.path.join(data_dir, 'train')):
@@ -1959,7 +1987,7 @@ def reorg_train_valid(data_dir, labels, valid_ratio):
     return n_valid_per_label
 
 def reorg_test(data_dir):
-    """ÔÚÔ¤²âÆÚ¼äÕûÀí²âÊÔ¼¯£¬ÒÔ·½±ã¶ÁÈ¡
+    """åœ¨é¢„æµ‹æœŸé—´æ•´ç†æµ‹è¯•é›†ï¼Œä»¥æ–¹ä¾¿è¯»å–
 
     Defined in :numref:`sec_kaggle_cifar10`"""
     for test_file in os.listdir(os.path.join(data_dir, 'test')):
@@ -1974,7 +2002,7 @@ d2l.DATA_HUB['ptb'] = (d2l.DATA_URL + 'ptb.zip',
                        '319d85e578af0cdc590547f26231e4e31cdf1e42')
 
 def read_ptb():
-    """½«PTBÊı¾İ¼¯¼ÓÔØµ½ÎÄ±¾ĞĞµÄÁĞ±íÖĞ
+    """å°†PTBæ•°æ®é›†åŠ è½½åˆ°æ–‡æœ¬è¡Œçš„åˆ—è¡¨ä¸­
 
     Defined in :numref:`sec_word2vec_data`"""
     data_dir = d2l.download_extract('ptb')
@@ -1984,16 +2012,16 @@ def read_ptb():
     return [line.split() for line in raw_text.split('\n')]
 
 def subsample(sentences, vocab):
-    """ÏÂ²ÉÑù¸ßÆµ´Ê
+    """ä¸‹é‡‡æ ·é«˜é¢‘è¯
 
     Defined in :numref:`sec_word2vec_data`"""
-    # ÅÅ³ıÎ´Öª´ÊÔª'<unk>'
+    # æ’é™¤æœªçŸ¥è¯å…ƒ'<unk>'
     sentences = [[token for token in line if vocab[token] != vocab.unk]
                  for line in sentences]
     counter = d2l.count_corpus(sentences)
     num_tokens = sum(counter.values())
 
-    # Èç¹ûÔÚÏÂ²ÉÑùÆÚ¼ä±£Áô´ÊÔª£¬Ôò·µ»ØTrue
+    # å¦‚æœåœ¨ä¸‹é‡‡æ ·æœŸé—´ä¿ç•™è¯å…ƒï¼Œåˆ™è¿”å›True
     def keep(token):
         return(random.uniform(0, 1) <
                math.sqrt(1e-4 / counter[token] * num_tokens))
@@ -2002,26 +2030,26 @@ def subsample(sentences, vocab):
             counter)
 
 def get_centers_and_contexts(corpus, max_window_size):
-    """·µ»ØÌøÔªÄ£ĞÍÖĞµÄÖĞĞÄ´ÊºÍÉÏÏÂÎÄ´Ê
+    """è¿”å›è·³å…ƒæ¨¡å‹ä¸­çš„ä¸­å¿ƒè¯å’Œä¸Šä¸‹æ–‡è¯
 
     Defined in :numref:`sec_word2vec_data`"""
     centers, contexts = [], []
     for line in corpus:
-        # ÒªĞÎ³É¡°ÖĞĞÄ´Ê-ÉÏÏÂÎÄ´Ê¡±¶Ô£¬Ã¿¸ö¾ä×ÓÖÁÉÙĞèÒªÓĞ2¸ö´Ê
+        # è¦å½¢æˆâ€œä¸­å¿ƒè¯-ä¸Šä¸‹æ–‡è¯â€å¯¹ï¼Œæ¯ä¸ªå¥å­è‡³å°‘éœ€è¦æœ‰2ä¸ªè¯
         if len(line) < 2:
             continue
         centers += line
-        for i in range(len(line)):  # ÉÏÏÂÎÄ´°¿ÚÖĞ¼äi
+        for i in range(len(line)):  # ä¸Šä¸‹æ–‡çª—å£ä¸­é—´`i`
             window_size = random.randint(1, max_window_size)
             indices = list(range(max(0, i - window_size),
                                  min(len(line), i + 1 + window_size)))
-            # ´ÓÉÏÏÂÎÄ´ÊÖĞÅÅ³ıÖĞĞÄ´Ê
+            # ä»ä¸Šä¸‹æ–‡è¯ä¸­æ’é™¤ä¸­å¿ƒè¯
             indices.remove(i)
             contexts.append([line[idx] for idx in indices])
     return centers, contexts
 
 class RandomGenerator:
-    """¸ù¾İn¸ö²ÉÑùÈ¨ÖØÔÚ{1,...,n}ÖĞËæ»ú³éÈ¡"""
+    """æ ¹æ®nä¸ªé‡‡æ ·æƒé‡åœ¨{1,...,n}ä¸­éšæœºæŠ½å–"""
     def __init__(self, sampling_weights):
         """Defined in :numref:`sec_word2vec_data`"""
         # Exclude
@@ -2032,7 +2060,7 @@ class RandomGenerator:
 
     def draw(self):
         if self.i == len(self.candidates):
-            # »º´æk¸öËæ»ú²ÉÑù½á¹û
+            # ç¼“å­˜`k`ä¸ªéšæœºé‡‡æ ·ç»“æœ
             self.candidates = random.choices(
                 self.population, self.sampling_weights, k=10000)
             self.i = 0
@@ -2043,10 +2071,10 @@ generator = RandomGenerator([2, 3, 4])
 [generator.draw() for _ in range(10)]
 
 def get_negatives(all_contexts, vocab, counter, K):
-    """·µ»Ø¸º²ÉÑùÖĞµÄÔëÉù´Ê
+    """è¿”å›è´Ÿé‡‡æ ·ä¸­çš„å™ªå£°è¯
 
     Defined in :numref:`sec_word2vec_data`"""
-    # Ë÷ÒıÎª1¡¢2¡¢...£¨Ë÷Òı0ÊÇ´Ê±íÖĞÅÅ³ıµÄÎ´Öª±ê¼Ç£©
+    # ç´¢å¼•ä¸º1ã€2ã€...ï¼ˆç´¢å¼•0æ˜¯è¯è¡¨ä¸­æ’é™¤çš„æœªçŸ¥æ ‡è®°ï¼‰
     sampling_weights = [counter[vocab.to_tokens(i)]**0.75
                         for i in range(1, len(vocab))]
     all_negatives, generator = [], RandomGenerator(sampling_weights)
@@ -2054,14 +2082,14 @@ def get_negatives(all_contexts, vocab, counter, K):
         negatives = []
         while len(negatives) < len(contexts) * K:
             neg = generator.draw()
-            # ÔëÉù´Ê²»ÄÜÊÇÉÏÏÂÎÄ´Ê
+            # å™ªå£°è¯ä¸èƒ½æ˜¯ä¸Šä¸‹æ–‡è¯
             if neg not in contexts:
                 negatives.append(neg)
         all_negatives.append(negatives)
     return all_negatives
 
 def batchify(data):
-    """·µ»Ø´øÓĞ¸º²ÉÑùµÄÌøÔªÄ£ĞÍµÄĞ¡ÅúÁ¿Ñù±¾
+    """è¿”å›å¸¦æœ‰è´Ÿé‡‡æ ·çš„è·³å…ƒæ¨¡å‹çš„å°æ‰¹é‡æ ·æœ¬
 
     Defined in :numref:`sec_word2vec_data`"""
     max_len = max(len(c) + len(n) for _, c, n in data)
@@ -2077,7 +2105,7 @@ def batchify(data):
         contexts_negatives), d2l.tensor(masks), d2l.tensor(labels))
 
 def load_data_ptb(batch_size, max_window_size, num_noise_words):
-    """ÏÂÔØPTBÊı¾İ¼¯£¬È»ºó½«Æä¼ÓÔØµ½ÄÚ´æÖĞ
+    """ä¸‹è½½PTBæ•°æ®é›†ï¼Œç„¶åå°†å…¶åŠ è½½åˆ°å†…å­˜ä¸­
 
     Defined in :numref:`subsec_word2vec-minibatch-loading`"""
     num_workers = d2l.get_dataloader_workers()
@@ -2124,7 +2152,7 @@ d2l.DATA_HUB['wiki.en'] = (d2l.DATA_URL + 'wiki.en.zip',
                            'c1816da3821ae9f43899be655002f6c723e91b88')
 
 class TokenEmbedding:
-    """GloVeÇ¶Èë"""
+    """GloVeåµŒå…¥"""
     def __init__(self, embedding_name):
         """Defined in :numref:`sec_synonyms`"""
         self.idx_to_token, self.idx_to_vec = self._load_embedding(
@@ -2136,13 +2164,13 @@ class TokenEmbedding:
     def _load_embedding(self, embedding_name):
         idx_to_token, idx_to_vec = ['<unk>'], []
         data_dir = d2l.download_extract(embedding_name)
-        # GloVeÍøÕ¾£ºhttps://nlp.stanford.edu/projects/glove/
-        # fastTextÍøÕ¾£ºhttps://fasttext.cc/
+        # GloVeç½‘ç«™ï¼šhttps://nlp.stanford.edu/projects/glove/
+        # fastTextç½‘ç«™ï¼šhttps://fasttext.cc/
         with open(os.path.join(data_dir, 'vec.txt'), 'r') as f:
             for line in f:
                 elems = line.rstrip().split(' ')
                 token, elems = elems[0], [float(elem) for elem in elems[1:]]
-                # Ìø¹ı±êÌâĞÅÏ¢£¬ÀıÈçfastTextÖĞµÄÊ×ĞĞ
+                # è·³è¿‡æ ‡é¢˜ä¿¡æ¯ï¼Œä¾‹å¦‚fastTextä¸­çš„é¦–è¡Œ
                 if len(elems) > 1:
                     idx_to_token.append(token)
                     idx_to_vec.append(elems)
@@ -2159,11 +2187,11 @@ class TokenEmbedding:
         return len(self.idx_to_token)
 
 def get_tokens_and_segments(tokens_a, tokens_b=None):
-    """»ñÈ¡ÊäÈëĞòÁĞµÄ´ÊÔª¼°ÆäÆ¬¶ÎË÷Òı
+    """è·å–è¾“å…¥åºåˆ—çš„è¯å…ƒåŠå…¶ç‰‡æ®µç´¢å¼•
 
     Defined in :numref:`sec_bert`"""
     tokens = ['<cls>'] + tokens_a + ['<sep>']
-    # 0ºÍ1·Ö±ğ±ê¼ÇÆ¬¶ÎAºÍB
+    # 0å’Œ1åˆ†åˆ«æ ‡è®°ç‰‡æ®µAå’ŒB
     segments = [0] * (len(tokens_a) + 2)
     if tokens_b is not None:
         tokens += tokens_b + ['<sep>']
@@ -2171,7 +2199,7 @@ def get_tokens_and_segments(tokens_a, tokens_b=None):
     return tokens, segments
 
 class BERTEncoder(nn.Module):
-    """BERT±àÂëÆ÷
+    """BERTç¼–ç å™¨
 
     Defined in :numref:`subsec_bert_input_rep`"""
     def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
@@ -2186,12 +2214,12 @@ class BERTEncoder(nn.Module):
             self.blks.add_module(f"{i}", d2l.EncoderBlock(
                 key_size, query_size, value_size, num_hiddens, norm_shape,
                 ffn_num_input, ffn_num_hiddens, num_heads, dropout, True))
-        # ÔÚBERTÖĞ£¬Î»ÖÃÇ¶ÈëÊÇ¿ÉÑ§Ï°µÄ£¬Òò´ËÎÒÃÇ´´½¨Ò»¸ö×ã¹»³¤µÄÎ»ÖÃÇ¶Èë²ÎÊı
+        # åœ¨BERTä¸­ï¼Œä½ç½®åµŒå…¥æ˜¯å¯å­¦ä¹ çš„ï¼Œå› æ­¤æˆ‘ä»¬åˆ›å»ºä¸€ä¸ªè¶³å¤Ÿé•¿çš„ä½ç½®åµŒå…¥å‚æ•°
         self.pos_embedding = nn.Parameter(torch.randn(1, max_len,
                                                       num_hiddens))
 
     def forward(self, tokens, segments, valid_lens):
-        # ÔÚÒÔÏÂ´úÂë¶ÎÖĞ£¬XµÄĞÎ×´±£³Ö²»±ä£º£¨ÅúÁ¿´óĞ¡£¬×î´óĞòÁĞ³¤¶È£¬num_hiddens£©
+        # åœ¨ä»¥ä¸‹ä»£ç æ®µä¸­ï¼Œ`X`çš„å½¢çŠ¶ä¿æŒä¸å˜ï¼šï¼ˆæ‰¹é‡å¤§å°ï¼Œæœ€å¤§åºåˆ—é•¿åº¦ï¼Œ`num_hiddens`ï¼‰
         X = self.token_embedding(tokens) + self.segment_embedding(segments)
         X = X + self.pos_embedding.data[:, :X.shape[1], :]
         for blk in self.blks:
@@ -2199,7 +2227,7 @@ class BERTEncoder(nn.Module):
         return X
 
 class MaskLM(nn.Module):
-    """BERTµÄÑÚ±ÎÓïÑÔÄ£ĞÍÈÎÎñ
+    """BERTçš„æ©è”½è¯­è¨€æ¨¡å‹ä»»åŠ¡
 
     Defined in :numref:`subsec_bert_input_rep`"""
     def __init__(self, vocab_size, num_hiddens, num_inputs=768, **kwargs):
@@ -2214,8 +2242,8 @@ class MaskLM(nn.Module):
         pred_positions = pred_positions.reshape(-1)
         batch_size = X.shape[0]
         batch_idx = torch.arange(0, batch_size)
-        # ¼ÙÉèbatch_size=2£¬num_pred_positions=3
-        # ÄÇÃ´batch_idxÊÇnp.array£¨[0,0,0,1,1]£©
+        # å‡è®¾batch_size=2ï¼Œnum_pred_positions=3
+        # é‚£ä¹ˆbatch_idxæ˜¯np.arrayï¼ˆ[0,0,0,1,1]ï¼‰
         batch_idx = torch.repeat_interleave(batch_idx, num_pred_positions)
         masked_X = X[batch_idx, pred_positions]
         masked_X = masked_X.reshape((batch_size, num_pred_positions, -1))
@@ -2223,7 +2251,7 @@ class MaskLM(nn.Module):
         return mlm_Y_hat
 
 class NextSentencePred(nn.Module):
-    """BERTµÄÏÂÒ»¾äÔ¤²âÈÎÎñ
+    """BERTçš„ä¸‹ä¸€å¥é¢„æµ‹ä»»åŠ¡
 
     Defined in :numref:`subsec_mlm`"""
     def __init__(self, num_inputs, **kwargs):
@@ -2231,11 +2259,11 @@ class NextSentencePred(nn.Module):
         self.output = nn.Linear(num_inputs, 2)
 
     def forward(self, X):
-        # XµÄĞÎ×´£º(batchsize,num_hiddens)
+        # `X`çš„å½¢çŠ¶ï¼š(batchsize,`num_hiddens`)
         return self.output(X)
 
 class BERTModel(nn.Module):
-    """BERTÄ£ĞÍ
+    """BERTæ¨¡å‹
 
     Defined in :numref:`subsec_nsp`"""
     def __init__(self, vocab_size, num_hiddens, norm_shape, ffn_num_input,
@@ -2260,7 +2288,7 @@ class BERTModel(nn.Module):
             mlm_Y_hat = self.mlm(encoded_X, pred_positions)
         else:
             mlm_Y_hat = None
-        # ÓÃÓÚÏÂÒ»¾äÔ¤²âµÄ¶à²ã¸ĞÖª»ú·ÖÀàÆ÷µÄÒş²Ø²ã£¬0ÊÇ¡°<cls>¡±±ê¼ÇµÄË÷Òı
+        # ç”¨äºä¸‹ä¸€å¥é¢„æµ‹çš„å¤šå±‚æ„ŸçŸ¥æœºåˆ†ç±»å™¨çš„éšè—å±‚ï¼Œ0æ˜¯â€œ<cls>â€æ ‡è®°çš„ç´¢å¼•
         nsp_Y_hat = self.nsp(self.hidden(encoded_X[:, 0, :]))
         return encoded_X, mlm_Y_hat, nsp_Y_hat
 
@@ -2273,7 +2301,7 @@ def _read_wiki(data_dir):
     file_name = os.path.join(data_dir, 'wiki.train.tokens')
     with open(file_name, 'r') as f:
         lines = f.readlines()
-    # ´óĞ´×ÖÄ¸×ª»»ÎªĞ¡Ğ´×ÖÄ¸
+    # å¤§å†™å­—æ¯è½¬æ¢ä¸ºå°å†™å­—æ¯
     paragraphs = [line.strip().lower().split(' . ')
                   for line in lines if len(line.split(' . ')) >= 2]
     random.shuffle(paragraphs)
@@ -2284,7 +2312,7 @@ def _get_next_sentence(sentence, next_sentence, paragraphs):
     if random.random() < 0.5:
         is_next = True
     else:
-        # paragraphsÊÇÈıÖØÁĞ±íµÄÇ¶Ì×
+        # `paragraphs`æ˜¯ä¸‰é‡åˆ—è¡¨çš„åµŒå¥—
         next_sentence = random.choice(random.choice(paragraphs))
         is_next = False
     return sentence, next_sentence, is_next
@@ -2295,7 +2323,7 @@ def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
     for i in range(len(paragraph) - 1):
         tokens_a, tokens_b, is_next = _get_next_sentence(
             paragraph[i], paragraph[i + 1], paragraphs)
-        # ¿¼ÂÇ1¸ö'<cls>'´ÊÔªºÍ2¸ö'<sep>'´ÊÔª
+        # è€ƒè™‘1ä¸ª'<cls>'è¯å…ƒå’Œ2ä¸ª'<sep>'è¯å…ƒ
         if len(tokens_a) + len(tokens_b) + 3 > max_len:
             continue
         tokens, segments = d2l.get_tokens_and_segments(tokens_a, tokens_b)
@@ -2305,23 +2333,23 @@ def _get_nsp_data_from_paragraph(paragraph, paragraphs, vocab, max_len):
 def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
                         vocab):
     """Defined in :numref:`sec_bert-dataset`"""
-    # ÎªÕÚ±ÎÓïÑÔÄ£ĞÍµÄÊäÈë´´½¨ĞÂµÄ´ÊÔª¸±±¾£¬ÆäÖĞÊäÈë¿ÉÄÜ°üº¬Ìæ»»µÄ¡°<mask>¡±»òËæ»ú´ÊÔª
+    # ä¸ºé®è”½è¯­è¨€æ¨¡å‹çš„è¾“å…¥åˆ›å»ºæ–°çš„è¯å…ƒå‰¯æœ¬ï¼Œå…¶ä¸­è¾“å…¥å¯èƒ½åŒ…å«æ›¿æ¢çš„â€œ<mask>â€æˆ–éšæœºè¯å…ƒ
     mlm_input_tokens = [token for token in tokens]
     pred_positions_and_labels = []
-    # ´òÂÒºóÓÃÓÚÔÚÕÚ±ÎÓïÑÔÄ£ĞÍÈÎÎñÖĞ»ñÈ¡15%µÄËæ»ú´ÊÔª½øĞĞÔ¤²â
+    # æ‰“ä¹±åç”¨äºåœ¨é®è”½è¯­è¨€æ¨¡å‹ä»»åŠ¡ä¸­è·å–15%çš„éšæœºè¯å…ƒè¿›è¡Œé¢„æµ‹
     random.shuffle(candidate_pred_positions)
     for mlm_pred_position in candidate_pred_positions:
         if len(pred_positions_and_labels) >= num_mlm_preds:
             break
         masked_token = None
-        # 80%µÄÊ±¼ä£º½«´ÊÌæ»»Îª¡°<mask>¡±´ÊÔª
+        # 80%çš„æ—¶é—´ï¼šå°†è¯æ›¿æ¢ä¸ºâ€œ<mask>â€è¯å…ƒ
         if random.random() < 0.8:
             masked_token = '<mask>'
         else:
-            # 10%µÄÊ±¼ä£º±£³Ö´Ê²»±ä
+            # 10%çš„æ—¶é—´ï¼šä¿æŒè¯ä¸å˜
             if random.random() < 0.5:
                 masked_token = tokens[mlm_pred_position]
-            # 10%µÄÊ±¼ä£ºÓÃËæ»ú´ÊÌæ»»¸Ã´Ê
+            # 10%çš„æ—¶é—´ï¼šç”¨éšæœºè¯æ›¿æ¢è¯¥è¯
             else:
                 masked_token = random.choice(vocab.idx_to_token)
         mlm_input_tokens[mlm_pred_position] = masked_token
@@ -2332,13 +2360,13 @@ def _replace_mlm_tokens(tokens, candidate_pred_positions, num_mlm_preds,
 def _get_mlm_data_from_tokens(tokens, vocab):
     """Defined in :numref:`subsec_prepare_mlm_data`"""
     candidate_pred_positions = []
-    # tokensÊÇÒ»¸ö×Ö·û´®ÁĞ±í
+    # `tokens`æ˜¯ä¸€ä¸ªå­—ç¬¦ä¸²åˆ—è¡¨
     for i, token in enumerate(tokens):
-        # ÔÚÕÚ±ÎÓïÑÔÄ£ĞÍÈÎÎñÖĞ²»»áÔ¤²âÌØÊâ´ÊÔª
+        # åœ¨é®è”½è¯­è¨€æ¨¡å‹ä»»åŠ¡ä¸­ä¸ä¼šé¢„æµ‹ç‰¹æ®Šè¯å…ƒ
         if token in ['<cls>', '<sep>']:
             continue
         candidate_pred_positions.append(i)
-    # ÕÚ±ÎÓïÑÔÄ£ĞÍÈÎÎñÖĞÔ¤²â15%µÄËæ»ú´ÊÔª
+    # é®è”½è¯­è¨€æ¨¡å‹ä»»åŠ¡ä¸­é¢„æµ‹15%çš„éšæœºè¯å…ƒ
     num_mlm_preds = max(1, round(len(tokens) * 0.15))
     mlm_input_tokens, pred_positions_and_labels = _replace_mlm_tokens(
         tokens, candidate_pred_positions, num_mlm_preds, vocab)
@@ -2360,11 +2388,11 @@ def _pad_bert_inputs(examples, max_len, vocab):
             max_len - len(token_ids)), dtype=torch.long))
         all_segments.append(torch.tensor(segments + [0] * (
             max_len - len(segments)), dtype=torch.long))
-        # valid_lens²»°üÀ¨'<pad>'µÄ¼ÆÊı
+        # `valid_lens`ä¸åŒ…æ‹¬'<pad>'çš„è®¡æ•°
         valid_lens.append(torch.tensor(len(token_ids), dtype=torch.float32))
         all_pred_positions.append(torch.tensor(pred_positions + [0] * (
             max_num_mlm_preds - len(pred_positions)), dtype=torch.long))
-        # Ìî³ä´ÊÔªµÄÔ¤²â½«Í¨¹ı³ËÒÔ0È¨ÖØÔÚËğÊ§ÖĞ¹ıÂËµô
+        # å¡«å……è¯å…ƒçš„é¢„æµ‹å°†é€šè¿‡ä¹˜ä»¥0æƒé‡åœ¨æŸå¤±ä¸­è¿‡æ»¤æ‰
         all_mlm_weights.append(
             torch.tensor([1.0] * len(mlm_pred_label_ids) + [0.0] * (
                 max_num_mlm_preds - len(pred_positions)),
@@ -2378,24 +2406,24 @@ def _pad_bert_inputs(examples, max_len, vocab):
 class _WikiTextDataset(torch.utils.data.Dataset):
     """Defined in :numref:`subsec_prepare_mlm_data`"""
     def __init__(self, paragraphs, max_len):
-        # ÊäÈëparagraphs[i]ÊÇ´ú±í¶ÎÂäµÄ¾ä×Ó×Ö·û´®ÁĞ±í£»
-        # ¶øÊä³öparagraphs[i]ÊÇ´ú±í¶ÎÂäµÄ¾ä×ÓÁĞ±í£¬ÆäÖĞÃ¿¸ö¾ä×Ó¶¼ÊÇ´ÊÔªÁĞ±í
+        # è¾“å…¥`paragraphs[i]`æ˜¯ä»£è¡¨æ®µè½çš„å¥å­å­—ç¬¦ä¸²åˆ—è¡¨ï¼›
+        # è€Œè¾“å‡º`paragraphs[i]`æ˜¯ä»£è¡¨æ®µè½çš„å¥å­åˆ—è¡¨ï¼Œå…¶ä¸­æ¯ä¸ªå¥å­éƒ½æ˜¯è¯å…ƒåˆ—è¡¨
         paragraphs = [d2l.tokenize(
             paragraph, token='word') for paragraph in paragraphs]
         sentences = [sentence for paragraph in paragraphs
                      for sentence in paragraph]
         self.vocab = d2l.Vocab(sentences, min_freq=5, reserved_tokens=[
             '<pad>', '<mask>', '<cls>', '<sep>'])
-        # »ñÈ¡ÏÂÒ»¾ä×ÓÔ¤²âÈÎÎñµÄÊı¾İ
+        # è·å–ä¸‹ä¸€å¥å­é¢„æµ‹ä»»åŠ¡çš„æ•°æ®
         examples = []
         for paragraph in paragraphs:
             examples.extend(_get_nsp_data_from_paragraph(
                 paragraph, paragraphs, self.vocab, max_len))
-        # »ñÈ¡ÕÚ±ÎÓïÑÔÄ£ĞÍÈÎÎñµÄÊı¾İ
+        # è·å–é®è”½è¯­è¨€æ¨¡å‹ä»»åŠ¡çš„æ•°æ®
         examples = [(_get_mlm_data_from_tokens(tokens, self.vocab)
                       + (segments, is_next))
                      for tokens, segments, is_next in examples]
-        # Ìî³äÊäÈë
+        # å¡«å……è¾“å…¥
         (self.all_token_ids, self.all_segments, self.valid_lens,
          self.all_pred_positions, self.all_mlm_weights,
          self.all_mlm_labels, self.nsp_labels) = _pad_bert_inputs(
@@ -2411,7 +2439,7 @@ class _WikiTextDataset(torch.utils.data.Dataset):
         return len(self.all_token_ids)
 
 def load_data_wiki(batch_size, max_len):
-    """¼ÓÔØWikiText-2Êı¾İ¼¯
+    """åŠ è½½WikiText-2æ•°æ®é›†
 
     Defined in :numref:`subsec_prepare_mlm_data`"""
     num_workers = d2l.get_dataloader_workers()
@@ -2427,15 +2455,15 @@ def _get_batch_loss_bert(net, loss, vocab_size, tokens_X,
                          pred_positions_X, mlm_weights_X,
                          mlm_Y, nsp_y):
     """Defined in :numref:`sec_bert-pretraining`"""
-    # Ç°Ïò´«²¥
+    # å‰å‘ä¼ æ’­
     _, mlm_Y_hat, nsp_Y_hat = net(tokens_X, segments_X,
                                   valid_lens_x.reshape(-1),
                                   pred_positions_X)
-    # ¼ÆËãÕÚ±ÎÓïÑÔÄ£ĞÍËğÊ§
+    # è®¡ç®—é®è”½è¯­è¨€æ¨¡å‹æŸå¤±
     mlm_l = loss(mlm_Y_hat.reshape(-1, vocab_size), mlm_Y.reshape(-1)) *\
     mlm_weights_X.reshape(-1, 1)
     mlm_l = mlm_l.sum() / (mlm_weights_X.sum() + 1e-8)
-    # ¼ÆËãÏÂÒ»¾ä×ÓÔ¤²âÈÎÎñµÄËğÊ§
+    # è®¡ç®—ä¸‹ä¸€å¥å­é¢„æµ‹ä»»åŠ¡çš„æŸå¤±
     nsp_l = loss(nsp_Y_hat, nsp_y)
     l = mlm_l + nsp_l
     return mlm_l, nsp_l, l
@@ -2445,7 +2473,7 @@ d2l.DATA_HUB['aclImdb'] = (
     '01ada507287d82875905620988597833ad4e0903')
 
 def read_imdb(data_dir, is_train):
-    """¶ÁÈ¡IMDbÆÀÂÛÊı¾İ¼¯ÎÄ±¾ĞòÁĞºÍ±êÇ©
+    """è¯»å–IMDbè¯„è®ºæ•°æ®é›†æ–‡æœ¬åºåˆ—å’Œæ ‡ç­¾
 
     Defined in :numref:`sec_sentiment`"""
     data, labels = [], []
@@ -2460,7 +2488,7 @@ def read_imdb(data_dir, is_train):
     return data, labels
 
 def load_data_imdb(batch_size, num_steps=500):
-    """·µ»ØÊı¾İµü´úÆ÷ºÍIMDbÆÀÂÛÊı¾İ¼¯µÄ´Ê±í
+    """è¿”å›æ•°æ®è¿­ä»£å™¨å’ŒIMDbè¯„è®ºæ•°æ®é›†çš„è¯è¡¨
 
     Defined in :numref:`sec_sentiment`"""
     data_dir = d2l.download_extract('aclImdb', 'aclImdb')
@@ -2481,7 +2509,7 @@ def load_data_imdb(batch_size, num_steps=500):
     return train_iter, test_iter, vocab
 
 def predict_sentiment(net, vocab, sequence):
-    """Ô¤²âÎÄ±¾ĞòÁĞµÄÇé¸Ğ
+    """é¢„æµ‹æ–‡æœ¬åºåˆ—çš„æƒ…æ„Ÿ
 
     Defined in :numref:`sec_sentiment_rnn`"""
     sequence = torch.tensor(vocab[sequence.split()], device=d2l.try_gpu())
@@ -2493,14 +2521,14 @@ d2l.DATA_HUB['SNLI'] = (
     '9fcde07509c7e87ec61c640c1b2753d9041758e4')
 
 def read_snli(data_dir, is_train):
-    """½«SNLIÊı¾İ¼¯½âÎöÎªÇ°Ìá¡¢¼ÙÉèºÍ±êÇ©
+    """å°†SNLIæ•°æ®é›†è§£æä¸ºå‰æã€å‡è®¾å’Œæ ‡ç­¾
 
     Defined in :numref:`sec_natural-language-inference-and-dataset`"""
     def extract_text(s):
-        # É¾³ıÎÒÃÇ²»»áÊ¹ÓÃµÄĞÅÏ¢
+        # åˆ é™¤æˆ‘ä»¬ä¸ä¼šä½¿ç”¨çš„ä¿¡æ¯
         s = re.sub('\\(', '', s)
         s = re.sub('\\)', '', s)
-        # ÓÃÒ»¸ö¿Õ¸ñÌæ»»Á½¸ö»ò¶à¸öÁ¬ĞøµÄ¿Õ¸ñ
+        # ç”¨ä¸€ä¸ªç©ºæ ¼æ›¿æ¢ä¸¤ä¸ªæˆ–å¤šä¸ªè¿ç»­çš„ç©ºæ ¼
         s = re.sub('\\s{2,}', ' ', s)
         return s.strip()
     label_set = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
@@ -2515,7 +2543,7 @@ def read_snli(data_dir, is_train):
     return premises, hypotheses, labels
 
 class SNLIDataset(torch.utils.data.Dataset):
-    """ÓÃÓÚ¼ÓÔØSNLIÊı¾İ¼¯µÄ×Ô¶¨ÒåÊı¾İ¼¯
+    """ç”¨äºåŠ è½½SNLIæ•°æ®é›†çš„è‡ªå®šä¹‰æ•°æ®é›†
 
     Defined in :numref:`sec_natural-language-inference-and-dataset`"""
     def __init__(self, dataset, num_steps, vocab=None):
@@ -2544,7 +2572,7 @@ class SNLIDataset(torch.utils.data.Dataset):
         return len(self.premises)
 
 def load_data_snli(batch_size, num_steps=50):
-    """ÏÂÔØSNLIÊı¾İ¼¯²¢·µ»ØÊı¾İµü´úÆ÷ºÍ´Ê±í
+    """ä¸‹è½½SNLIæ•°æ®é›†å¹¶è¿”å›æ•°æ®è¿­ä»£å™¨å’Œè¯è¡¨
 
     Defined in :numref:`sec_natural-language-inference-and-dataset`"""
     num_workers = d2l.get_dataloader_workers()
@@ -2562,7 +2590,7 @@ def load_data_snli(batch_size, num_steps=50):
     return train_iter, test_iter, train_set.vocab
 
 def predict_snli(net, vocab, premise, hypothesis):
-    """Ô¤²âÇ°ÌáºÍ¼ÙÉèÖ®¼äµÄÂß¼­¹ØÏµ
+    """é¢„æµ‹å‰æå’Œå‡è®¾ä¹‹é—´çš„é€»è¾‘å…³ç³»
 
     Defined in :numref:`sec_natural-language-inference-attention`"""
     net.eval()
