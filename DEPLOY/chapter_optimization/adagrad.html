@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>11.7. AdaGrad算法 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="11.8. RMSProp算法" href="rmsprop.html" />
+    <link rel="prev" title="11.6. 动量法" href="momentum.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">11. </span>优化算法</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">11.7. </span>AdaGrad算法</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_optimization/adagrad.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  MXNet
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-pytorch.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  PyTorch
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-paddle.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  Paddle
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.zip">
+                  <i class="fas fa-download"></i>
+                  Jupyter 记事本
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://courses.d2l.ai/zh-v2/">
+                  <i class="fas fa-user-graduate"></i>
+                  课程
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/0x00A0/d2l-zh_paddle">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://d2l.ai">
+                  <i class="fas fa-external-link-alt"></i>
+                  English
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id7">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id20">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id21">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id22">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id8">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id9">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id10">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#softmax">3.32. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id2">3.33. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id3">3.34. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id4">3.35. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id5">3.36. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id6">3.37. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id7">3.38. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id8">3.39. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-concise.html">3.40. softmax回归的简洁实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_multilayer-perceptrons/index.html">4. 多层感知机</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp.html">4.1. 多层感知机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-scratch.html">4.2. 多层感知机的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-concise.html">4.3. 多层感知机的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/underfit-overfit.html">4.4. 模型选择、欠拟合和过拟合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/weight-decay.html">4.5. 权重衰减</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/dropout.html">4.6. 暂退法（Dropout）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/backprop.html">4.7. 前向传播、反向传播和计算图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/numerical-stability-and-init.html">4.8. 数值稳定性和模型初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/environment.html">4.9. 环境和分布偏移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/kaggle-house-price.html">4.10. 实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_deep-learning-computation/index.html">5. 深度学习计算</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/model-construction.html">5.1. 层和块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/parameters.html">5.2. 参数管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/deferred-init.html">5.3. 延后初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/custom-layer.html">5.4. 自定义层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/read-write.html">5.5. 读写文件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/use-gpu.html">5.6. GPU</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">6. 卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/why-conv.html">6.1. 从全连接层到卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/conv-layer.html">6.2. 图像卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/padding-and-strides.html">6.3. 填充和步幅</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/channels.html">6.4. 多输入多输出通道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/pooling.html">6.5. 汇聚层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/lenet.html">6.6. 卷积神经网络（LeNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-modern/index.html">7. 现代卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/alexnet.html">7.1. 深度卷积神经网络（AlexNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/vgg.html">7.2. 使用块的网络（VGG）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/nin.html">7.3. 网络中的网络（NiN）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/googlenet.html">7.4. 含并行连结的网络（GoogLeNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/batch-norm.html">7.5. 批量规范化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/resnet.html">7.6. 残差网络（ResNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/densenet.html">7.7. 稠密连接网络（DenseNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">8. 循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/sequence.html">8.1. 序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/text-preprocessing.html">8.2. 文本预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/language-models-and-dataset.html">8.3. 语言模型和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn.html">8.4. 循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-scratch.html">8.5. 循环神经网络的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-concise.html">8.6. 循环神经网络的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/bptt.html">8.7. 通过时间反向传播</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-modern/index.html">9. 现代循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/gru.html">9.1. 门控循环单元（GRU）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/lstm.html">9.2. 长短期记忆网络（LSTM）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/deep-rnn.html">9.3. 深度循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/bi-rnn.html">9.4. 双向循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/machine-translation-and-dataset.html">9.5. 机器翻译与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/encoder-decoder.html">9.6. 编码器-解码器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/seq2seq.html">9.7. 序列到序列学习（seq2seq）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/beam-search.html">9.8. 束搜索</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_attention-mechanisms/index.html">10. 注意力机制</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-cues.html">10.1. 注意力提示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/nadaraya-waston.html">10.2. 注意力汇聚：Nadaraya-Watson 核回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-scoring-functions.html">10.3. 注意力评分函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/bahdanau-attention.html">10.4. Bahdanau 注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/multihead-attention.html">10.5. 多头注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/self-attention-and-positional-encoding.html">10.6. 自注意力和位置编码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/transformer.html">10.7. Transformer</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">11. 优化算法</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="optimization-intro.html">11.1. 优化和深度学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convexity.html">11.2. 凸性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gd.html">11.3. 梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sgd.html">11.4. 随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minibatch-sgd.html">11.5. 小批量随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="momentum.html">11.6. 动量法</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">11.7. AdaGrad算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rmsprop.html">11.8. RMSProp算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adadelta.html">11.9. Adadelta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adam.html">11.10. Adam算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lr-scheduler.html">11.11. 学习率调度器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computational-performance/index.html">12. 计算性能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hybridize.html">12.1. 编译器和解释器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/async-computation.html">12.2. 异步计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/auto-parallelism.html">12.3. 自动并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hardware.html">12.4. 硬件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus.html">12.5. 多GPU训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus-concise.html">12.6. 多GPU的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/parameterserver.html">12.7. 参数服务器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">13. 计算机视觉</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/image-augmentation.html">13.1. 图像增广</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/fine-tuning.html">13.2. 微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/bounding-box.html">13.3. 目标检测和边界框</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/anchor.html">13.4. 锚框</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/multiscale-object-detection.html">13.5. 多尺度目标检测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/object-detection-dataset.html">13.6. 目标检测数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/ssd.html">13.7. 单发多框检测（SSD）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/rcnn.html">13.8. 区域卷积神经网络（R-CNN）系列</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/semantic-segmentation-and-dataset.html">13.9. 语义分割和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/transposed-conv.html">13.10. 转置卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/fcn.html">13.11. 全卷积网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/neural-style.html">13.12. 风格迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/kaggle-cifar10.html">13.13. 实战 Kaggle 比赛：图像分类 (CIFAR-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/kaggle-dog.html">13.14. 实战Kaggle比赛：狗的品种识别（ImageNet Dogs）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/index.html">14. 自然语言处理：预训练</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec.html">14.1. 词嵌入（Word2vec）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/approx-training.html">14.2. 近似训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word-embedding-dataset.html">14.3. 用于预训练词嵌入的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec-pretraining.html">14.4. 预训练word2vec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/glove.html">14.5. 全局向量的词嵌入（GloVe）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/subword-embedding.html">14.6. 子词嵌入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/similarity-analogy.html">14.7. 词的相似性和类比任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert.html">14.8. 来自Transformers的双向编码器表示（BERT）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-dataset.html">14.9. 用于预训练BERT的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-pretraining.html">14.10. 预训练BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-applications/index.html">15. 自然语言处理：应用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-and-dataset.html">15.1. 情感分析及数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-rnn.html">15.2. 情感分析：使用递归神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-cnn.html">15.3. 情感分析：使用卷积神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-and-dataset.html">15.4. 自然语言推断与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-attention.html">15.5. 自然语言推断：使用注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/finetuning-bert.html">15.6. 针对序列级和词元级应用程序微调BERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-bert.html">15.7. 自然语言推断：微调BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/index.html">16. 附录：深度学习工具</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/jupyter.html">16.1. 使用Jupyter Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/sagemaker.html">16.2. 使用Amazon SageMaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/aws.html">16.3. 使用Amazon EC2实例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html">16.4. 选择服务器和GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/contributing.html">16.5. 为本书做贡献</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/d2l.html">16.6. <code class="docutils literal notranslate"><span class="pre">d2l</span></code> API 文档</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id7">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id20">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id21">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id22">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id8">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id9">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id10">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#softmax">3.32. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id2">3.33. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id3">3.34. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id4">3.35. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id5">3.36. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id6">3.37. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id7">3.38. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id8">3.39. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-concise.html">3.40. softmax回归的简洁实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_multilayer-perceptrons/index.html">4. 多层感知机</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp.html">4.1. 多层感知机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-scratch.html">4.2. 多层感知机的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-concise.html">4.3. 多层感知机的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/underfit-overfit.html">4.4. 模型选择、欠拟合和过拟合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/weight-decay.html">4.5. 权重衰减</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/dropout.html">4.6. 暂退法（Dropout）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/backprop.html">4.7. 前向传播、反向传播和计算图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/numerical-stability-and-init.html">4.8. 数值稳定性和模型初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/environment.html">4.9. 环境和分布偏移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/kaggle-house-price.html">4.10. 实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_deep-learning-computation/index.html">5. 深度学习计算</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/model-construction.html">5.1. 层和块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/parameters.html">5.2. 参数管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/deferred-init.html">5.3. 延后初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/custom-layer.html">5.4. 自定义层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/read-write.html">5.5. 读写文件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/use-gpu.html">5.6. GPU</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">6. 卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/why-conv.html">6.1. 从全连接层到卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/conv-layer.html">6.2. 图像卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/padding-and-strides.html">6.3. 填充和步幅</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/channels.html">6.4. 多输入多输出通道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/pooling.html">6.5. 汇聚层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/lenet.html">6.6. 卷积神经网络（LeNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-modern/index.html">7. 现代卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/alexnet.html">7.1. 深度卷积神经网络（AlexNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/vgg.html">7.2. 使用块的网络（VGG）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/nin.html">7.3. 网络中的网络（NiN）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/googlenet.html">7.4. 含并行连结的网络（GoogLeNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/batch-norm.html">7.5. 批量规范化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/resnet.html">7.6. 残差网络（ResNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/densenet.html">7.7. 稠密连接网络（DenseNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">8. 循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/sequence.html">8.1. 序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/text-preprocessing.html">8.2. 文本预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/language-models-and-dataset.html">8.3. 语言模型和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn.html">8.4. 循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-scratch.html">8.5. 循环神经网络的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-concise.html">8.6. 循环神经网络的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/bptt.html">8.7. 通过时间反向传播</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-modern/index.html">9. 现代循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/gru.html">9.1. 门控循环单元（GRU）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/lstm.html">9.2. 长短期记忆网络（LSTM）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/deep-rnn.html">9.3. 深度循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/bi-rnn.html">9.4. 双向循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/machine-translation-and-dataset.html">9.5. 机器翻译与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/encoder-decoder.html">9.6. 编码器-解码器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/seq2seq.html">9.7. 序列到序列学习（seq2seq）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/beam-search.html">9.8. 束搜索</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_attention-mechanisms/index.html">10. 注意力机制</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-cues.html">10.1. 注意力提示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/nadaraya-waston.html">10.2. 注意力汇聚：Nadaraya-Watson 核回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-scoring-functions.html">10.3. 注意力评分函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/bahdanau-attention.html">10.4. Bahdanau 注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/multihead-attention.html">10.5. 多头注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/self-attention-and-positional-encoding.html">10.6. 自注意力和位置编码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/transformer.html">10.7. Transformer</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">11. 优化算法</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="optimization-intro.html">11.1. 优化和深度学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convexity.html">11.2. 凸性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gd.html">11.3. 梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sgd.html">11.4. 随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minibatch-sgd.html">11.5. 小批量随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="momentum.html">11.6. 动量法</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">11.7. AdaGrad算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rmsprop.html">11.8. RMSProp算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adadelta.html">11.9. Adadelta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adam.html">11.10. Adam算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lr-scheduler.html">11.11. 学习率调度器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computational-performance/index.html">12. 计算性能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hybridize.html">12.1. 编译器和解释器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/async-computation.html">12.2. 异步计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/auto-parallelism.html">12.3. 自动并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hardware.html">12.4. 硬件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus.html">12.5. 多GPU训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus-concise.html">12.6. 多GPU的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/parameterserver.html">12.7. 参数服务器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computer-vision/index.html">13. 计算机视觉</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/image-augmentation.html">13.1. 图像增广</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/fine-tuning.html">13.2. 微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/bounding-box.html">13.3. 目标检测和边界框</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/anchor.html">13.4. 锚框</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/multiscale-object-detection.html">13.5. 多尺度目标检测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/object-detection-dataset.html">13.6. 目标检测数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/ssd.html">13.7. 单发多框检测（SSD）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/rcnn.html">13.8. 区域卷积神经网络（R-CNN）系列</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/semantic-segmentation-and-dataset.html">13.9. 语义分割和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/transposed-conv.html">13.10. 转置卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/fcn.html">13.11. 全卷积网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/neural-style.html">13.12. 风格迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/kaggle-cifar10.html">13.13. 实战 Kaggle 比赛：图像分类 (CIFAR-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computer-vision/kaggle-dog.html">13.14. 实战Kaggle比赛：狗的品种识别（ImageNet Dogs）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/index.html">14. 自然语言处理：预训练</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec.html">14.1. 词嵌入（Word2vec）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/approx-training.html">14.2. 近似训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word-embedding-dataset.html">14.3. 用于预训练词嵌入的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec-pretraining.html">14.4. 预训练word2vec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/glove.html">14.5. 全局向量的词嵌入（GloVe）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/subword-embedding.html">14.6. 子词嵌入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/similarity-analogy.html">14.7. 词的相似性和类比任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert.html">14.8. 来自Transformers的双向编码器表示（BERT）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-dataset.html">14.9. 用于预训练BERT的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-pretraining.html">14.10. 预训练BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-applications/index.html">15. 自然语言处理：应用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-and-dataset.html">15.1. 情感分析及数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-rnn.html">15.2. 情感分析：使用递归神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-cnn.html">15.3. 情感分析：使用卷积神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-and-dataset.html">15.4. 自然语言推断与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-attention.html">15.5. 自然语言推断：使用注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/finetuning-bert.html">15.6. 针对序列级和词元级应用程序微调BERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-bert.html">15.7. 自然语言推断：微调BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/index.html">16. 附录：深度学习工具</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/jupyter.html">16.1. 使用Jupyter Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/sagemaker.html">16.2. 使用Amazon SageMaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/aws.html">16.3. 使用Amazon EC2实例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html">16.4. 选择服务器和GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/contributing.html">16.5. 为本书做贡献</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/d2l.html">16.6. <code class="docutils literal notranslate"><span class="pre">d2l</span></code> API 文档</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <div class="section" id="adagrad">
+<span id="sec-adagrad"></span><h1><span class="section-number">11.7. </span>AdaGrad算法<a class="headerlink" href="#adagrad" title="Permalink to this headline">¶</a></h1>
+<p>我们从有关特征学习中并不常见的问题入手。</p>
+<div class="section" id="id1">
+<h2><span class="section-number">11.7.1. </span>稀疏特征和学习率<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>假设我们正在训练一个语言模型。
+为了获得良好的准确性，我们大多希望在训练的过程中降低学习率，速度通常为<span class="math notranslate nohighlight">\(\mathcal{O}(t^{-\frac{1}{2}})\)</span>或更低。
+现在讨论关于稀疏特征（即只在偶尔出现的特征）的模型训练，这对自然语言来说很常见。
+例如，我们看到“预先条件”这个词比“学习”这个词的可能性要小得多。
+但是，它在计算广告学和个性化协同过滤等其他领域也很常见。</p>
+<p>只有在这些不常见的特征出现时，与其相关的参数才会得到有意义的更新。
+鉴于学习率下降，我们可能最终会面临这样的情况：常见特征的参数相当迅速地收敛到最佳值，而对于不常见的特征，我们仍缺乏足够的观测以确定其最佳值。
+换句话说，学习率要么对于常见特征而言降低太慢，要么对于不常见特征而言降低太快。</p>
+<p>解决此问题的一个方法是记录我们看到特定特征的次数，然后将其用作调整学习率。
+即我们可以使用大小为<span class="math notranslate nohighlight">\(\eta_i = \frac{\eta_0}{\sqrt{s(i, t) + c}}\)</span>的学习率，而不是<span class="math notranslate nohighlight">\(\eta = \frac{\eta_0}{\sqrt{t + c}}\)</span>。
+在这里<span class="math notranslate nohighlight">\(s(i, t)\)</span>计下了我们截至<span class="math notranslate nohighlight">\(t\)</span>时观察到功能<span class="math notranslate nohighlight">\(i\)</span>的次数。
+这其实很容易实施且不产生额外损耗。</p>
+<p>AdaGrad算法
+<a class="bibtex reference internal" href="../chapter_references/zreferences.html#duchi-hazan-singer-2011" id="id2">[Duchi et al., 2011]</a>通过将粗略的计数器<span class="math notranslate nohighlight">\(s(i, t)\)</span>替换为先前观察所得梯度的平方之和来解决这个问题。
+它使用<span class="math notranslate nohighlight">\(s(i, t+1) = s(i, t) + \left(\partial_i f(\mathbf{x})\right)^2\)</span>来调整学习率。
+这有两个好处：首先，我们不再需要决定梯度何时算足够大。
+其次，它会随梯度的大小自动变化。通常对应于较大梯度的坐标会显著缩小，而其他梯度较小的坐标则会得到更平滑的处理。
+在实际应用中，它促成了计算广告学及其相关问题中非常有效的优化程序。
+但是，它遮盖了AdaGrad固有的一些额外优势，这些优势在预处理环境中很容易被理解。</p>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">11.7.2. </span>预处理<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>凸优化问题有助于分析算法的特点。
+毕竟对于大多数非凸问题来说，获得有意义的理论保证很难，但是直觉和洞察往往会延续。
+让我们来看看最小化<span class="math notranslate nohighlight">\(f(\mathbf{x}) = \frac{1}{2} \mathbf{x}^\top \mathbf{Q} \mathbf{x} + \mathbf{c}^\top \mathbf{x} + b\)</span>这一问题。</p>
+<p>正如在
+<a class="reference internal" href="momentum.html#sec-momentum"><span class="std std-numref">11.6节</span></a>中那样，我们可以根据其特征分解<span class="math notranslate nohighlight">\(\mathbf{Q} = \mathbf{U}^\top \boldsymbol{\Lambda} \mathbf{U}\)</span>重写这个问题，来得到一个简化得多的问题，使每个坐标都可以单独解出：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-optimization-adagrad-0">
+<span class="eqno">(11.7.1)<a class="headerlink" href="#equation-chapter-optimization-adagrad-0" title="Permalink to this equation">¶</a></span>\[f(\mathbf{x}) = \bar{f}(\bar{\mathbf{x}}) = \frac{1}{2} \bar{\mathbf{x}}^\top \boldsymbol{\Lambda} \bar{\mathbf{x}} + \bar{\mathbf{c}}^\top \bar{\mathbf{x}} + b.\]</div>
+<p>在这里我们使用了<span class="math notranslate nohighlight">\(\mathbf{x} = \mathbf{U} \mathbf{x}\)</span>，且因此<span class="math notranslate nohighlight">\(\mathbf{c} = \mathbf{U} \mathbf{c}\)</span>。
+修改后优化器为<span class="math notranslate nohighlight">\(\bar{\mathbf{x}} = -\boldsymbol{\Lambda}^{-1} \bar{\mathbf{c}}\)</span>且最小值为<span class="math notranslate nohighlight">\(-\frac{1}{2} \bar{\mathbf{c}}^\top \boldsymbol{\Lambda}^{-1} \bar{\mathbf{c}} + b\)</span>。
+这样更容易计算，因为<span class="math notranslate nohighlight">\(\boldsymbol{\Lambda}\)</span>是一个包含<span class="math notranslate nohighlight">\(\mathbf{Q}\)</span>特征值的对角矩阵。</p>
+<p>如果稍微扰动<span class="math notranslate nohighlight">\(\mathbf{c}\)</span>，我们会期望在<span class="math notranslate nohighlight">\(f\)</span>的最小化器中只产生微小的变化。
+遗憾的是，情况并非如此。
+虽然<span class="math notranslate nohighlight">\(\mathbf{c}\)</span>的微小变化导致了<span class="math notranslate nohighlight">\(\bar{\mathbf{c}}\)</span>同样的微小变化，但<span class="math notranslate nohighlight">\(f\)</span>的（以及<span class="math notranslate nohighlight">\(\bar{f}\)</span>的）最小化器并非如此。
+每当特征值<span class="math notranslate nohighlight">\(\boldsymbol{\Lambda}_i\)</span>很大时，我们只会看到<span class="math notranslate nohighlight">\(\bar{x}_i\)</span>和<span class="math notranslate nohighlight">\(\bar{f}\)</span>的最小值发声微小变化。
+相反，对于小的<span class="math notranslate nohighlight">\(\boldsymbol{\Lambda}_i\)</span>来说，<span class="math notranslate nohighlight">\(\bar{x}_i\)</span>的变化可能是剧烈的。
+最大和最小的特征值之比称为优化问题的<em>条件数</em>（condition number）。</p>
+<div class="math notranslate nohighlight" id="equation-chapter-optimization-adagrad-1">
+<span class="eqno">(11.7.2)<a class="headerlink" href="#equation-chapter-optimization-adagrad-1" title="Permalink to this equation">¶</a></span>\[\kappa = \frac{\boldsymbol{\Lambda}_1}{\boldsymbol{\Lambda}_d}.\]</div>
+<p>如果条件编号<span class="math notranslate nohighlight">\(\kappa\)</span>很大，准确解决优化问题就会很难。
+我们需要确保在获取大量动态的特征值范围时足够谨慎：我们不能简单地通过扭曲空间来“修复”这个问题，从而使所有特征值都是<span class="math notranslate nohighlight">\(1\)</span>？
+理论上这很容易：我们只需要<span class="math notranslate nohighlight">\(\mathbf{Q}\)</span>的特征值和特征向量即可将问题从<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>整理到<span class="math notranslate nohighlight">\(\mathbf{z} := \boldsymbol{\Lambda}^{\frac{1}{2}} \mathbf{U} \mathbf{x}\)</span>中的一个。
+在新的坐标系中，<span class="math notranslate nohighlight">\(\mathbf{x}^\top \mathbf{Q} \mathbf{x}\)</span>可以被简化为<span class="math notranslate nohighlight">\(\|\mathbf{z}\|^2\)</span>。
+可惜，这是一个相当不切实际的想法。
+一般而言，计算特征值和特征向量要比解决实际问题“贵”得多。</p>
+<p>虽然准确计算特征值可能会很昂贵，但即便只是大致猜测并计算它们，也可能已经比不做任何事情好得多。
+特别是，我们可以使用<span class="math notranslate nohighlight">\(\mathbf{Q}\)</span>的对角线条目并相应地重新缩放它。
+这比计算特征值开销小的多。</p>
+<div class="math notranslate nohighlight" id="equation-chapter-optimization-adagrad-2">
+<span class="eqno">(11.7.3)<a class="headerlink" href="#equation-chapter-optimization-adagrad-2" title="Permalink to this equation">¶</a></span>\[\tilde{\mathbf{Q}} = \mathrm{diag}^{-\frac{1}{2}}(\mathbf{Q}) \mathbf{Q} \mathrm{diag}^{-\frac{1}{2}}(\mathbf{Q}).\]</div>
+<p>在这种情况下，我们得到了<span class="math notranslate nohighlight">\(\tilde{\mathbf{Q}}_{ij} = \mathbf{Q}_{ij} / \sqrt{\mathbf{Q}_{ii} \mathbf{Q}_{jj}}\)</span>，特别注意对于所有<span class="math notranslate nohighlight">\(i\)</span>，<span class="math notranslate nohighlight">\(\tilde{\mathbf{Q}}_{ii} = 1\)</span>。
+在大多数情况下，这大大简化了条件数。
+例如我们之前讨论的案例，它将完全消除眼下的问题，因为问题是轴对齐的。</p>
+<p>遗憾的是，我们还面临另一个问题：在深度学习中，我们通常情况甚至无法计算目标函数的二阶导数：对于<span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^d\)</span>，即使只在小批量上，二阶导数可能也需要<span class="math notranslate nohighlight">\(\mathcal{O}(d^2)\)</span>空间来计算，导致几乎不可行。
+AdaGrad算法巧妙的思路是，使用一个代理来表示黑塞矩阵（Hessian）的对角线，既相对易于计算又高效。</p>
+<p>为了了解它是如何生效的，让我们来看看<span class="math notranslate nohighlight">\(\bar{f}(\bar{\mathbf{x}})\)</span>。
+我们有</p>
+<div class="math notranslate nohighlight" id="equation-chapter-optimization-adagrad-3">
+<span class="eqno">(11.7.4)<a class="headerlink" href="#equation-chapter-optimization-adagrad-3" title="Permalink to this equation">¶</a></span>\[\partial_{\bar{\mathbf{x}}} \bar{f}(\bar{\mathbf{x}}) = \boldsymbol{\Lambda} \bar{\mathbf{x}} + \bar{\mathbf{c}} = \boldsymbol{\Lambda} \left(\bar{\mathbf{x}} - \bar{\mathbf{x}}_0\right),\]</div>
+<p>其中<span class="math notranslate nohighlight">\(\bar{\mathbf{x}}_0\)</span>是<span class="math notranslate nohighlight">\(\bar{f}\)</span>的优化器。
+因此，梯度的大小取决于<span class="math notranslate nohighlight">\(\boldsymbol{\Lambda}\)</span>和与最佳值的差值。
+如果<span class="math notranslate nohighlight">\(\bar{\mathbf{x}} - \bar{\mathbf{x}}_0\)</span>没有改变，那这就是我们所求的。
+毕竟在这种情况下，梯度<span class="math notranslate nohighlight">\(\partial_{\bar{\mathbf{x}}} \bar{f}(\bar{\mathbf{x}})\)</span>的大小就足够了。
+由于AdaGrad算法是一种随机梯度下降算法，所以即使是在最佳值中，我们也会看到具有非零方差的梯度。
+因此，我们可以放心地使用梯度的方差作为黑塞矩阵比例的廉价替代。
+详尽的分析（要花几页解释）超出了本节的范围，请读者参考
+<a class="bibtex reference internal" href="../chapter_references/zreferences.html#duchi-hazan-singer-2011" id="id4">[Duchi et al., 2011]</a>。</p>
+</div>
+<div class="section" id="id5">
+<h2><span class="section-number">11.7.3. </span>算法<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>让我们接着上面正式开始讨论。
+我们使用变量<span class="math notranslate nohighlight">\(\mathbf{s}_t\)</span>来累加过去的梯度方差，如下所示：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-optimization-adagrad-4">
+<span class="eqno">(11.7.5)<a class="headerlink" href="#equation-chapter-optimization-adagrad-4" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+    \mathbf{g}_t &amp; = \partial_{\mathbf{w}} l(y_t, f(\mathbf{x}_t, \mathbf{w})), \\
+    \mathbf{s}_t &amp; = \mathbf{s}_{t-1} + \mathbf{g}_t^2, \\
+    \mathbf{w}_t &amp; = \mathbf{w}_{t-1} - \frac{\eta}{\sqrt{\mathbf{s}_t + \epsilon}} \cdot \mathbf{g}_t.
+\end{aligned}\end{split}\]</div>
+<p>在这里，操作是按照坐标顺序应用。
+也就是说，<span class="math notranslate nohighlight">\(\mathbf{v}^2\)</span>有条目<span class="math notranslate nohighlight">\(v_i^2\)</span>。
+同样，<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{v}}\)</span>有条目<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{v_i}}\)</span>，
+并且<span class="math notranslate nohighlight">\(\mathbf{u} \cdot \mathbf{v}\)</span>有条目<span class="math notranslate nohighlight">\(u_i v_i\)</span>。
+与之前一样，<span class="math notranslate nohighlight">\(\eta\)</span>是学习率，<span class="math notranslate nohighlight">\(\epsilon\)</span>是一个为维持数值稳定性而添加的常数，用来确保我们不会除以<span class="math notranslate nohighlight">\(0\)</span>。
+最后，我们初始化<span class="math notranslate nohighlight">\(\mathbf{s}_0 = \mathbf{0}\)</span>。</p>
+<p>就像在动量法中我们需要跟踪一个辅助变量一样，在AdaGrad算法中，我们允许每个坐标有单独的学习率。
+与SGD算法相比，这并没有明显增加AdaGrad的计算代价，因为主要计算用在<span class="math notranslate nohighlight">\(l(y_t, f(\mathbf{x}_t, \mathbf{w}))\)</span>及其导数。</p>
+<p>请注意，在<span class="math notranslate nohighlight">\(\mathbf{s}_t\)</span>中累加平方梯度意味着<span class="math notranslate nohighlight">\(\mathbf{s}_t\)</span>基本上以线性速率增长（由于梯度从最初开始衰减，实际上比线性慢一些）。
+这产生了一个学习率<span class="math notranslate nohighlight">\(\mathcal{O}(t^{-\frac{1}{2}})\)</span>，但是在单个坐标的层面上进行了调整。
+对于凸问题，这完全足够了。
+然而，在深度学习中，我们可能希望更慢地降低学习率。
+这引出了许多AdaGrad算法的变体，我们将在后续章节中讨论它们。
+眼下让我们先看看它在二次凸问题中的表现如何。 我们仍然同一函数为例：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-optimization-adagrad-5">
+<span class="eqno">(11.7.6)<a class="headerlink" href="#equation-chapter-optimization-adagrad-5" title="Permalink to this equation">¶</a></span>\[f(\mathbf{x}) = 0.1 x_1^2 + 2 x_2^2.\]</div>
+<p>我们将使用与之前相同的学习率来实现AdaGrad算法，即<span class="math notranslate nohighlight">\(\eta = 0.4\)</span>。
+可以看到，自变量的迭代轨迹较平滑。
+但由于<span class="math notranslate nohighlight">\(\boldsymbol{s}_t\)</span>的累加效果使学习率不断衰减，自变量在迭代后期的移动幅度较小。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
+
+<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">adagrad_2d</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">):</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">x1</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">x2</span>
+    <span class="n">s1</span> <span class="o">+=</span> <span class="n">g1</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">s2</span> <span class="o">+=</span> <span class="n">g2</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">x1</span> <span class="o">-=</span> <span class="n">eta</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s1</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="n">g1</span>
+    <span class="n">x2</span> <span class="o">-=</span> <span class="n">eta</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s2</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="n">g2</span>
+    <span class="k">return</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span>
+
+<span class="k">def</span> <span class="nf">f_2d</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x2</span> <span class="o">**</span> <span class="mi">2</span>
+
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">show_trace_2d</span><span class="p">(</span><span class="n">f_2d</span><span class="p">,</span> <span class="n">d2l</span><span class="o">.</span><span class="n">train_2d</span><span class="p">(</span><span class="n">adagrad_2d</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>我们将学习率提高到<span class="math notranslate nohighlight">\(2\)</span>，可以看到更好的表现。
+这已经表明，即使在无噪声的情况下，学习率的降低可能相当剧烈，我们需要确保参数能够适当地收敛。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">show_trace_2d</span><span class="p">(</span><span class="n">f_2d</span><span class="p">,</span> <span class="n">d2l</span><span class="o">.</span><span class="n">train_2d</span><span class="p">(</span><span class="n">adagrad_2d</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2><span class="section-number">11.7.4. </span>从零开始实现<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>同动量法一样，AdaGrad算法需要对每个自变量维护同它一样形状的状态变量。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_adagrad_states</span><span class="p">(</span><span class="n">feature_dim</span><span class="p">):</span>
+    <span class="n">s_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">feature_dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">s_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">s_w</span><span class="p">,</span> <span class="n">s_b</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">adagrad</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">hyperparams</span><span class="p">):</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+        <span class="n">s</span><span class="p">[:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[:]</span> <span class="o">-=</span> <span class="n">hyperparams</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>与
+<a class="reference internal" href="minibatch-sgd.html#sec-minibatch-sgd"><span class="std std-numref">11.5节</span></a>一节中的实验相比，这里使用更大的学习率来训练模型。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data_iter</span><span class="p">,</span> <span class="n">feature_dim</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">get_data_ch11</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">d2l</span><span class="o">.</span><span class="n">train_ch11</span><span class="p">(</span><span class="n">adagrad</span><span class="p">,</span> <span class="n">init_adagrad_states</span><span class="p">(</span><span class="n">feature_dim</span><span class="p">),</span>
+               <span class="p">{</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">data_iter</span><span class="p">,</span> <span class="n">feature_dim</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2><span class="section-number">11.7.5. </span>简洁实现<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>我们可直接使用深度学习框架中提供的AdaGrad算法来训练模型。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d2l</span><span class="o">.</span><span class="n">train_concise_ch11</span><span class="p">(</span><span class="s1">&#39;adagrad&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">data_iter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2><span class="section-number">11.7.6. </span>小结<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>AdaGrad算法会在单个坐标层面动态降低学习率。</p></li>
+<li><p>AdaGrad算法利用梯度的大小作为调整进度速率的手段：用较小的学习率来补偿带有较大梯度的坐标。</p></li>
+<li><p>在深度学习问题中，由于内存和计算限制，计算准确的二阶导数通常是不可行的。梯度可以作为一个有效的代理。</p></li>
+<li><p>如果优化问题的结构相当不均匀，AdaGrad算法可以帮助缓解扭曲。</p></li>
+<li><p>AdaGrad算法对于稀疏特征特别有效，在此情况下由于不常出现的问题，学习率需要更慢地降低。</p></li>
+<li><p>在深度学习问题上，AdaGrad算法有时在降低学习率方面可能过于剧烈。我们将在
+<a class="reference internal" href="adam.html#sec-adam"><span class="std std-numref">11.10节</span></a>一节讨论缓解这种情况的策略。</p></li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h2><span class="section-number">11.7.7. </span>练习<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>证明对于正交矩阵<span class="math notranslate nohighlight">\(\mathbf{U}\)</span>和向量<span class="math notranslate nohighlight">\(\mathbf{c}\)</span>，以下等式成立：<span class="math notranslate nohighlight">\(\|\mathbf{c} - \mathbf{\delta}\|_2 = \|\mathbf{U} \mathbf{c} - \mathbf{U} \mathbf{\delta}\|_2\)</span>。为什么这意味着在变量的正交变化之后，扰动的程度不会改变？</p></li>
+<li><p>尝试对函数<span class="math notranslate nohighlight">\(f(\mathbf{x}) = 0.1 x_1^2 + 2 x_2^2\)</span>、以及它旋转45度后的函数即<span class="math notranslate nohighlight">\(f(\mathbf{x}) = 0.1 (x_1 + x_2)^2 + 2 (x_1 - x_2)^2\)</span>使用AdaGrad算法。它的表现会不同吗？</p></li>
+<li><p>证明<a class="reference external" href="https://en.wikipedia.org/wiki/Gershgorin_circle_theorem">格什戈林圆盘定理</a>，其中提到，矩阵<span class="math notranslate nohighlight">\(\mathbf{M}\)</span>的特征值<span class="math notranslate nohighlight">\(\lambda_i\)</span>在至少一个<span class="math notranslate nohighlight">\(j\)</span>的选项中满足<span class="math notranslate nohighlight">\(|\lambda_i - \mathbf{M}_{jj}| \leq \sum_{k \neq j} |\mathbf{M}_{jk}|\)</span>的要求。</p></li>
+<li><p>关于对角线预处理矩阵<span class="math notranslate nohighlight">\(\mathrm{diag}^{-\frac{1}{2}}(\mathbf{M}) \mathbf{M} \mathrm{diag}^{-\frac{1}{2}}(\mathbf{M})\)</span>的特征值，格什戈林的定理告诉了我们什么？</p></li>
+<li><p>尝试对适当的深度网络使用AdaGrad算法，例如，当应用于时尚MNIST时，使用
+<a class="reference internal" href="../chapter_convolutional-neural-networks/lenet.html#sec-lenet"><span class="std std-numref">6.6节</span></a>。</p></li>
+<li><p>你要如何修改AdaGrad算法，才能使其在学习率方面的衰减不那么激进？</p></li>
+</ol>
+<p><a class="reference external" href="https://discuss.d2l.ai/t/4318">Discussions</a></p>
+</div>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">11.7. AdaGrad算法</a><ul>
+<li><a class="reference internal" href="#id1">11.7.1. 稀疏特征和学习率</a></li>
+<li><a class="reference internal" href="#id3">11.7.2. 预处理</a></li>
+<li><a class="reference internal" href="#id5">11.7.3. 算法</a></li>
+<li><a class="reference internal" href="#id6">11.7.4. 从零开始实现</a></li>
+<li><a class="reference internal" href="#id7">11.7.5. 简洁实现</a></li>
+<li><a class="reference internal" href="#id8">11.7.6. 小结</a></li>
+<li><a class="reference internal" href="#id9">11.7.7. 练习</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="momentum.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>11.6. 动量法</div>
+         </div>
+     </a>
+     <a id="button-next" href="rmsprop.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>11.8. RMSProp算法</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>

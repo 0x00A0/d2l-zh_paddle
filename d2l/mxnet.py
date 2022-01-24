@@ -279,6 +279,16 @@ def train_ch3(net, train_iter, test_iter, loss, num_epochs, updater):
     assert train_acc <= 1 and train_acc > 0.7, train_acc
     assert test_acc <= 1 and test_acc > 0.7, test_acc
 
+def sgd(params, lr, batch_size):
+    """小批量随机梯度下降
+
+    Defined in :numref:`sec_softmax_scratch`"""
+    with paddle.no_grad():  # 由于Paddle框架的问题,即使在no_grad下也必须手动修改stop_gradient来控制带梯度参数的inplace操作,该bug已提交Issue:https://github.com/PaddlePaddle/Paddle/issues/38016
+        for param in params:
+            param.stop_gradient=True
+            param.subtract_(lr * param.grad / batch_size)
+            param.clear_grad()
+
 def predict_ch3(net, test_iter, n=6):
     """预测标签（定义见第3章）
 

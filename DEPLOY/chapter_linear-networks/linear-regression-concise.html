@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>3.16. 生成数据集 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+    <title>3.7. 生成数据集 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
 
     <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
@@ -26,8 +26,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="3.25. softmax回归" href="softmax-regression.html" />
-    <link rel="prev" title="3.7. 生成数据集" href="linear-regression-scratch.html" /> 
+    <link rel="next" title="3.16. softmax回归" href="softmax-regression.html" />
+    <link rel="prev" title="3.1. 线性回归的基本元素" href="linear-regression.html" /> 
   </head>
 <body>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
@@ -35,7 +35,7 @@
         
         <nav class="mdl-navigation breadcrumb">
             <a class="mdl-navigation__link" href="index.html"><span class="section-number">3. </span>线性神经网络</a><i class="material-icons">navigate_next</i>
-            <a class="mdl-navigation__link is-active"><span class="section-number">3.16. </span>生成数据集</a>
+            <a class="mdl-navigation__link is-active"><span class="section-number">3.7. </span>生成数据集</a>
         </nav>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -130,7 +130,6 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
@@ -191,30 +190,36 @@ Show Source
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.16. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">3.17. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">3.18. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">3.19. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">3.20. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">3.21. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">3.22. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">3.23. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">3.24. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.25. softmax回归</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.26. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.29. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.30. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.9. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.10. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.16. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.18. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.19. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.20. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.21. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html">3.22. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#softmax">3.23. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id2">3.24. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id3">3.25. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id4">3.26. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id5">3.27. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id6">3.28. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id7">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id8">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#softmax">3.32. 重新审视Softmax的实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id2">3.33. 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id3">3.34. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id4">3.35. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id5">3.36. 练习</a></li>
 </ul>
 </li>
 </ul>
@@ -254,7 +259,6 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
@@ -315,30 +319,36 @@ Show Source
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.16. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">3.17. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">3.18. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">3.19. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">3.20. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">3.21. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">3.22. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">3.23. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">3.24. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.25. softmax回归</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.26. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.27. 读取小批量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.28. 整合所有组件</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.29. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.30. 练习</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">3.9. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.10. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.16. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id4">3.18. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id5">3.19. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id6">3.20. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image-classification-dataset.html#id7">3.21. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html">3.22. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#softmax">3.23. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id2">3.24. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id3">3.25. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id4">3.26. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id5">3.27. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id6">3.28. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id7">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id8">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#softmax">3.32. 重新审视Softmax的实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id2">3.33. 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id3">3.34. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id4">3.35. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id5">3.36. 练习</a></li>
 </ul>
 </li>
 </ul>
@@ -366,7 +376,7 @@ Show Source
 <p>在本节中，我们将介绍如何通过使用深度学习框架来简洁地实现
 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中的线性回归模型。</p>
 <div class="section" id="id1">
-<h1><span class="section-number">3.16. </span>生成数据集<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.7. </span>生成数据集<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
 <p>与 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中类似，我们首先生成数据集。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">paddle</span>
@@ -384,7 +394,7 @@ Show Source
 </div>
 </div>
 <div class="section" id="id2">
-<h1><span class="section-number">3.17. </span>读取数据集<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.8. </span>读取数据集<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h1>
 <p>我们可以调用框架中现有的API来读取数据。
 我们将<code class="docutils literal notranslate"><span class="pre">features</span></code>和<code class="docutils literal notranslate"><span class="pre">labels</span></code>作为API的参数传递，并通过数据迭代器指定<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>。
 此外，布尔值<code class="docutils literal notranslate"><span class="pre">is_train</span></code>表示是否希望数据迭代器对象在每个迭代周期内打乱数据。</p>
@@ -431,7 +441,7 @@ Show Source
 </div>
 </div>
 <div class="section" id="id3">
-<h1><span class="section-number">3.18. </span>定义模型<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.9. </span>定义模型<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
 <p>当我们在 <code class="xref std std-numref docutils literal notranslate"><span class="pre">sec_linear_scratch</span></code>中实现线性回归时，
 我们明确定义了模型参数变量，并编写了计算的代码，这样通过基本的线性代数运算得到输出。
 但是，如果模型变得更加复杂，且当你几乎每天都需要实现模型时，你会想简化这个过程。
@@ -458,7 +468,7 @@ Show Source
 </div>
 </div>
 <div class="section" id="id4">
-<h1><span class="section-number">3.19. </span>初始化模型参数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.10. </span>初始化模型参数<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
 <p>在使用<code class="docutils literal notranslate"><span class="pre">net</span></code>之前，我们需要初始化模型参数。
 如在线性回归模型中的权重和偏置。
 深度学习框架通常有预定义的方法来初始化参数。
@@ -476,7 +486,7 @@ Show Source
 </div>
 </div>
 <div class="section" id="id5">
-<h1><span class="section-number">3.20. </span>定义损失函数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.11. </span>定义损失函数<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
 <p>计算均方误差使用的是<code class="docutils literal notranslate"><span class="pre">MSELoss</span></code>类，也称为平方<span class="math notranslate nohighlight">\(L_2\)</span>范数。
 默认情况下，它返回所有样本损失的平均值。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
@@ -484,7 +494,7 @@ Show Source
 </div>
 </div>
 <div class="section" id="id6">
-<h1><span class="section-number">3.21. </span>定义优化算法<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.12. </span>定义优化算法<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
 <p>小批量随机梯度下降算法是一种优化神经网络的标准工具，
 Paddle在<code class="docutils literal notranslate"><span class="pre">optimizer</span></code>模块中实现了该算法的许多变种。
 动态图模式下,当我们实例化一个<code class="docutils literal notranslate"><span class="pre">SGD</span></code>实例时，我们要指定优化的参数
@@ -495,7 +505,7 @@ Paddle在<code class="docutils literal notranslate"><span class="pre">optimizer<
 </div>
 </div>
 <div class="section" id="id7">
-<h1><span class="section-number">3.22. </span>训练<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.13. </span>训练<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h1>
 <p>通过深度学习框架的高级API来实现我们的模型只需要相对较少的代码。
 我们不必单独分配参数、不必定义我们的损失函数，也不必手动实现小批量随机梯度下降。
 当我们需要更复杂的模型时，高级API的优势将大大增加。
@@ -542,15 +552,15 @@ b的估计误差： Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradie
 </div>
 </div>
 <div class="section" id="id8">
-<h1><span class="section-number">3.23. </span>小结<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.14. </span>小结<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h1>
 </div>
 <div class="section" id="id9">
-<h1><span class="section-number">3.24. </span>练习<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.15. </span>练习<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic">
 <li><p>如果将小批量的总损失替换为小批量损失的平均值，你需要如何更改学习率？</p></li>
 <li><p>查看深度学习框架文档，它们提供了哪些损失函数和初始化方法？用Huber损失代替原损失，即</p>
 <div class="math notranslate nohighlight" id="equation-chapter-linear-networks-linear-regression-concise-0">
-<span class="eqno">(3.24.1)<a class="headerlink" href="#equation-chapter-linear-networks-linear-regression-concise-0" title="Permalink to this equation">¶</a></span>\[\begin{split}l(y,y') = \begin{cases}|y-y'| -\frac{\sigma}{2} &amp; \text{ if } |y-y'| &gt; \sigma \\ \frac{1}{2 \sigma} (y-y')^2 &amp; \text{ 其它情况}\end{cases}\end{split}\]</div>
+<span class="eqno">(3.15.1)<a class="headerlink" href="#equation-chapter-linear-networks-linear-regression-concise-0" title="Permalink to this equation">¶</a></span>\[\begin{split}l(y,y') = \begin{cases}|y-y'| -\frac{\sigma}{2} &amp; \text{ if } |y-y'| &gt; \sigma \\ \frac{1}{2 \sigma} (y-y')^2 &amp; \text{ 其它情况}\end{cases}\end{split}\]</div>
 </li>
 <li><p>你如何访问线性回归的梯度？</p></li>
 </ol>
@@ -565,15 +575,15 @@ b的估计误差： Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradie
       <span class="caption-text">Table Of Contents</span>
     </p>
     <ul>
-<li><a class="reference internal" href="#">3.16. 生成数据集</a></li>
-<li><a class="reference internal" href="#id2">3.17. 读取数据集</a></li>
-<li><a class="reference internal" href="#id3">3.18. 定义模型</a></li>
-<li><a class="reference internal" href="#id4">3.19. 初始化模型参数</a></li>
-<li><a class="reference internal" href="#id5">3.20. 定义损失函数</a></li>
-<li><a class="reference internal" href="#id6">3.21. 定义优化算法</a></li>
-<li><a class="reference internal" href="#id7">3.22. 训练</a></li>
-<li><a class="reference internal" href="#id8">3.23. 小结</a></li>
-<li><a class="reference internal" href="#id9">3.24. 练习</a></li>
+<li><a class="reference internal" href="#">3.7. 生成数据集</a></li>
+<li><a class="reference internal" href="#id2">3.8. 读取数据集</a></li>
+<li><a class="reference internal" href="#id3">3.9. 定义模型</a></li>
+<li><a class="reference internal" href="#id4">3.10. 初始化模型参数</a></li>
+<li><a class="reference internal" href="#id5">3.11. 定义损失函数</a></li>
+<li><a class="reference internal" href="#id6">3.12. 定义优化算法</a></li>
+<li><a class="reference internal" href="#id7">3.13. 训练</a></li>
+<li><a class="reference internal" href="#id8">3.14. 小结</a></li>
+<li><a class="reference internal" href="#id9">3.15. 练习</a></li>
 </ul>
 
 </div>
@@ -582,18 +592,18 @@ b的估计误差： Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradie
 
       <div class="clearer"></div>
     </div><div class="pagenation">
-     <a id="button-prev" href="linear-regression-scratch.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+     <a id="button-prev" href="linear-regression.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
          <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
          <div class="pagenation-text">
             <span class="pagenation-direction">Previous</span>
-            <div>3.7. 生成数据集</div>
+            <div>3.1. 线性回归的基本元素</div>
          </div>
      </a>
      <a id="button-next" href="softmax-regression.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
          <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
         <div class="pagenation-text">
             <span class="pagenation-direction">Next</span>
-            <div>3.25. softmax回归</div>
+            <div>3.16. softmax回归</div>
         </div>
      </a>
   </div>

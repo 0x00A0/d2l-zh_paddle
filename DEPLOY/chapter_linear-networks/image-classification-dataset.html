@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>3.26. 读取数据集 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+    <title>3.17. 读取数据集 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
 
     <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
@@ -26,8 +26,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="参考文献" href="../chapter_references/zreferences.html" />
-    <link rel="prev" title="3.25. softmax回归" href="softmax-regression.html" /> 
+    <link rel="next" title="3.22. 初始化模型参数" href="softmax-regression-scratch.html" />
+    <link rel="prev" title="3.16. softmax回归" href="softmax-regression.html" /> 
   </head>
 <body>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
@@ -35,7 +35,7 @@
         
         <nav class="mdl-navigation breadcrumb">
             <a class="mdl-navigation__link" href="index.html"><span class="section-number">3. </span>线性神经网络</a><i class="material-icons">navigate_next</i>
-            <a class="mdl-navigation__link is-active"><span class="section-number">3.26. </span>读取数据集</a>
+            <a class="mdl-navigation__link is-active"><span class="section-number">3.17. </span>读取数据集</a>
         </nav>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -130,7 +130,6 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
@@ -191,30 +190,36 @@ Show Source
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html">3.16. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id3">3.18. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id7">3.22. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id8">3.23. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id9">3.24. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.25. softmax回归</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.26. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">3.27. 读取小批量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">3.28. 整合所有组件</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">3.29. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id3">3.9. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id4">3.10. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.16. softmax回归</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.18. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.19. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.20. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.21. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html">3.22. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#softmax">3.23. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id2">3.24. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id3">3.25. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id4">3.26. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id5">3.27. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id6">3.28. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id7">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id8">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#softmax">3.32. 重新审视Softmax的实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id2">3.33. 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id3">3.34. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id4">3.35. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id5">3.36. 练习</a></li>
 </ul>
 </li>
 </ul>
@@ -254,7 +259,6 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
@@ -315,30 +319,36 @@ Show Source
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id13">3.5. 小结</a></li>
 <li class="toctree-l2"><a class="reference internal" href="linear-regression.html#id14">3.6. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html">3.7. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id7">3.13. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id8">3.14. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-scratch.html#id9">3.15. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html">3.16. 生成数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id3">3.18. 定义模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id7">3.22. 训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id8">3.23. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id9">3.24. 练习</a></li>
-<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.25. softmax回归</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3.26. 读取数据集</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">3.27. 读取小批量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">3.28. 整合所有组件</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">3.29. 小结</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id3">3.9. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id4">3.10. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear-regression-concise.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression.html">3.16. softmax回归</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.18. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">3.19. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.20. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">3.21. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html">3.22. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#softmax">3.23. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id2">3.24. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id3">3.25. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id4">3.26. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id5">3.27. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id6">3.28. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id7">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-scratch.html#id8">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#softmax">3.32. 重新审视Softmax的实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id2">3.33. 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id3">3.34. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id4">3.35. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softmax-regression-concise.html#id5">3.36. 练习</a></li>
 </ul>
 </li>
 </ul>
@@ -355,7 +365,7 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <p>None # 图像分类数据集</p>
+  <p>None None None # 图像分类数据集</p>
 <p id="sec-fashion-mnist">MNIST数据集 <a class="bibtex reference internal" href="../chapter_references/zreferences.html#lecun-bottou-bengio-ea-1998" id="id1">[LeCun et al., 1998]</a>
 是图像分类中广泛使用的数据集之一，但作为基准数据集过于简单。
 我们将使用类似但更复杂的Fashion-MNIST数据集
@@ -368,11 +378,10 @@ Show Source
 <span class="n">d2l</span><span class="o">.</span><span class="n">use_svg_display</span><span class="p">()</span>
 </pre></div>
 </div>
-<pre class="output literal-block">Matplotlib created a temporary config/cache directory at /tmp/matplotlib-83dc4cmz because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
-/home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: <cite>set_matplotlib_formats</cite> is deprecated since IPython 7.23, directly use <cite>matplotlib_inline.backend_inline.set_matplotlib_formats()</cite>
+<pre class="output literal-block">D:Anaconda3envsd2llibsite-packagesd2lpaddle.py:38: DeprecationWarning: <cite>set_matplotlib_formats</cite> is deprecated since IPython 7.23, directly use <cite>matplotlib_inline.backend_inline.set_matplotlib_formats()</cite>
   display.set_matplotlib_formats('svg')</pre>
 <div class="section" id="id3">
-<h1><span class="section-number">3.26. </span>读取数据集<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.17. </span>读取数据集<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h1>
 <p>我们可以通过框架中的内置函数将Fashion-MNIST数据集下载并读取到内存中。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mnist_train</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;cv2&#39;</span><span class="p">)</span>
 <span class="n">mnist_test</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;cv2&#39;</span><span class="p">)</span>
@@ -391,6 +400,12 @@ dataset）中的1000张图像组成。
 </div>
 <p>每个输入图像的高度和宽度均为28像素。 数据集由灰度图像组成，其通道数为1。
 为了简洁起见，本书将高度<span class="math notranslate nohighlight">\(h\)</span>像素、宽度<span class="math notranslate nohighlight">\(w\)</span>像素图像的形状记为<span class="math notranslate nohighlight">\(h \times w\)</span>或（<span class="math notranslate nohighlight">\(h\)</span>,<span class="math notranslate nohighlight">\(w\)</span>）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mnist_train</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Fashion-MNIST中包含的10个类别，分别为t-shirt（T恤）、trouser（裤子）、pullover（套衫）、dress（连衣裙）、coat（外套）、sandal（凉鞋）、shirt（衬衫）、sneaker（运动鞋）、bag（包）和ankle
 boot（短靴）。 以下函数用于在数字标签索引及其文本名称之间进行转换。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_fashion_mnist_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>  <span class="c1">#@save</span>
@@ -421,10 +436,10 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 </pre></div>
 </div>
 <div class="figure align-default">
-<img alt="../_images/output_image-classification-dataset_a6d0d8_12_0.svg" src="../_images/output_image-classification-dataset_a6d0d8_12_0.svg" /></div>
+<img alt="../_images/output_image-classification-dataset_a6d0d8_13_0.svg" src="../_images/output_image-classification-dataset_a6d0d8_13_0.svg" /></div>
 </div>
 <div class="section" id="id4">
-<h1><span class="section-number">3.27. </span>读取小批量<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.18. </span>读取小批量<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h1>
 <p>为了使我们在读取训练集和测试集时更容易，我们使用内置的数据迭代器，而不是从零开始创建。
 回顾一下，在每次迭代中，数据加载器每次都会读取一小批量数据，大小为<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>。
 通过内置数据迭代器，我们可以随机打乱了所有样本，从而无偏见地读取小批量。</p>
@@ -438,6 +453,8 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
                              <span class="n">num_workers</span><span class="o">=</span><span class="n">get_dataloader_workers</span><span class="p">())</span>
 </pre></div>
 </div>
+<pre class="output literal-block">D:Anaconda3envsd2llibsite-packagespaddlefluidreader.py:355: UserWarning: DataLoader with multi-process mode is not supported on MacOs and Windows currently. Please use signle-process mode with num_workers = 0 instead
+  warnings.warn(</pre>
 <p>我们看一下读取训练数据所需的时间。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">timer</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">Timer</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">train_iter</span><span class="p">:</span>
@@ -445,24 +462,24 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> sec&#39;</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0.48 sec&#39;</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;0.74 sec&#39;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="id5">
-<h1><span class="section-number">3.28. </span>整合所有组件<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.19. </span>整合所有组件<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h1>
 <p>现在我们定义<code class="docutils literal notranslate"><span class="pre">load_data_fashion_mnist</span></code>函数，用于获取和读取Fashion-MNIST数据集。
 这个函数返回训练集和验证集的数据迭代器。
 此外，这个函数还接受一个可选参数<code class="docutils literal notranslate"><span class="pre">resize</span></code>，用来将图像大小调整为另一种形状。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">load_data_fashion_mnist</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">resize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1">#@save</span>
     <span class="sd">&quot;&quot;&quot;下载Fashion-MNIST数据集，然后将其加载到内存中&quot;&quot;&quot;</span>
-    <span class="n">trans</span> <span class="o">=</span> <span class="p">[</span><span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()]</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="p">[</span><span class="n">paddle</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()]</span>
     <span class="k">if</span> <span class="n">resize</span><span class="p">:</span>
-        <span class="n">trans</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">resize</span><span class="p">))</span>
-    <span class="n">trans</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span><span class="n">trans</span><span class="p">)</span>
+        <span class="n">trans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paddle</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="n">resize</span><span class="p">))</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span><span class="n">trans</span><span class="p">)</span>
 
-    <span class="n">mnist_train</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;cv2&#39;</span><span class="p">)</span>
-    <span class="n">mnist_test</span> <span class="o">=</span> <span class="n">vision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;cv2&#39;</span><span class="p">)</span>
+    <span class="n">mnist_train</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;cv2&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">trans</span><span class="p">)</span>
+    <span class="n">mnist_test</span> <span class="o">=</span> <span class="n">paddle</span><span class="o">.</span><span class="n">vision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;cv2&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">trans</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">mnist_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                              <span class="n">num_workers</span><span class="o">=</span><span class="n">get_dataloader_workers</span><span class="p">()),</span>
@@ -477,13 +494,13 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
     <span class="k">break</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">]</span> <span class="n">paddle</span><span class="o">.</span><span class="n">float32</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="n">paddle</span><span class="o">.</span><span class="n">int64</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span> <span class="n">paddle</span><span class="o">.</span><span class="n">float32</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="n">paddle</span><span class="o">.</span><span class="n">int64</span>
 </pre></div>
 </div>
 <p>我们现在已经准备好使用Fashion-MNIST数据集，便于下面的章节调用来评估各种分类算法。</p>
 </div>
 <div class="section" id="id6">
-<h1><span class="section-number">3.29. </span>小结<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.20. </span>小结<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p>Fashion-MNIST是一个服装分类数据集，由10个类别的图像组成。我们将在后续章节中使用此数据集来评估各种分类算法。</p></li>
 <li><p>我们将高度<span class="math notranslate nohighlight">\(h\)</span>像素，宽度<span class="math notranslate nohighlight">\(w\)</span>像素图像的形状记为<span class="math notranslate nohighlight">\(h \times w\)</span>或（<span class="math notranslate nohighlight">\(h\)</span>,<span class="math notranslate nohighlight">\(w\)</span>）。</p></li>
@@ -491,7 +508,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 </ul>
 </div>
 <div class="section" id="id7">
-<h1><span class="section-number">3.30. </span>练习<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3.21. </span>练习<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
 <li><p>减少<code class="docutils literal notranslate"><span class="pre">batch_size</span></code>（如减少到1）是否会影响读取性能？</p></li>
 <li><p>数据迭代器的性能非常重要。你认为当前的实现足够快吗？探索各种选择来改进它。</p></li>
@@ -508,11 +525,11 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
       <span class="caption-text">Table Of Contents</span>
     </p>
     <ul>
-<li><a class="reference internal" href="#">3.26. 读取数据集</a></li>
-<li><a class="reference internal" href="#id4">3.27. 读取小批量</a></li>
-<li><a class="reference internal" href="#id5">3.28. 整合所有组件</a></li>
-<li><a class="reference internal" href="#id6">3.29. 小结</a></li>
-<li><a class="reference internal" href="#id7">3.30. 练习</a></li>
+<li><a class="reference internal" href="#">3.17. 读取数据集</a></li>
+<li><a class="reference internal" href="#id4">3.18. 读取小批量</a></li>
+<li><a class="reference internal" href="#id5">3.19. 整合所有组件</a></li>
+<li><a class="reference internal" href="#id6">3.20. 小结</a></li>
+<li><a class="reference internal" href="#id7">3.21. 练习</a></li>
 </ul>
 
 </div>
@@ -525,14 +542,14 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
          <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
          <div class="pagenation-text">
             <span class="pagenation-direction">Previous</span>
-            <div>3.25. softmax回归</div>
+            <div>3.16. softmax回归</div>
          </div>
      </a>
-     <a id="button-next" href="../chapter_references/zreferences.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+     <a id="button-next" href="softmax-regression-scratch.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
          <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
         <div class="pagenation-text">
             <span class="pagenation-direction">Next</span>
-            <div>参考文献</div>
+            <div>3.22. 初始化模型参数</div>
         </div>
      </a>
   </div>

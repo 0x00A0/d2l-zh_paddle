@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>13.4. 锚框 &#8212; 动手学深度学习 2.0.0-beta0 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="13.5. 多尺度目标检测" href="multiscale-object-detection.html" />
+    <link rel="prev" title="13.3. 目标检测和边界框" href="bounding-box.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">13. </span>计算机视觉</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">13.4. </span>锚框</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_computer-vision/anchor.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  MXNet
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-pytorch.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  PyTorch
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh-paddle.pdf">
+                  <i class="fas fa-file-pdf"></i>
+                  Paddle
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://0x00a0.github.io/d2l-zh_paddle/d2l-zh.zip">
+                  <i class="fas fa-download"></i>
+                  Jupyter 记事本
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://courses.d2l.ai/zh-v2/">
+                  <i class="fas fa-user-graduate"></i>
+                  课程
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/0x00A0/d2l-zh_paddle">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://d2l.ai">
+                  <i class="fas fa-external-link-alt"></i>
+                  English
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id7">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id20">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id21">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id22">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id8">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id9">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id10">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#softmax">3.32. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id2">3.33. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id3">3.34. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id4">3.35. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id5">3.36. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id6">3.37. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id7">3.38. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id8">3.39. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-concise.html">3.40. softmax回归的简洁实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_multilayer-perceptrons/index.html">4. 多层感知机</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp.html">4.1. 多层感知机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-scratch.html">4.2. 多层感知机的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-concise.html">4.3. 多层感知机的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/underfit-overfit.html">4.4. 模型选择、欠拟合和过拟合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/weight-decay.html">4.5. 权重衰减</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/dropout.html">4.6. 暂退法（Dropout）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/backprop.html">4.7. 前向传播、反向传播和计算图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/numerical-stability-and-init.html">4.8. 数值稳定性和模型初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/environment.html">4.9. 环境和分布偏移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/kaggle-house-price.html">4.10. 实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_deep-learning-computation/index.html">5. 深度学习计算</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/model-construction.html">5.1. 层和块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/parameters.html">5.2. 参数管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/deferred-init.html">5.3. 延后初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/custom-layer.html">5.4. 自定义层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/read-write.html">5.5. 读写文件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/use-gpu.html">5.6. GPU</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">6. 卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/why-conv.html">6.1. 从全连接层到卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/conv-layer.html">6.2. 图像卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/padding-and-strides.html">6.3. 填充和步幅</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/channels.html">6.4. 多输入多输出通道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/pooling.html">6.5. 汇聚层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/lenet.html">6.6. 卷积神经网络（LeNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-modern/index.html">7. 现代卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/alexnet.html">7.1. 深度卷积神经网络（AlexNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/vgg.html">7.2. 使用块的网络（VGG）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/nin.html">7.3. 网络中的网络（NiN）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/googlenet.html">7.4. 含并行连结的网络（GoogLeNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/batch-norm.html">7.5. 批量规范化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/resnet.html">7.6. 残差网络（ResNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/densenet.html">7.7. 稠密连接网络（DenseNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">8. 循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/sequence.html">8.1. 序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/text-preprocessing.html">8.2. 文本预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/language-models-and-dataset.html">8.3. 语言模型和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn.html">8.4. 循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-scratch.html">8.5. 循环神经网络的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-concise.html">8.6. 循环神经网络的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/bptt.html">8.7. 通过时间反向传播</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-modern/index.html">9. 现代循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/gru.html">9.1. 门控循环单元（GRU）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/lstm.html">9.2. 长短期记忆网络（LSTM）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/deep-rnn.html">9.3. 深度循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/bi-rnn.html">9.4. 双向循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/machine-translation-and-dataset.html">9.5. 机器翻译与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/encoder-decoder.html">9.6. 编码器-解码器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/seq2seq.html">9.7. 序列到序列学习（seq2seq）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/beam-search.html">9.8. 束搜索</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_attention-mechanisms/index.html">10. 注意力机制</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-cues.html">10.1. 注意力提示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/nadaraya-waston.html">10.2. 注意力汇聚：Nadaraya-Watson 核回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-scoring-functions.html">10.3. 注意力评分函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/bahdanau-attention.html">10.4. Bahdanau 注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/multihead-attention.html">10.5. 多头注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/self-attention-and-positional-encoding.html">10.6. 自注意力和位置编码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/transformer.html">10.7. Transformer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">11. 优化算法</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/optimization-intro.html">11.1. 优化和深度学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/convexity.html">11.2. 凸性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/gd.html">11.3. 梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/sgd.html">11.4. 随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/minibatch-sgd.html">11.5. 小批量随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/momentum.html">11.6. 动量法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/adagrad.html">11.7. AdaGrad算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/rmsprop.html">11.8. RMSProp算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/adadelta.html">11.9. Adadelta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/adam.html">11.10. Adam算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/lr-scheduler.html">11.11. 学习率调度器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computational-performance/index.html">12. 计算性能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hybridize.html">12.1. 编译器和解释器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/async-computation.html">12.2. 异步计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/auto-parallelism.html">12.3. 自动并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hardware.html">12.4. 硬件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus.html">12.5. 多GPU训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus-concise.html">12.6. 多GPU的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/parameterserver.html">12.7. 参数服务器</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">13. 计算机视觉</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="image-augmentation.html">13.1. 图像增广</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fine-tuning.html">13.2. 微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bounding-box.html">13.3. 目标检测和边界框</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">13.4. 锚框</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiscale-object-detection.html">13.5. 多尺度目标检测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="object-detection-dataset.html">13.6. 目标检测数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssd.html">13.7. 单发多框检测（SSD）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rcnn.html">13.8. 区域卷积神经网络（R-CNN）系列</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantic-segmentation-and-dataset.html">13.9. 语义分割和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transposed-conv.html">13.10. 转置卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fcn.html">13.11. 全卷积网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neural-style.html">13.12. 风格迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-cifar10.html">13.13. 实战 Kaggle 比赛：图像分类 (CIFAR-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-dog.html">13.14. 实战Kaggle比赛：狗的品种识别（ImageNet Dogs）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/index.html">14. 自然语言处理：预训练</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec.html">14.1. 词嵌入（Word2vec）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/approx-training.html">14.2. 近似训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word-embedding-dataset.html">14.3. 用于预训练词嵌入的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec-pretraining.html">14.4. 预训练word2vec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/glove.html">14.5. 全局向量的词嵌入（GloVe）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/subword-embedding.html">14.6. 子词嵌入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/similarity-analogy.html">14.7. 词的相似性和类比任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert.html">14.8. 来自Transformers的双向编码器表示（BERT）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-dataset.html">14.9. 用于预训练BERT的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-pretraining.html">14.10. 预训练BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-applications/index.html">15. 自然语言处理：应用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-and-dataset.html">15.1. 情感分析及数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-rnn.html">15.2. 情感分析：使用递归神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-cnn.html">15.3. 情感分析：使用卷积神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-and-dataset.html">15.4. 自然语言推断与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-attention.html">15.5. 自然语言推断：使用注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/finetuning-bert.html">15.6. 针对序列级和词元级应用程序微调BERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-bert.html">15.7. 自然语言推断：微调BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/index.html">16. 附录：深度学习工具</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/jupyter.html">16.1. 使用Jupyter Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/sagemaker.html">16.2. 使用Amazon SageMaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/aws.html">16.3. 使用Amazon EC2实例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html">16.4. 选择服务器和GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/contributing.html">16.5. 为本书做贡献</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/d2l.html">16.6. <code class="docutils literal notranslate"><span class="pre">d2l</span></code> API 文档</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/logo-with-text.png" alt="动手学深度学习"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id7">关于本书</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id20">致谢</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id21">小结</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preface/index.html#id22">练习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html">安装 Miniconda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l">安装深度学习框架和<code class="docutils literal notranslate"><span class="pre">d2l</span></code>软件包</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_installation/index.html#d2l-notebook">下载 D2L Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_notation/index.html">符号</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. 前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_preliminaries/index.html">2. 预备知识</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html">2.1. 入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id2">2.2. 运算符</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#subsec-broadcasting">2.3. 广播机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id4">2.4. 索引和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id5">2.5. 节省内存</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#python">2.6. 转换为其他Python对象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id6">2.7. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/ndarray.html#id7">2.8. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html">2.9. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id2">2.10. 处理缺失值</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id3">2.11. 转换为张量格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id4">2.12. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/pandas.html#id5">2.13. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html">2.14. 标量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id2">2.15. 向量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id4">2.16. 矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id5">2.17. 张量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id6">2.18. 张量算法的基本性质</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subseq-lin-alg-reduction">2.19. 降维</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#dot-product">2.20. 点积（Dot Product）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id9">2.21. 矩阵-向量积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id10">2.22. 矩阵-矩阵乘法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#subsec-lin-algebra-norms">2.23. 范数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id13">2.24. 关于线性代数的更多信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id17">2.25. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/linear-algebra.html#id18">2.26. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html">2.27. 导数和微分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id2">2.28. 偏导数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#subsec-calculus-grad">2.29. 梯度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id4">2.30. 链式法则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id5">2.31. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/calculus.html#id6">2.32. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html">2.33. 一个简单的例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id2">2.34. 非标量变量的反向传播</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id3">2.35. 分离计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#python">2.36. Python控制流的梯度计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id4">2.37. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/autograd.html#id5">2.38. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html">2.39. 基本概率论</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id4">2.40. 处理多个随机变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id11">2.41. 期望和方差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id12">2.42. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/probability.html#id13">2.43. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html">2.44. 查找模块中的所有函数和类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id2">2.45. 查找特定函数和类的用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id3">2.46. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_preliminaries/lookup-api.html#id4">2.47. 练习</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_linear-networks/index.html">3. 线性神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html">3.1. 线性回归的基本元素</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id7">3.2. 矢量化加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#subsec-normal-distribution-and-squared-loss">3.3. 正态分布与平方损失</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id9">3.4. 从线性回归到深度网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id13">3.5. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression.html#id14">3.6. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html">3.7. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id2">3.8. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id3">3.9. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id4">3.10. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id5">3.11. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id6">3.12. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id7">3.13. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id8">3.14. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-scratch.html#id9">3.15. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html">3.16. 生成数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id2">3.17. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id3">3.18. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id4">3.19. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id5">3.20. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id6">3.21. 定义优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id7">3.22. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id8">3.23. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/linear-regression-concise.html#id9">3.24. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression.html">3.25. softmax回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html">3.26. 读取数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id7">3.27. 读取小批量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id8">3.28. 整合所有组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id9">3.29. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/image-classification-dataset.html#id10">3.30. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html">3.31. 初始化模型参数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#softmax">3.32. 定义softmax操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id2">3.33. 定义模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id3">3.34. 定义损失函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id4">3.35. 分类精度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id5">3.36. 训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id6">3.37. 预测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id7">3.38. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-scratch.html#id8">3.39. 练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_linear-networks/softmax-regression-concise.html">3.40. softmax回归的简洁实现</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_multilayer-perceptrons/index.html">4. 多层感知机</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp.html">4.1. 多层感知机</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-scratch.html">4.2. 多层感知机的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/mlp-concise.html">4.3. 多层感知机的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/underfit-overfit.html">4.4. 模型选择、欠拟合和过拟合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/weight-decay.html">4.5. 权重衰减</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/dropout.html">4.6. 暂退法（Dropout）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/backprop.html">4.7. 前向传播、反向传播和计算图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/numerical-stability-and-init.html">4.8. 数值稳定性和模型初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/environment.html">4.9. 环境和分布偏移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_multilayer-perceptrons/kaggle-house-price.html">4.10. 实战Kaggle比赛：预测房价</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_deep-learning-computation/index.html">5. 深度学习计算</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/model-construction.html">5.1. 层和块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/parameters.html">5.2. 参数管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/deferred-init.html">5.3. 延后初始化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/custom-layer.html">5.4. 自定义层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/read-write.html">5.5. 读写文件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_deep-learning-computation/use-gpu.html">5.6. GPU</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-neural-networks/index.html">6. 卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/why-conv.html">6.1. 从全连接层到卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/conv-layer.html">6.2. 图像卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/padding-and-strides.html">6.3. 填充和步幅</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/channels.html">6.4. 多输入多输出通道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/pooling.html">6.5. 汇聚层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-neural-networks/lenet.html">6.6. 卷积神经网络（LeNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_convolutional-modern/index.html">7. 现代卷积神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/alexnet.html">7.1. 深度卷积神经网络（AlexNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/vgg.html">7.2. 使用块的网络（VGG）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/nin.html">7.3. 网络中的网络（NiN）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/googlenet.html">7.4. 含并行连结的网络（GoogLeNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/batch-norm.html">7.5. 批量规范化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/resnet.html">7.6. 残差网络（ResNet）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_convolutional-modern/densenet.html">7.7. 稠密连接网络（DenseNet）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-neural-networks/index.html">8. 循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/sequence.html">8.1. 序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/text-preprocessing.html">8.2. 文本预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/language-models-and-dataset.html">8.3. 语言模型和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn.html">8.4. 循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-scratch.html">8.5. 循环神经网络的从零开始实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/rnn-concise.html">8.6. 循环神经网络的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-neural-networks/bptt.html">8.7. 通过时间反向传播</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_recurrent-modern/index.html">9. 现代循环神经网络</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/gru.html">9.1. 门控循环单元（GRU）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/lstm.html">9.2. 长短期记忆网络（LSTM）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/deep-rnn.html">9.3. 深度循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/bi-rnn.html">9.4. 双向循环神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/machine-translation-and-dataset.html">9.5. 机器翻译与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/encoder-decoder.html">9.6. 编码器-解码器架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/seq2seq.html">9.7. 序列到序列学习（seq2seq）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_recurrent-modern/beam-search.html">9.8. 束搜索</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_attention-mechanisms/index.html">10. 注意力机制</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-cues.html">10.1. 注意力提示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/nadaraya-waston.html">10.2. 注意力汇聚：Nadaraya-Watson 核回归</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/attention-scoring-functions.html">10.3. 注意力评分函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/bahdanau-attention.html">10.4. Bahdanau 注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/multihead-attention.html">10.5. 多头注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/self-attention-and-positional-encoding.html">10.6. 自注意力和位置编码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_attention-mechanisms/transformer.html">10.7. Transformer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_optimization/index.html">11. 优化算法</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/optimization-intro.html">11.1. 优化和深度学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/convexity.html">11.2. 凸性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/gd.html">11.3. 梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/sgd.html">11.4. 随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/minibatch-sgd.html">11.5. 小批量随机梯度下降</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/momentum.html">11.6. 动量法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/adagrad.html">11.7. AdaGrad算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/rmsprop.html">11.8. RMSProp算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/adadelta.html">11.9. Adadelta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/adam.html">11.10. Adam算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_optimization/lr-scheduler.html">11.11. 学习率调度器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_computational-performance/index.html">12. 计算性能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hybridize.html">12.1. 编译器和解释器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/async-computation.html">12.2. 异步计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/auto-parallelism.html">12.3. 自动并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/hardware.html">12.4. 硬件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus.html">12.5. 多GPU训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/multiple-gpus-concise.html">12.6. 多GPU的简洁实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_computational-performance/parameterserver.html">12.7. 参数服务器</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">13. 计算机视觉</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="image-augmentation.html">13.1. 图像增广</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fine-tuning.html">13.2. 微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bounding-box.html">13.3. 目标检测和边界框</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">13.4. 锚框</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiscale-object-detection.html">13.5. 多尺度目标检测</a></li>
+<li class="toctree-l2"><a class="reference internal" href="object-detection-dataset.html">13.6. 目标检测数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssd.html">13.7. 单发多框检测（SSD）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rcnn.html">13.8. 区域卷积神经网络（R-CNN）系列</a></li>
+<li class="toctree-l2"><a class="reference internal" href="semantic-segmentation-and-dataset.html">13.9. 语义分割和数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transposed-conv.html">13.10. 转置卷积</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fcn.html">13.11. 全卷积网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neural-style.html">13.12. 风格迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-cifar10.html">13.13. 实战 Kaggle 比赛：图像分类 (CIFAR-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle-dog.html">13.14. 实战Kaggle比赛：狗的品种识别（ImageNet Dogs）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/index.html">14. 自然语言处理：预训练</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec.html">14.1. 词嵌入（Word2vec）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/approx-training.html">14.2. 近似训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word-embedding-dataset.html">14.3. 用于预训练词嵌入的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/word2vec-pretraining.html">14.4. 预训练word2vec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/glove.html">14.5. 全局向量的词嵌入（GloVe）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/subword-embedding.html">14.6. 子词嵌入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/similarity-analogy.html">14.7. 词的相似性和类比任务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert.html">14.8. 来自Transformers的双向编码器表示（BERT）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-dataset.html">14.9. 用于预训练BERT的数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-pretraining/bert-pretraining.html">14.10. 预训练BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_natural-language-processing-applications/index.html">15. 自然语言处理：应用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-and-dataset.html">15.1. 情感分析及数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-rnn.html">15.2. 情感分析：使用递归神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/sentiment-analysis-cnn.html">15.3. 情感分析：使用卷积神经网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-and-dataset.html">15.4. 自然语言推断与数据集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-attention.html">15.5. 自然语言推断：使用注意力</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/finetuning-bert.html">15.6. 针对序列级和词元级应用程序微调BERT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_natural-language-processing-applications/natural-language-inference-bert.html">15.7. 自然语言推断：微调BERT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/index.html">16. 附录：深度学习工具</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/jupyter.html">16.1. 使用Jupyter Notebooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/sagemaker.html">16.2. 使用Amazon SageMaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/aws.html">16.3. 使用Amazon EC2实例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/selecting-servers-gpus.html">16.4. 选择服务器和GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/contributing.html">16.5. 为本书做贡献</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_appendix-tools-for-deep-learning/d2l.html">16.6. <code class="docutils literal notranslate"><span class="pre">d2l</span></code> API 文档</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_references/zreferences.html">参考文献</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <div class="section" id="sec-anchor">
+<span id="id1"></span><h1><span class="section-number">13.4. </span>锚框<a class="headerlink" href="#sec-anchor" title="Permalink to this headline">¶</a></h1>
+<p>目标检测算法通常会在输入图像中采样大量的区域，然后判断这些区域中是否包含我们感兴趣的目标，并调整区域边界从而更准确地预测目标的<em>真实边界框</em>（ground-truth
+bounding box）。 不同的模型使用的区域采样方法可能不同。
+这里我们介绍其中的一种方法：以每个像素为中心，生成多个缩放比和宽高比（aspect
+ratio）不同的边界框。 这些边界框被称为<em>锚框</em>（anchor box）我们将在
+<a class="reference internal" href="ssd.html#sec-ssd"><span class="std std-numref">13.7节</span></a>中设计一个基于锚框的目标检测模型。</p>
+<p>首先，让我们修改输出精度，以获得更简洁的输出。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">mxnet</span> <span class="kn">import</span> <span class="n">gluon</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">npx</span>
+<span class="kn">from</span> <span class="nn">d2l</span> <span class="kn">import</span> <span class="n">mxnet</span> <span class="k">as</span> <span class="n">d2l</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># 精简输出精度</span>
+<span class="n">npx</span><span class="o">.</span><span class="n">set_np</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">13.4.1. </span>生成多个锚框<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>假设输入图像的高度为<span class="math notranslate nohighlight">\(h\)</span>，宽度为<span class="math notranslate nohighlight">\(w\)</span>。
+我们以图像的每个像素为中心生成不同形状的锚框：<em>缩放比</em>为<span class="math notranslate nohighlight">\(s\in (0, 1]\)</span>，<em>宽高比</em>为<span class="math notranslate nohighlight">\(r &gt; 0\)</span>。
+那么锚框的宽度和高度分别是<span class="math notranslate nohighlight">\(ws\sqrt{r}\)</span>和<span class="math notranslate nohighlight">\(hs/\sqrt{r}\)</span>。
+请注意，当中心位置给定时，已知宽和高的锚框是确定的。</p>
+<p>要生成多个不同形状的锚框，让我们设置许多缩放比（scale）取值<span class="math notranslate nohighlight">\(s_1,\ldots, s_n\)</span>和许多宽高比（aspect
+ratio）取值<span class="math notranslate nohighlight">\(r_1,\ldots, r_m\)</span>。
+当使用这些比例和长宽比的所有组合以每个像素为中心时，输入图像将总共有<span class="math notranslate nohighlight">\(whnm\)</span>个锚框。
+尽管这些锚框可能会覆盖所有真实边界框，但计算复杂性很容易过高。
+在实践中，我们只考虑包含<span class="math notranslate nohighlight">\(s_1\)</span>或<span class="math notranslate nohighlight">\(r_1\)</span>的组合：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-computer-vision-anchor-0">
+<span class="eqno">(13.4.1)<a class="headerlink" href="#equation-chapter-computer-vision-anchor-0" title="Permalink to this equation">¶</a></span>\[(s_1, r_1), (s_1, r_2), \ldots, (s_1, r_m), (s_2, r_1), (s_3, r_1), \ldots, (s_n, r_1).\]</div>
+<p>也就是说，以同一像素为中心的锚框的数量是<span class="math notranslate nohighlight">\(n+m-1\)</span>。
+对于整个输入图像，我们将共生成<span class="math notranslate nohighlight">\(wh(n+m-1)\)</span>个锚框。</p>
+<p>上述生成锚框的方法在下面的<code class="docutils literal notranslate"><span class="pre">multibox_prior</span></code>函数中实现。
+我们指定输入图像、尺寸列表和宽高比列表，然后此函数将返回所有的锚框。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">multibox_prior</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">ratios</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;生成以每个像素为中心具有不同形状的锚框&quot;&quot;&quot;</span>
+    <span class="n">in_height</span><span class="p">,</span> <span class="n">in_width</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">device</span><span class="p">,</span> <span class="n">num_sizes</span><span class="p">,</span> <span class="n">num_ratios</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sizes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="n">boxes_per_pixel</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_sizes</span> <span class="o">+</span> <span class="n">num_ratios</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">size_tensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">ratio_tensor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># 为了将锚点移动到像素的中心，需要设置偏移量。</span>
+    <span class="c1"># 因为一个像素的的高为1且宽为1，我们选择偏移我们的中心0.5</span>
+    <span class="n">offset_h</span><span class="p">,</span> <span class="n">offset_w</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span>
+    <span class="n">steps_h</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">in_height</span>  <span class="c1"># 在y轴上缩放步长</span>
+    <span class="n">steps_w</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">in_width</span>  <span class="c1"># 在x轴上缩放步长</span>
+
+    <span class="c1"># 生成锚框的所有中心点</span>
+    <span class="n">center_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">in_height</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset_h</span><span class="p">)</span> <span class="o">*</span> <span class="n">steps_h</span>
+    <span class="n">center_w</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">in_width</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset_w</span><span class="p">)</span> <span class="o">*</span> <span class="n">steps_w</span>
+    <span class="n">shift_x</span><span class="p">,</span> <span class="n">shift_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">center_w</span><span class="p">,</span> <span class="n">center_h</span><span class="p">)</span>
+    <span class="n">shift_x</span><span class="p">,</span> <span class="n">shift_y</span> <span class="o">=</span> <span class="n">shift_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">shift_y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># 生成“boxes_per_pixel”个高和宽，</span>
+    <span class="c1"># 之后用于创建锚框的四角坐标(xmin,xmax,ymin,ymax)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">size_tensor</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ratio_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ratio_tensor</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span> \
+                        <span class="o">*</span> <span class="n">in_height</span> <span class="o">/</span> <span class="n">in_width</span>  <span class="c1"># 处理矩形输入</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">size_tensor</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ratio_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ratio_tensor</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
+    <span class="c1"># 除以2来获得半高和半宽</span>
+    <span class="n">anchor_manipulations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="o">-</span><span class="n">w</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                   <span class="p">(</span><span class="n">in_height</span> <span class="o">*</span> <span class="n">in_width</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># 每个中心点都将有“boxes_per_pixel”个锚框，</span>
+    <span class="c1"># 所以生成含所有锚框中心的网格，重复了“boxes_per_pixel”次</span>
+    <span class="n">out_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">shift_x</span><span class="p">,</span> <span class="n">shift_y</span><span class="p">,</span> <span class="n">shift_x</span><span class="p">,</span> <span class="n">shift_y</span><span class="p">],</span>
+                         <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">boxes_per_pixel</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">out_grid</span> <span class="o">+</span> <span class="n">anchor_manipulations</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>我们可以看到返回的锚框变量<code class="docutils literal notranslate"><span class="pre">Y</span></code>的形状是（批量大小，锚框的数量，4）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;../img/catdog.jpg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+<span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">multibox_prior</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sizes</span><span class="o">=</span><span class="p">[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="n">ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="n">Y</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+<p>将锚框变量<code class="docutils literal notranslate"><span class="pre">Y</span></code>的形状更改为(图像高度,图像宽度,以同一像素为中心的锚框的数量,4)后，我们可以获得以指定像素的位置为中心的所有锚框。
+在接下来的内容中，我们访问以（250,250）为中心的第一个锚框。
+它有四个元素：锚框左上角的<span class="math notranslate nohighlight">\((x, y)\)</span>轴坐标和右下角的<span class="math notranslate nohighlight">\((x, y)\)</span>轴坐标。
+将两个轴的坐标各分别除以图像的宽度和高度后，所得的值介于0和1之间。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">boxes</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">boxes</span><span class="p">[</span><span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+</pre></div>
+</div>
+<p>为了显示以图像中以某个像素为中心的所有锚框，我们定义了下面的<code class="docutils literal notranslate"><span class="pre">show_bboxes</span></code>函数来在图像上绘制多个边界框。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">show_bboxes</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">bboxes</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;显示所有边界框&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_make_list</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">default_values</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">default_values</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">_make_list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">_make_list</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bboxes</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)]</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">bbox_to_rect</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">(),</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">text_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span> <span class="k">if</span> <span class="n">color</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="k">else</span> <span class="s1">&#39;w&#39;</span>
+            <span class="n">axes</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rect</span><span class="o">.</span><span class="n">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                      <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">text_color</span><span class="p">,</span>
+                      <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>正如你所看到的，变量<code class="docutils literal notranslate"><span class="pre">boxes</span></code>中<span class="math notranslate nohighlight">\(x\)</span>轴和<span class="math notranslate nohighlight">\(y\)</span>轴的坐标值已分别除以图像的宽度和高度。
+绘制锚框时，我们需要恢复它们原始的坐标值。
+因此，我们在下面定义了变量<code class="docutils literal notranslate"><span class="pre">bbox_scale</span></code>。
+现在，我们可以绘制出图像中所有以(250,250)为中心的锚框了。
+如下所示，缩放比为0.75且宽高比为1的蓝色锚框很好地围绕着图像中的狗。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d2l</span><span class="o">.</span><span class="n">set_figsize</span><span class="p">()</span>
+<span class="n">bbox_scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">show_bboxes</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">boxes</span><span class="p">[</span><span class="mi">250</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">bbox_scale</span><span class="p">,</span>
+            <span class="p">[</span><span class="s1">&#39;s=0.75, r=1&#39;</span><span class="p">,</span> <span class="s1">&#39;s=0.5, r=1&#39;</span><span class="p">,</span> <span class="s1">&#39;s=0.25, r=1&#39;</span><span class="p">,</span> <span class="s1">&#39;s=0.75, r=2&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;s=0.75, r=0.5&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iou">
+<h2><span class="section-number">13.4.2. </span>交并比（IoU）<a class="headerlink" href="#iou" title="Permalink to this headline">¶</a></h2>
+<p>我们刚刚提到某个锚框“较好地”覆盖了图像中的狗。
+如果已知目标的真实边界框，那么这里的“好”该如何如何量化呢？
+直观地说，我们可以衡量锚框和真实边界框之间的相似性。
+我们知道<em>杰卡德系数</em>（Jaccard）可以衡量两组之间的相似性。
+给定集合<span class="math notranslate nohighlight">\(\mathcal{A}\)</span>和<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>，他们的杰卡德系数是他们交集的大小除以他们并集的大小：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-computer-vision-anchor-1">
+<span class="eqno">(13.4.2)<a class="headerlink" href="#equation-chapter-computer-vision-anchor-1" title="Permalink to this equation">¶</a></span>\[J(\mathcal{A},\mathcal{B}) = \frac{\left|\mathcal{A} \cap \mathcal{B}\right|}{\left| \mathcal{A} \cup \mathcal{B}\right|}.\]</div>
+<p>事实上，我们可以将任何边界框的像素区域视为一组像素。通
+过这种方式，我们可以通过其像素集的杰卡德系数来测量两个边界框的相似性。
+对于两个边界框，我们通常将它们的杰卡德系数称为<em>交并比</em>（intersection
+over union，IoU），即两个边界框相交面积与相并面积之比，如
+<a class="reference internal" href="#fig-iou"><span class="std std-numref">图13.4.1</span></a>所示。
+交并比的取值范围在0和1之间：0表示两个边界框无重合像素，1表示两个边界框完全重合。</p>
+<div class="figure align-default" id="id11">
+<span id="fig-iou"></span><img alt="../_images/iou.svg" src="../_images/iou.svg" /><p class="caption"><span class="caption-number">图13.4.1 </span><span class="caption-text">交并比是两个边界框相交面积与相并面积之比。</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+</div>
+<p>在接下来部分中，我们将使用交并比来衡量锚框和真实边界框之间、以及不同锚框之间的相似度。
+给定两个锚框或边界框的列表，以下<code class="docutils literal notranslate"><span class="pre">box_iou</span></code>函数将在这两个列表中计算它们成对的交并比。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">box_iou</span><span class="p">(</span><span class="n">boxes1</span><span class="p">,</span> <span class="n">boxes2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;计算两个锚框或边界框列表中成对的交并比&quot;&quot;&quot;</span>
+    <span class="n">box_area</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">boxes</span><span class="p">:</span> <span class="p">((</span><span class="n">boxes</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">boxes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span>
+                              <span class="p">(</span><span class="n">boxes</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">boxes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="c1"># boxes1,boxes2,areas1,areas2的形状:</span>
+    <span class="c1"># boxes1：(boxes1的数量,4),</span>
+    <span class="c1"># boxes2：(boxes2的数量,4),</span>
+    <span class="c1"># areas1：(boxes1的数量,),</span>
+    <span class="c1"># areas2：(boxes2的数量,)</span>
+    <span class="n">areas1</span> <span class="o">=</span> <span class="n">box_area</span><span class="p">(</span><span class="n">boxes1</span><span class="p">)</span>
+    <span class="n">areas2</span> <span class="o">=</span> <span class="n">box_area</span><span class="p">(</span><span class="n">boxes2</span><span class="p">)</span>
+
+    <span class="c1"># inter_upperlefts,inter_lowerrights,inters的形状:</span>
+    <span class="c1"># (boxes1的数量,boxes2的数量,2)</span>
+    <span class="n">inter_upperlefts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">boxes1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">boxes2</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">inter_lowerrights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">boxes1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">:],</span> <span class="n">boxes2</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:])</span>
+    <span class="n">inters</span> <span class="o">=</span> <span class="p">(</span><span class="n">inter_lowerrights</span> <span class="o">-</span> <span class="n">inter_upperlefts</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># inter_areasandunion_areas的形状:(boxes1的数量,boxes2的数量)</span>
+    <span class="n">inter_areas</span> <span class="o">=</span> <span class="n">inters</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">inters</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">union_areas</span> <span class="o">=</span> <span class="n">areas1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">areas2</span> <span class="o">-</span> <span class="n">inter_areas</span>
+    <span class="k">return</span> <span class="n">inter_areas</span> <span class="o">/</span> <span class="n">union_areas</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="subsec-labeling-anchor-boxes">
+<span id="id3"></span><h2><span class="section-number">13.4.3. </span>在训练数据中标注锚框<a class="headerlink" href="#subsec-labeling-anchor-boxes" title="Permalink to this headline">¶</a></h2>
+<p>在训练集中，我们将每个锚框视为一个训练样本。
+为了训练目标检测模型，我们需要每个锚框的<em>类别</em>（class）和<em>偏移量</em>（offset）标签，其中前者是与锚框相关的对象的类别，后者是真实边界框相对于锚框的偏移量。
+在预测时，我们为每个图像生成多个锚框，预测所有锚框的类别和偏移量，根据预测的偏移量调整它们的位置以获得预测的边界框，最后只输出符合特定条件的预测边界框。</p>
+<p>我们知道，目标检测训练集带有“真实边界框”的位置及其包围物体类别的标签。
+要标记任何生成的锚框，我们可以参考分配到的最接近此锚框的真实边界框的位置和类别标签。
+在下文中，我们将介绍一个算法，它能够把最接近的真实边界框分配给锚框。</p>
+<div class="section" id="id4">
+<h3><span class="section-number">13.4.3.1. </span>将真实边界框分配给锚框<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>给定图像，假设锚框是<span class="math notranslate nohighlight">\(A_1, A_2, \ldots, A_{n_a}\)</span>，真实边界框是<span class="math notranslate nohighlight">\(B_1, B_2, \ldots, B_{n_b}\)</span>，其中<span class="math notranslate nohighlight">\(n_a \geq n_b\)</span>。
+让我们定义一个矩阵<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{n_a \times n_b}\)</span>，其中第<span class="math notranslate nohighlight">\(i\)</span>行、第<span class="math notranslate nohighlight">\(j\)</span>列的元素<span class="math notranslate nohighlight">\(x_{ij}\)</span>是锚框<span class="math notranslate nohighlight">\(A_i\)</span>和真实边界框<span class="math notranslate nohighlight">\(B_j\)</span>的IoU。
+该算法包含以下步骤：</p>
+<ol class="arabic simple">
+<li><p>在矩阵<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>中找到最大的元素，并将它的行索引和列索引分别表示为<span class="math notranslate nohighlight">\(i_1\)</span>和<span class="math notranslate nohighlight">\(j_1\)</span>。然后将真实边界框<span class="math notranslate nohighlight">\(B_{j_1}\)</span>分配给锚框<span class="math notranslate nohighlight">\(A_{i_1}\)</span>。这很直观，因为<span class="math notranslate nohighlight">\(A_{i_1}\)</span>和<span class="math notranslate nohighlight">\(B_{j_1}\)</span>是所有锚框和真实边界框配对中最相近的。在第一个分配完成后，丢弃矩阵中<span class="math notranslate nohighlight">\({i_1}^\mathrm{th}\)</span>行和<span class="math notranslate nohighlight">\({j_1}^\mathrm{th}\)</span>列中的所有元素。</p></li>
+<li><p>在矩阵<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>中找到剩余元素中最大的元素，并将它的行索引和列索引分别表示为<span class="math notranslate nohighlight">\(i_2\)</span>和<span class="math notranslate nohighlight">\(j_2\)</span>。我们将真实边界框<span class="math notranslate nohighlight">\(B_{j_2}\)</span>分配给锚框<span class="math notranslate nohighlight">\(A_{i_2}\)</span>，并丢弃矩阵中<span class="math notranslate nohighlight">\({i_2}^\mathrm{th}\)</span>行和<span class="math notranslate nohighlight">\({j_2}^\mathrm{th}\)</span>列中的所有元素。</p></li>
+<li><p>此时，矩阵<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>中两行和两列中的元素已被丢弃。我们继续，直到丢弃掉矩阵<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>中<span class="math notranslate nohighlight">\(n_b\)</span>列中的所有元素。此时，我们已经为这<span class="math notranslate nohighlight">\(n_b\)</span>个锚框各自分配了一个真实边界框。</p></li>
+<li><p>只遍历剩下的<span class="math notranslate nohighlight">\(n_a - n_b\)</span>个锚框。例如，给定任何锚框<span class="math notranslate nohighlight">\(A_i\)</span>，在矩阵<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>的第<span class="math notranslate nohighlight">\(i^\mathrm{th}\)</span>行中找到与<span class="math notranslate nohighlight">\(A_i\)</span>的IoU最大的真实边界框<span class="math notranslate nohighlight">\(B_j\)</span>，只有当此IoU大于预定义的阈值时，才将<span class="math notranslate nohighlight">\(B_j\)</span>分配给<span class="math notranslate nohighlight">\(A_i\)</span>。</p></li>
+</ol>
+<p>让我们用一个具体的例子来说明上述算法。 如
+<a class="reference internal" href="#fig-anchor-label"><span class="std std-numref">图13.4.2</span></a>（左）所示，假设矩阵<span class="math notranslate nohighlight">\(\mathbf{X}\)</span>中的最大值为<span class="math notranslate nohighlight">\(x_{23}\)</span>，我们将真实边界框<span class="math notranslate nohighlight">\(B_3\)</span>分配给锚框<span class="math notranslate nohighlight">\(A_2\)</span>。
+然后，我们丢弃矩阵第2行和第3列中的所有元素，在剩余元素（阴影区域）中找到最大的<span class="math notranslate nohighlight">\(x_{71}\)</span>，然后将真实边界框<span class="math notranslate nohighlight">\(B_1\)</span>分配给锚框<span class="math notranslate nohighlight">\(A_7\)</span>。
+接下来，如
+<a class="reference internal" href="#fig-anchor-label"><span class="std std-numref">图13.4.2</span></a>（中）所示，丢弃矩阵第7行和第1列中的所有元素，在剩余元素（阴影区域）中找到最大的<span class="math notranslate nohighlight">\(x_{54}\)</span>，然后将真实边界框<span class="math notranslate nohighlight">\(B_4\)</span>分配给锚框<span class="math notranslate nohighlight">\(A_5\)</span>。
+最后，如
+<a class="reference internal" href="#fig-anchor-label"><span class="std std-numref">图13.4.2</span></a>（右）所示，丢弃矩阵第5行和第4列中的所有元素，在剩余元素（阴影区域）中找到最大的<span class="math notranslate nohighlight">\(x_{92}\)</span>，然后将真实边界框<span class="math notranslate nohighlight">\(B_2\)</span>分配给锚框<span class="math notranslate nohighlight">\(A_9\)</span>。
+之后，我们只需要遍历剩余的锚框<span class="math notranslate nohighlight">\(A_1, A_3, A_4, A_6, A_8\)</span>，然后根据阈值确定是否为它们分配真实边界框。</p>
+<div class="figure align-default" id="id12">
+<span id="fig-anchor-label"></span><img alt="../_images/anchor-label.svg" src="../_images/anchor-label.svg" /><p class="caption"><span class="caption-number">图13.4.2 </span><span class="caption-text">将真实边界框分配给锚框。</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</div>
+<p>此算法在下面的<code class="docutils literal notranslate"><span class="pre">assign_anchor_to_bbox</span></code>函数中实现。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">assign_anchor_to_bbox</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">anchors</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;将最接近的真实边界框分配给锚框&quot;&quot;&quot;</span>
+    <span class="n">num_anchors</span><span class="p">,</span> <span class="n">num_gt_boxes</span> <span class="o">=</span> <span class="n">anchors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ground_truth</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># 位于第i行和第j列的元素x_ij是锚框i和真实边界框j的IoU</span>
+    <span class="n">jaccard</span> <span class="o">=</span> <span class="n">box_iou</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
+    <span class="c1"># 对于每个锚框，分配的真实边界框的张量</span>
+    <span class="n">anchors_bbox_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_anchors</span><span class="p">,),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># 根据阈值，决定是否分配真实边界框</span>
+    <span class="n">max_ious</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">jaccard</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">jaccard</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">anc_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">max_ious</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">box_j</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">max_ious</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">]</span>
+    <span class="n">anchors_bbox_map</span><span class="p">[</span><span class="n">anc_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_j</span>
+    <span class="n">col_discard</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_anchors</span><span class="p">,),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">row_discard</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_gt_boxes</span><span class="p">,),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_gt_boxes</span><span class="p">):</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">jaccard</span><span class="p">)</span>
+        <span class="n">box_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_idx</span> <span class="o">%</span> <span class="n">num_gt_boxes</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+        <span class="n">anc_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_idx</span> <span class="o">/</span> <span class="n">num_gt_boxes</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+        <span class="n">anchors_bbox_map</span><span class="p">[</span><span class="n">anc_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_idx</span>
+        <span class="n">jaccard</span><span class="p">[:,</span> <span class="n">box_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_discard</span>
+        <span class="n">jaccard</span><span class="p">[</span><span class="n">anc_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">row_discard</span>
+    <span class="k">return</span> <span class="n">anchors_bbox_map</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">13.4.3.2. </span>标记类别和偏移量<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>现在我们可以为每个锚框标记类别和偏移量了。
+假设一个锚框<span class="math notranslate nohighlight">\(A\)</span>被分配了一个真实边界框<span class="math notranslate nohighlight">\(B\)</span>。
+一方面，锚框<span class="math notranslate nohighlight">\(A\)</span>的类别将被标记为与<span class="math notranslate nohighlight">\(B\)</span>相同。
+另一方面，锚框<span class="math notranslate nohighlight">\(A\)</span>的偏移量将根据<span class="math notranslate nohighlight">\(B\)</span>和<span class="math notranslate nohighlight">\(A\)</span>中心坐标的相对位置以及这两个框的相对大小进行标记。
+鉴于数据集内不同的框的位置和大小不同，我们可以对那些相对位置和大小应用变换，使其获得分布更均匀且易于拟合的偏移量。
+在这里，我们介绍一种常见的变换。
+给定框<span class="math notranslate nohighlight">\(A\)</span>和<span class="math notranslate nohighlight">\(B\)</span>，中心坐标分别为<span class="math notranslate nohighlight">\((x_a, y_a)\)</span>和<span class="math notranslate nohighlight">\((x_b, y_b)\)</span>，宽度分别为<span class="math notranslate nohighlight">\(w_a\)</span>和<span class="math notranslate nohighlight">\(w_b\)</span>，高度分别为<span class="math notranslate nohighlight">\(h_a\)</span>和<span class="math notranslate nohighlight">\(h_b\)</span>。
+我们可以将<span class="math notranslate nohighlight">\(A\)</span>的偏移量标记为：</p>
+<div class="math notranslate nohighlight" id="equation-chapter-computer-vision-anchor-2">
+<span class="eqno">(13.4.3)<a class="headerlink" href="#equation-chapter-computer-vision-anchor-2" title="Permalink to this equation">¶</a></span>\[\left( \frac{ \frac{x_b - x_a}{w_a} - \mu_x }{\sigma_x},
+\frac{ \frac{y_b - y_a}{h_a} - \mu_y }{\sigma_y},
+\frac{ \log \frac{w_b}{w_a} - \mu_w }{\sigma_w},
+\frac{ \log \frac{h_b}{h_a} - \mu_h }{\sigma_h}\right),\]</div>
+<p>其中常量的默认值为
+<span class="math notranslate nohighlight">\(\mu_x = \mu_y = \mu_w = \mu_h = 0, \sigma_x=\sigma_y=0.1\)</span> ，
+<span class="math notranslate nohighlight">\(\sigma_w=\sigma_h=0.2\)</span>。 这种转换在下面的 <code class="docutils literal notranslate"><span class="pre">offset_boxes</span></code>
+函数中实现。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">offset_boxes</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">assigned_bb</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;对锚框偏移量的转换&quot;&quot;&quot;</span>
+    <span class="n">c_anc</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">box_corner_to_center</span><span class="p">(</span><span class="n">anchors</span><span class="p">)</span>
+    <span class="n">c_assigned_bb</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">box_corner_to_center</span><span class="p">(</span><span class="n">assigned_bb</span><span class="p">)</span>
+    <span class="n">offset_xy</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="n">c_assigned_bb</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">c_anc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">c_anc</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span>
+    <span class="n">offset_wh</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">eps</span> <span class="o">+</span> <span class="n">c_assigned_bb</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">/</span> <span class="n">c_anc</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:])</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">offset_xy</span><span class="p">,</span> <span class="n">offset_wh</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">offset</span>
+</pre></div>
+</div>
+<p>如果一个锚框没有被分配真实边界框，我们只需将锚框的类别标记为“背景”（background）。
+背景类别的锚框通常被称为“负类”锚框，其余的被称为“正类”锚框。
+我们使用真实边界框（<code class="docutils literal notranslate"><span class="pre">labels</span></code>参数）实现以下<code class="docutils literal notranslate"><span class="pre">multibox_target</span></code>函数，来标记锚框的类别和偏移量（<code class="docutils literal notranslate"><span class="pre">anchors</span></code>参数）。
+此函数将背景类别的索引设置为零，然后将新类别的整数索引递增一。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">multibox_target</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;使用真实边界框标记锚框&quot;&quot;&quot;</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">anchors</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">anchors</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">batch_offset</span><span class="p">,</span> <span class="n">batch_mask</span><span class="p">,</span> <span class="n">batch_class_labels</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">device</span><span class="p">,</span> <span class="n">num_anchors</span> <span class="o">=</span> <span class="n">anchors</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">anchors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">anchors_bbox_map</span> <span class="o">=</span> <span class="n">assign_anchor_to_bbox</span><span class="p">(</span>
+            <span class="n">label</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">anchors</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+        <span class="n">bbox_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">((</span><span class="n">anchors_bbox_map</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span>
+                                            <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+        <span class="c1"># 将类标签和分配的边界框坐标初始化为零</span>
+        <span class="n">class_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_anchors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">assigned_bb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_anchors</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                                <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># 使用真实边界框来标记锚框的类别。</span>
+        <span class="c1"># 如果一个锚框没有被分配，我们标记其为背景（值为零）</span>
+        <span class="n">indices_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">anchors_bbox_map</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bb_idx</span> <span class="o">=</span> <span class="n">anchors_bbox_map</span><span class="p">[</span><span class="n">indices_true</span><span class="p">]</span>
+        <span class="n">class_labels</span><span class="p">[</span><span class="n">indices_true</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="n">bb_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">assigned_bb</span><span class="p">[</span><span class="n">indices_true</span><span class="p">]</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="n">bb_idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="c1"># 偏移量转换</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">offset_boxes</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">assigned_bb</span><span class="p">)</span> <span class="o">*</span> <span class="n">bbox_mask</span>
+        <span class="n">batch_offset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">batch_mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bbox_mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">batch_class_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">class_labels</span><span class="p">)</span>
+    <span class="n">bbox_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">batch_offset</span><span class="p">)</span>
+    <span class="n">bbox_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">batch_mask</span><span class="p">)</span>
+    <span class="n">class_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">batch_class_labels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">bbox_offset</span><span class="p">,</span> <span class="n">bbox_mask</span><span class="p">,</span> <span class="n">class_labels</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3><span class="section-number">13.4.3.3. </span>一个例子<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>让我们通过一个具体的例子来说明锚框标签。
+我们已经为加载图像中的狗和猫定义了真实边界框，其中第一个元素是类别（0代表狗，1代表猫），其余四个元素是左上角和右下角的<span class="math notranslate nohighlight">\((x, y)\)</span>轴坐标（范围介于0和1之间）。
+我们还构建了五个锚框，用左上角和右下角的坐标进行标记：<span class="math notranslate nohighlight">\(A_0, \ldots, A_4\)</span>（索引从0开始）。
+然后我们在图像中绘制这些真实边界框和锚框。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ground_truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">],</span>
+                         <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">]])</span>
+<span class="n">anchors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mf">0.63</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.66</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mf">0.57</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">show_bboxes</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">bbox_scale</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;dog&#39;</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">show_bboxes</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">anchors</span> <span class="o">*</span> <span class="n">bbox_scale</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;4&#39;</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>使用上面定义的<code class="docutils literal notranslate"><span class="pre">multibox_target</span></code>函数，我们可以根据狗和猫的真实边界框，标注这些锚框的分类和偏移量。
+在这个例子中，背景、狗和猫的类索引分别为0、1和2。
+下面我们为锚框和真实边界框样本添加一个维度。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="n">multibox_target</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>返回的结果中有三个元素，都是张量格式。第三个元素包含标记的输入锚框的类别。</p>
+<p>让我们根据图像中的锚框和真实边界框的位置来分析下面返回的类别标签。
+首先，在所有的锚框和真实边界框配对中，锚框<span class="math notranslate nohighlight">\(A_4\)</span>与猫的真实边界框的IoU是最大的。
+因此，<span class="math notranslate nohighlight">\(A_4\)</span>的类别被标记为猫。
+去除包含<span class="math notranslate nohighlight">\(A_4\)</span>或猫的真实边界框的配对，在剩下的配对中，锚框<span class="math notranslate nohighlight">\(A_1\)</span>和狗的真实边界框有最大的IoU。
+因此，<span class="math notranslate nohighlight">\(A_1\)</span>的类别被标记为狗。
+接下来，我们需要遍历剩下的三个未标记的锚框：<span class="math notranslate nohighlight">\(A_0\)</span>、<span class="math notranslate nohighlight">\(A_2\)</span>和<span class="math notranslate nohighlight">\(A_3\)</span>。
+对于<span class="math notranslate nohighlight">\(A_0\)</span>，与其拥有最大IoU的真实边界框的类别是狗，但IoU低于预定义的阈值（0.5），因此该类别被标记为背景；
+对于<span class="math notranslate nohighlight">\(A_2\)</span>，与其拥有最大IoU的真实边界框的类别是猫，IoU超过阈值，所以类别被标记为猫；
+对于<span class="math notranslate nohighlight">\(A_3\)</span>，与其拥有最大IoU的真实边界框的类别是猫，但值低于阈值，因此该类别被标记为背景。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>返回的第二个元素是掩码（mask）变量，形状为（批量大小，锚框数的四倍）。
+掩码变量中的元素与每个锚框的4个偏移量一一对应。
+由于我们不关心对背景的检测，负类的偏移量不应影响目标函数。
+通过元素乘法，掩码变量中的零将在计算目标函数之前过滤掉负类偏移量。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>返回的第一个元素包含了为每个锚框标记的四个偏移值。
+请注意，负类锚框的偏移量被标记为零。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="subsec-predicting-bounding-boxes-nms">
+<span id="id7"></span><h2><span class="section-number">13.4.4. </span>使用非极大值抑制预测边界框<a class="headerlink" href="#subsec-predicting-bounding-boxes-nms" title="Permalink to this headline">¶</a></h2>
+<p>在预测时，我们先为图像生成多个锚框，再为这些锚框一一预测类别和偏移量。
+一个“预测好的边界框”则根据其中某个带有预测偏移量的锚框而生成。
+下面我们实现了<code class="docutils literal notranslate"><span class="pre">offset_inverse</span></code>函数，该函数将锚框和偏移量预测作为输入，并应用逆偏移变换来返回预测的边界框坐标。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">offset_inverse</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">offset_preds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;根据带有预测偏移量的锚框来预测边界框&quot;&quot;&quot;</span>
+    <span class="n">anc</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">box_corner_to_center</span><span class="p">(</span><span class="n">anchors</span><span class="p">)</span>
+    <span class="n">pred_bbox_xy</span> <span class="o">=</span> <span class="p">(</span><span class="n">offset_preds</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">anc</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">anc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">pred_bbox_wh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">offset_preds</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">anc</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:]</span>
+    <span class="n">pred_bbox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pred_bbox_xy</span><span class="p">,</span> <span class="n">pred_bbox_wh</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">predicted_bbox</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">box_center_to_corner</span><span class="p">(</span><span class="n">pred_bbox</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">predicted_bbox</span>
+</pre></div>
+</div>
+<p>当有许多锚框时，可能会输出许多相似的具有明显重叠的预测边界框，都围绕着同一目标。
+为了简化输出，我们可以使用<em>非极大值抑制</em>（non-maximum
+suppression，NMS）合并属于同一目标的类似的预测边界框。</p>
+<p>以下是非极大值抑制的工作原理。
+对于一个预测边界框<span class="math notranslate nohighlight">\(B\)</span>，目标检测模型会计算每个类别的预测概率。
+假设最大的预测概率为<span class="math notranslate nohighlight">\(p\)</span>，则该概率所对应的类别<span class="math notranslate nohighlight">\(B\)</span>即为预测的类别。
+具体来说，我们将<span class="math notranslate nohighlight">\(p\)</span>称为预测边界框<span class="math notranslate nohighlight">\(B\)</span>的<em>置信度</em>（confidence）。
+在同一张图像中，所有预测的非背景边界框都按置信度降序排序，以生成列表<span class="math notranslate nohighlight">\(L\)</span>。然后我们通过以下步骤操作排序列表<span class="math notranslate nohighlight">\(L\)</span>：</p>
+<ol class="arabic simple">
+<li><p>从<span class="math notranslate nohighlight">\(L\)</span>中选取置信度最高的预测边界框<span class="math notranslate nohighlight">\(B_1\)</span>作为基准，然后将所有与<span class="math notranslate nohighlight">\(B_1\)</span>的IoU超过预定阈值<span class="math notranslate nohighlight">\(\epsilon\)</span>的非基准预测边界框从<span class="math notranslate nohighlight">\(L\)</span>中移除。这时，<span class="math notranslate nohighlight">\(L\)</span>保留了置信度最高的预测边界框，去除了与其太过相似的其他预测边界框。简而言之，那些具有<em>非极大值</em>置信度的边界框被<em>抑制</em>了。</p></li>
+<li><p>从<span class="math notranslate nohighlight">\(L\)</span>中选取置信度第二高的预测边界框<span class="math notranslate nohighlight">\(B_2\)</span>作为又一个基准，然后将所有与<span class="math notranslate nohighlight">\(B_2\)</span>的IoU大于<span class="math notranslate nohighlight">\(\epsilon\)</span>的非基准预测边界框从<span class="math notranslate nohighlight">\(L\)</span>中移除。</p></li>
+<li><p>重复上述过程，直到<span class="math notranslate nohighlight">\(L\)</span>中的所有预测边界框都曾被用作基准。此时，<span class="math notranslate nohighlight">\(L\)</span>中任意一对预测边界框的IoU都小于阈值<span class="math notranslate nohighlight">\(\epsilon\)</span>；因此，没有一对边界框过于相似。</p></li>
+<li><p>输出列表<span class="math notranslate nohighlight">\(L\)</span>中的所有预测边界框。</p></li>
+</ol>
+<p>以下<code class="docutils literal notranslate"><span class="pre">nms</span></code>函数按降序对置信度进行排序并返回其索引。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">nms</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">iou_threshold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;对预测边界框的置信度进行排序&quot;&quot;&quot;</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 保留预测边界框的指标</span>
+    <span class="k">while</span> <span class="n">B</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">keep</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">break</span>
+        <span class="n">iou</span> <span class="o">=</span> <span class="n">box_iou</span><span class="p">(</span><span class="n">boxes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                      <span class="n">boxes</span><span class="p">[</span><span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">iou</span> <span class="o">&lt;=</span> <span class="n">iou_threshold</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">inds</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">keep</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">boxes</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>我们定义以下<code class="docutils literal notranslate"><span class="pre">multibox_detection</span></code>函数来将非极大值抑制应用于预测边界框。
+如果你发现实现有点复杂，请不要担心。我们将在实现之后，马上用一个具体的例子来展示它是如何工作的。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@save</span>
+<span class="k">def</span> <span class="nf">multibox_detection</span><span class="p">(</span><span class="n">cls_probs</span><span class="p">,</span> <span class="n">offset_preds</span><span class="p">,</span> <span class="n">anchors</span><span class="p">,</span> <span class="n">nms_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                       <span class="n">pos_threshold</span><span class="o">=</span><span class="mf">0.009999999</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;使用非极大值抑制来预测边界框&quot;&quot;&quot;</span>
+    <span class="n">device</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="n">cls_probs</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="n">cls_probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">anchors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">num_classes</span><span class="p">,</span> <span class="n">num_anchors</span> <span class="o">=</span> <span class="n">cls_probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cls_probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">cls_prob</span><span class="p">,</span> <span class="n">offset_pred</span> <span class="o">=</span> <span class="n">cls_probs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">offset_preds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">conf</span><span class="p">,</span> <span class="n">class_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cls_prob</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">cls_prob</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">predicted_bb</span> <span class="o">=</span> <span class="n">offset_inverse</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">offset_pred</span><span class="p">)</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">nms</span><span class="p">(</span><span class="n">predicted_bb</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">nms_threshold</span><span class="p">)</span>
+
+        <span class="c1"># 找到所有的non_keep索引，并将类设置为背景</span>
+        <span class="n">all_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_anchors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">keep</span><span class="p">,</span> <span class="n">all_idx</span><span class="p">))</span>
+        <span class="n">unique</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">non_keep</span> <span class="o">=</span> <span class="n">unique</span><span class="p">[</span><span class="n">counts</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">all_id_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">keep</span><span class="p">,</span> <span class="n">non_keep</span><span class="p">))</span>
+        <span class="n">class_id</span><span class="p">[</span><span class="n">non_keep</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">class_id</span> <span class="o">=</span> <span class="n">class_id</span><span class="p">[</span><span class="n">all_id_sorted</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+        <span class="n">conf</span><span class="p">,</span> <span class="n">predicted_bb</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="n">all_id_sorted</span><span class="p">],</span> <span class="n">predicted_bb</span><span class="p">[</span><span class="n">all_id_sorted</span><span class="p">]</span>
+        <span class="c1"># pos_threshold是一个用于非背景预测的阈值</span>
+        <span class="n">below_min_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">conf</span> <span class="o">&lt;</span> <span class="n">pos_threshold</span><span class="p">)</span>
+        <span class="n">class_id</span><span class="p">[</span><span class="n">below_min_idx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">conf</span><span class="p">[</span><span class="n">below_min_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">conf</span><span class="p">[</span><span class="n">below_min_idx</span><span class="p">]</span>
+        <span class="n">pred_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">class_id</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                                <span class="n">predicted_bb</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_info</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>现在让我们将上述算法应用到一个带有四个锚框的具体示例中。
+为简单起见，我们假设预测的偏移量都是零，这意味着预测的边界框即是锚框。
+对于背景、狗和猫其中的每个类，我们还定义了它的预测概率。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">anchors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">0.92</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.56</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.62</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">]])</span>
+<span class="n">offset_preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">d2l</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">anchors</span><span class="p">))</span>
+<span class="n">cls_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># 背景的预测概率</span>
+                      <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>  <span class="c1"># 狗的预测概率</span>
+                      <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>  <span class="c1"># 猫的预测概率</span>
+</pre></div>
+</div>
+<p>我们可以在图像上绘制这些预测边界框和置信度。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">show_bboxes</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="n">anchors</span> <span class="o">*</span> <span class="n">bbox_scale</span><span class="p">,</span>
+            <span class="p">[</span><span class="s1">&#39;dog=0.9&#39;</span><span class="p">,</span> <span class="s1">&#39;dog=0.8&#39;</span><span class="p">,</span> <span class="s1">&#39;dog=0.7&#39;</span><span class="p">,</span> <span class="s1">&#39;cat=0.9&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>现在我们可以调用<code class="docutils literal notranslate"><span class="pre">multibox_detection</span></code>函数来执行非极大值抑制，其中阈值设置为0.5。
+请注意，我们在示例的张量输入中添加了维度。</p>
+<p>我们可以看到返回结果的形状是（批量大小，锚框的数量，6）。
+最内层维度中的六个元素提供了同一预测边界框的输出信息。
+第一个元素是预测的类索引，从0开始（0代表狗，1代表猫），值-1表示背景或在非极大值抑制中被移除了。
+第二个元素是预测的边界框的置信度。
+其余四个元素分别是预测边界框左上角和右下角的<span class="math notranslate nohighlight">\((x, y)\)</span>轴坐标（范围介于0和1之间）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">multibox_detection</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">cls_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">offset_preds</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">anchors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                            <span class="n">nms_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">output</span>
+</pre></div>
+</div>
+<p>删除-1类别（背景）的预测边界框后，我们可以输出由非极大值抑制保存的最终预测边界框。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">d2l</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;dog=&#39;</span><span class="p">,</span> <span class="s1">&#39;cat=&#39;</span><span class="p">)[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">show_bboxes</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span> <span class="o">*</span> <span class="n">bbox_scale</span><span class="p">],</span> <span class="n">label</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>实践中，在执行非极大值抑制前，我们甚至可以将置信度较低的预测边界框移除，从而减少此算法中的计算量。
+我们也可以对非极大值抑制的输出结果进行后处理。例如，只保留置信度更高的结果作为最终输出。</p>
+</div>
+<div class="section" id="id8">
+<h2><span class="section-number">13.4.5. </span>小结<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>我们以图像的每个像素为中心生成不同形状的锚框。</p></li>
+<li><p>交并比（IoU）也被称为杰卡德系数，用于衡量两个边界框的相似性。它是相交面积与相并面积的比率。</p></li>
+<li><p>在训练集中，我们需要给每个锚框两种类型的标签。一个是与锚框中目标检测的类别，另一个是锚框真实相对于边界框的偏移量。</p></li>
+<li><p>在预测期间，我们可以使用非极大值抑制（NMS）来移除类似的预测边界框，从而简化输出。</p></li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h2><span class="section-number">13.4.6. </span>练习<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>在<code class="docutils literal notranslate"><span class="pre">multibox_prior</span></code>函数中更改<code class="docutils literal notranslate"><span class="pre">sizes</span></code>和<code class="docutils literal notranslate"><span class="pre">ratios</span></code>的值。生成的锚框有什么变化？</p></li>
+<li><p>构建并可视化两个IoU为0.5的边界框。它们是怎样重叠的？</p></li>
+<li><p>在 <a class="reference internal" href="#subsec-labeling-anchor-boxes"><span class="std std-numref">13.4.3节</span></a>和
+<a class="reference internal" href="#subsec-predicting-bounding-boxes-nms"><span class="std std-numref">13.4.4节</span></a>中修改变量<code class="docutils literal notranslate"><span class="pre">anchors</span></code>，结果如何变化？</p></li>
+<li><p>非极大值抑制是一种贪心算法，它通过<em>移除</em>来抑制预测的边界框。是否存在一种可能，被移除的一些框实际上是有用的？如何修改这个算法来柔和地抑制？你可以参考Soft-NMS
+<a class="bibtex reference internal" href="../chapter_references/zreferences.html#bodla-singh-chellappa-ea-2017" id="id10">[Bodla et al., 2017]</a>。</p></li>
+<li><p>如果非手动，非最大限度的抑制可以被学习吗？</p></li>
+</ol>
+<p><a class="reference external" href="https://discuss.d2l.ai/t/2945">Discussions</a></p>
+</div>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">13.4. 锚框</a><ul>
+<li><a class="reference internal" href="#id2">13.4.1. 生成多个锚框</a></li>
+<li><a class="reference internal" href="#iou">13.4.2. 交并比（IoU）</a></li>
+<li><a class="reference internal" href="#subsec-labeling-anchor-boxes">13.4.3. 在训练数据中标注锚框</a><ul>
+<li><a class="reference internal" href="#id4">13.4.3.1. 将真实边界框分配给锚框</a></li>
+<li><a class="reference internal" href="#id5">13.4.3.2. 标记类别和偏移量</a></li>
+<li><a class="reference internal" href="#id6">13.4.3.3. 一个例子</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subsec-predicting-bounding-boxes-nms">13.4.4. 使用非极大值抑制预测边界框</a></li>
+<li><a class="reference internal" href="#id8">13.4.5. 小结</a></li>
+<li><a class="reference internal" href="#id9">13.4.6. 练习</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="bounding-box.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>13.3. 目标检测和边界框</div>
+         </div>
+     </a>
+     <a id="button-next" href="multiscale-object-detection.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>13.5. 多尺度目标检测</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>

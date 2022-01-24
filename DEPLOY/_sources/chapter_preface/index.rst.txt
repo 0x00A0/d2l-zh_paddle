@@ -1,5 +1,5 @@
 
-None # 序言
+None None None # 序言
 
 几年前，在大公司和初创公司中，并没有大量的深度学习科学家开发智能产品和服务。我们中年轻人（作者）进入这个领域时，机器学习并没有在报纸上获得头条新闻。我们的父母根本不知道什么是机器学习，更不用说为什么我们可能更喜欢机器学习，而不是从事医学或法律职业。机器学习是一门具有前瞻性的学科，在现实世界的应用范围很窄。而那些应用，例如语音识别和计算机视觉，需要大量的领域知识，以至于它们通常被认为是完全独立的领域，而机器学习对于这些领域来说只是一个小组件。因此，神经网络——我们在本书中关注的深度学习模型的前身，被认为是过时的工具。
 
@@ -113,20 +113,14 @@ Bishop的优秀教科书 :cite:`Bishop.2006`
     
     d2l = sys.modules[__name__]
 
-
-.. parsed-literal::
-    :class: output
-
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-587e2t37 because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
-
-
 .. code:: python
 
     #@save
     import numpy as np
     import paddle
-    from paddle import nn
+    from paddle import io, nn, vision
     from paddle.nn import functional as F
+    from paddle.vision import datasets
     from PIL import Image
 
 目标受众

@@ -1,5 +1,5 @@
 
-None # 图像分类数据集
+None None None # 图像分类数据集
 
 .. _sec_fashion_mnist:
 
@@ -21,8 +21,7 @@ MNIST数据集 :cite:`LeCun.Bottou.Bengio.ea.1998`
 .. parsed-literal::
     :class: output
 
-    Matplotlib created a temporary config/cache directory at /tmp/matplotlib-83dc4cmz because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
-    /home/wan/anaconda3/lib/python3.9/site-packages/d2l/paddle.py:33: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
+    D:\Anaconda3\envs\d2l\lib\site-packages\d2l\paddle.py:38: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
       display.set_matplotlib_formats('svg')
 
 
@@ -58,6 +57,20 @@ dataset）中的1000张图像组成。
 
 每个输入图像的高度和宽度均为28像素。 数据集由灰度图像组成，其通道数为1。
 为了简洁起见，本书将高度\ :math:`h`\ 像素、宽度\ :math:`w`\ 像素图像的形状记为\ :math:`h \times w`\ 或（\ :math:`h`,\ :math:`w`\ ）。
+
+.. code:: python
+
+    mnist_train[0][0].shape
+
+
+
+
+.. parsed-literal::
+    :class: output
+
+    (28, 28)
+
+
 
 Fashion-MNIST中包含的10个类别，分别为t-shirt（T恤）、trouser（裤子）、pullover（套衫）、dress（连衣裙）、coat（外套）、sandal（凉鞋）、shirt（衬衫）、sneaker（运动鞋）、bag（包）和ankle
 boot（短靴）。 以下函数用于在数字标签索引及其文本名称之间进行转换。
@@ -96,7 +109,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 
 
 
-.. figure:: output_image-classification-dataset_a6d0d8_12_0.svg
+.. figure:: output_image-classification-dataset_a6d0d8_13_0.svg
 
 
 读取小批量
@@ -117,6 +130,14 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
     train_iter = io.DataLoader(mnist_train, batch_size=batch_size, shuffle=True,
                                  num_workers=get_dataloader_workers())
 
+
+.. parsed-literal::
+    :class: output
+
+    D:\Anaconda3\envs\d2l\lib\site-packages\paddle\fluid\reader.py:355: UserWarning: DataLoader with multi-process mode is not supported on MacOs and Windows currently. Please use signle-process mode with num_workers = 0 instead
+      warnings.warn(
+
+
 我们看一下读取训练数据所需的时间。
 
 .. code:: python
@@ -132,7 +153,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 .. parsed-literal::
     :class: output
 
-    '0.48 sec'
+    '0.74 sec'
 
 
 
@@ -147,13 +168,13 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 
     def load_data_fashion_mnist(batch_size, resize=None):  #@save
         """下载Fashion-MNIST数据集，然后将其加载到内存中"""
-        trans = [vision.transforms.ToTensor()]
+        trans = [paddle.vision.transforms.ToTensor()]
         if resize:
-            trans.insert(0, vision.transforms.Resize(resize))
-        trans = vision.transforms.transforms.Compose(trans)
+            trans.append(paddle.vision.transforms.Resize(resize))
+        trans = paddle.vision.transforms.transforms.Compose(trans)
     
-        mnist_train = vision.datasets.FashionMNIST(mode='train', backend='cv2')
-        mnist_test = vision.datasets.FashionMNIST(mode='test', backend='cv2')
+        mnist_train = paddle.vision.datasets.FashionMNIST(mode='train', backend='cv2', transform=trans)
+        mnist_test = paddle.vision.datasets.FashionMNIST(mode='test', backend='cv2', transform=trans)
     
         return (io.DataLoader(mnist_train, batch_size=batch_size, shuffle=True,
                                  num_workers=get_dataloader_workers()),
@@ -173,7 +194,7 @@ boot（短靴）。 以下函数用于在数字标签索引及其文本名称之
 .. parsed-literal::
     :class: output
 
-    [32, 28, 28] paddle.float32 [32, 1] paddle.int64
+    [32, 1, 64, 64] paddle.float32 [32, 1] paddle.int64
 
 
 我们现在已经准备好使用Fashion-MNIST数据集，便于下面的章节调用来评估各种分类算法。

@@ -11,6 +11,39 @@ None None # 线性回归的从零开始实现
 在这一节中，我们将只使用张量和自动求导。
 在之后的章节中，我们会充分利用深度学习框架的优势，介绍更简洁的实现方式。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-1-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-1-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-1-0">
+
+.. code:: python
+
+    %matplotlib inline
+    import random
+    from mxnet import autograd, np, npx
+    from d2l import mxnet as d2l
+    
+    npx.set_np()
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-1-1">
+
 .. code:: python
 
     %matplotlib inline
@@ -24,6 +57,18 @@ None None # 线性回归的从零开始实现
 
     Matplotlib created a temporary config/cache directory at /tmp/matplotlib-hu3_4u2f because the default path (/home/wan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
 
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 生成数据集
 ----------
@@ -44,6 +89,43 @@ None None # 线性回归的从零开始实现
 在这里我们认为标准假设成立，即\ :math:`\epsilon`\ 服从均值为0的正态分布。
 为了简化问题，我们将标准差设为0.01。 下面的代码生成合成数据集。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-3-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-3-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-3-0">
+
+.. code:: python
+
+    def synthetic_data(w, b, num_examples):  #@save
+        """生成y=Xw+b+噪声"""
+        X = np.random.normal(0, 1, (num_examples, len(w)))
+        y = np.dot(X, w) + b
+        y += np.random.normal(0, 0.01, y.shape)
+        return X, y.reshape((-1, 1))
+    
+    true_w = np.array([2, -3.4])
+    true_b = 4.2
+    features, labels = synthetic_data(true_w, true_b, 1000)
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-3-1">
+
 .. code:: python
 
     def synthetic_data(w, b, num_examples):  #@save
@@ -52,15 +134,63 @@ None None # 线性回归的从零开始实现
         y = paddle.matmul(X, w) + b
         y += paddle.normal(0, 0.01, y.shape)
         return X, y.reshape((-1, 1))
-
-.. code:: python
-
+    
     true_w = paddle.paddle.to_tensor([2, -3.4])
     true_b = 4.2
     features, labels = synthetic_data(true_w, true_b, 1000)
 
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
+
 注意，\ ``features``\ 中的每一行都包含一个二维数据样本，
 ``labels``\ 中的每一行都包含一维标签值（一个标量）。
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-5-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-5-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-5-0">
+
+.. code:: python
+
+    print('features:', features[0],'\nlabel:', labels[0])
+
+
+.. parsed-literal::
+    :class: output
+
+    features: Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [0.36917415, 1.14585161]) 
+    label: Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [1.04518020])
+
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-5-1">
 
 .. code:: python
 
@@ -76,8 +206,61 @@ None None # 线性回归的从零开始实现
            [5.33892918])
 
 
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
+
 通过生成第二个特征\ ``features[:, 1]``\ 和\ ``labels``\ 的散点图，
 可以直观观察到两者之间的线性关系。
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-7-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-7-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-7-0">
+
+.. code:: python
+
+    d2l.set_figsize()
+    d2l.plt.scatter(features[:, 1].asnumpy(), labels.asnumpy(), 1);
+
+
+.. parsed-literal::
+    :class: output
+
+    D:\Anaconda3\envs\d2l\lib\site-packages\d2l\paddle.py:35: DeprecationWarning: `set_matplotlib_formats` is deprecated since IPython 7.23, directly use `matplotlib_inline.backend_inline.set_matplotlib_formats()`
+      display.set_matplotlib_formats('svg')
+
+
+
+.. figure:: output_linear-regression-scratch_58de05_30_1.svg
+
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-7-1">
 
 .. code:: python
 
@@ -93,8 +276,20 @@ None None # 线性回归的从零开始实现
 
 
 
-.. figure:: output_linear-regression-scratch_20cad4_8_1.svg
+.. figure:: output_linear-regression-scratch_58de05_33_1.svg
 
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 读取数据集
 ----------
@@ -106,6 +301,42 @@ None None # 线性回归的从零开始实现
 在下面的代码中，我们定义一个\ ``data_iter``\ 函数，
 该函数接收批量大小、特征矩阵和标签向量作为输入，生成大小为\ ``batch_size``\ 的小批量。
 每个小批量包含一组特征和标签。
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-9-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-9-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-9-0">
+
+.. code:: python
+
+    def data_iter(batch_size, features, labels):
+        num_examples = len(features)
+        indices = list(range(num_examples))
+        # 这些样本是随机读取的，没有特定的顺序
+        random.shuffle(indices)
+        for i in range(0, num_examples, batch_size):
+            batch_indices = np.array(
+                indices[i: min(i + batch_size, num_examples)])
+            yield features[batch_indices], labels[batch_indices]
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-9-1">
 
 .. code:: python
 
@@ -119,6 +350,18 @@ None None # 线性回归的从零开始实现
                 indices[i: min(i + batch_size, num_examples)])
             yield features[batch_indices], labels[batch_indices]
 
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
+
 通常，我们利用GPU并行运算的优势，处理合理大小的“小批量”。
 每个样本都可以并行地进行模型计算，且每个样本损失函数的梯度也可以被并行计算。
 GPU可以在处理几百个样本时，所花费的时间不比处理一个样本时多太多。
@@ -126,6 +369,66 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 我们直观感受一下小批量运算：读取第一个小批量数据样本并打印。
 每个批量的特征维度显示批量大小和输入特征数。
 同样的，批量的标签形状与\ ``batch_size``\ 相等。
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-11-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-11-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-11-0">
+
+.. code:: python
+
+    batch_size = 10
+    
+    for X, y in data_iter(batch_size, features, labels):
+        print(X, '\n', y)
+        break
+
+
+.. parsed-literal::
+    :class: output
+
+    Tensor(shape=[10, 2], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[ 0.00760228,  0.21791586],
+            [ 1.83002532, -0.09345292],
+            [-0.17348005, -0.53726870],
+            [-2.06337047,  0.09542230],
+            [ 0.27952668,  1.11181331],
+            [ 1.16761696, -0.74136072],
+            [ 2.47060490, -0.27046424],
+            [-0.61427116,  1.01177621],
+            [-0.44147632,  0.20658316],
+            [ 1.09019566, -0.22348033]]) 
+     Tensor(shape=[10, 1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [[ 3.46957517],
+            [ 8.17458344],
+            [ 5.67574835],
+            [-0.26734629],
+            [ 0.96260804],
+            [ 9.05514240],
+            [10.04859734],
+            [-0.45727643],
+            [ 2.62457132],
+            [ 7.13361502]])
+
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-11-1">
 
 .. code:: python
 
@@ -163,6 +466,18 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
             [1.81782389]])
 
 
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
+
 当我们运行迭代时，我们会连续地获得不同的小批量，直至遍历完整个数据集。
 上面实现的迭代对于教学来说很好，但它的执行效率很低，可能会在实际问题上陷入麻烦。
 例如，它要求我们将所有数据加载到内存中，并执行大量的随机内存访问。
@@ -177,10 +492,53 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 在下面的代码中，我们通过从均值为0、标准差为0.01的正态分布中采样随机数来初始化权重，
 并将偏置初始化为0。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-13-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-13-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-13-0">
+
+.. code:: python
+
+    w = np.random.normal(0, 0.01, (2, 1))
+    b = np.zeros(1)
+    w.attach_grad()
+    b.attach_grad()
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-13-1">
+
 .. code:: python
 
     w = paddle.normal(0., 0.01, shape=(2,1))
     b = paddle.zeros([1])
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 在初始化参数之后，我们的任务是更新这些参数，直到这些参数足够拟合我们的数据。
 每次更新都需要计算损失函数关于模型参数的梯度。
@@ -198,11 +556,53 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 回想一下 :numref:`subsec_broadcasting`\ 中描述的广播机制：
 当我们用一个向量加一个标量时，标量会被加到向量的每个分量上。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-15-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-15-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-15-0">
+
+.. code:: python
+
+    def linreg(X, w, b):  #@save
+        """线性回归模型"""
+        return np.dot(X, w) + b
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-15-1">
+
 .. code:: python
 
     def linreg(X, w, b):  #@save
         """线性回归模型"""
         return paddle.matmul(X, w) + b
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 定义损失函数
 ------------
@@ -211,11 +611,53 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 :numref:`sec_linear_regression`\ 中描述的平方损失函数。
 在实现中，我们需要将真实值\ ``y``\ 的形状转换为和预测值\ ``y_hat``\ 的形状相同。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-17-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-17-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-17-0">
+
 .. code:: python
 
     def squared_loss(y_hat, y):  #@save
         """均方损失"""
         return (y_hat - y.reshape(y_hat.shape)) ** 2 / 2
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-17-1">
+
+.. code:: python
+
+    def squared_loss(y_hat, y):  #@save
+        """均方损失"""
+        return (y_hat - y.reshape(y_hat.shape)) ** 2 / 2
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 定义优化算法
 ------------
@@ -233,6 +675,37 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 因为我们计算的损失是一个批量样本的总和，所以我们用批量大小（\ ``batch_size``\ ）
 来规范化步长，这样步长大小就不会取决于我们对批量大小的选择。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-19-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-19-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-19-0">
+
+.. code:: python
+
+    def sgd(params, lr, batch_size):  #@save
+        """小批量随机梯度下降"""
+        for param in params:
+            param[:] = param - lr * param.grad / batch_size
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-19-1">
+
 .. code:: python
 
     def sgd(params, lr, batch_size):  #@save
@@ -242,6 +715,18 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
                 param.stop_gradient=True
                 param.subtract_(lr * param.grad / batch_size)
                 param.clear_grad()
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 训练
 ----
@@ -268,15 +753,54 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 我们现在忽略这些细节，以后会在
 :numref:`chap_optimization`\ 中详细介绍。
 
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-21-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-21-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-21-0">
+
 .. code:: python
 
     lr = 0.03
     num_epochs = 3
     net = linreg
     loss = squared_loss
+    
+    for epoch in range(num_epochs):
+        for X, y in data_iter(batch_size, features, labels):
+            with autograd.record():
+                l = loss(net(X, w, b), y)  # X和y的小批量损失
+            # 计算l关于[w,b]的梯度
+            l.backward()
+            sgd([w, b], lr, batch_size)  # 使用参数的梯度更新参数
+        train_l = loss(net(features, w, b), labels)
+        print(f'epoch {epoch + 1}, loss {float(train_l.mean()):f}')
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-21-1">
 
 .. code:: python
 
+    lr = 0.03
+    num_epochs = 3
+    net = linreg
+    loss = squared_loss
+    
     for epoch in range(num_epochs):
         for X, y in data_iter(batch_size, features, labels):
             w.stop_gradient=False
@@ -303,9 +827,60 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
     epoch 3, loss 0.000049
 
 
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
+
 因为我们使用的是自己合成的数据集，所以我们知道真正的参数是什么。
 因此，我们可以通过比较真实参数和通过训练学到的参数来评估训练的成功程度。
 事实上，真实参数和通过训练学到的参数确实非常接近。
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar code"><a href="#mxnet-23-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a><a href="#paddle-23-1" onclick="tagClick('paddle'); return false;" class="mdl-tabs__tab ">paddle</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-23-0">
+
+.. code:: python
+
+    print(f'w的估计误差: {true_w - w.reshape(true_w.shape)}')
+    print(f'b的估计误差: {true_b - b}')
+
+
+.. parsed-literal::
+    :class: output
+
+    w的估计误差: Tensor(shape=[2], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [ 0.00005352, -0.00022674])
+    b的估计误差: Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
+           [0.00006580])
+
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel " id="paddle-23-1">
 
 .. code:: python
 
@@ -321,6 +896,18 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
     b的估计误差: Tensor(shape=[1], dtype=float32, place=CPUPlace, stop_gradient=True,
            [0.00127888])
 
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>
 
 注意，我们不应该想当然地认为我们能够完美地求解参数。
 在机器学习中，我们通常不太关心恢复真正的参数，而更关心如何高度准确预测参数。
@@ -343,3 +930,29 @@ GPU可以在处理几百个样本时，所花费的时间不比处理一个样�
 5. 为什么在\ ``squared_loss``\ 函数中需要使用\ ``reshape``\ 函数？
 6. 尝试使用不同的学习率，观察损失函数值下降的快慢。
 7. 如果样本个数不能被批量大小整除，\ ``data_iter``\ 函数的行为会有什么变化？
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"><div class="mdl-tabs__tab-bar text"><a href="#mxnet-25-0" onclick="tagClick('mxnet'); return false;" class="mdl-tabs__tab is-active">mxnet</a></div>
+
+
+
+.. raw:: html
+
+    <div class="mdl-tabs__panel is-active" id="mxnet-25-0">
+
+`Discussions <https://discuss.d2l.ai/t/1779>`__
+
+
+
+.. raw:: html
+
+    </div>
+
+
+
+.. raw:: html
+
+    </div>

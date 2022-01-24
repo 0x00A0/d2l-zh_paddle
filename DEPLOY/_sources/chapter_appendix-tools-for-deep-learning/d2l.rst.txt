@@ -1,0 +1,84 @@
+
+.. _sec_d2l:
+
+``d2l`` API 文档
+================
+
+
+``d2l``\ 包以下成员的实现及其定义和解释部分可在\ `源文件 <https://github.com/d2l-ai/d2l-en/tree/master/d2l>`__\ 中找到。
+
+
+
+.. currentmodule:: d2l.mxnet
+
+模型
+----
+
+
+
+.. autoclass:: Module
+   :members: 
+
+
+.. autoclass:: LinearRegressionScratch
+   :members:
+
+
+.. autoclass:: LinearRegression
+   :members:    
+
+
+.. autoclass:: Classification
+   :members:
+
+数据
+----
+
+
+
+.. autoclass:: DataModule
+   :members: 
+
+
+.. autoclass:: SyntheticRegressionData
+   :members: 
+
+
+.. autoclass:: FashionMNIST
+   :members:
+
+训练
+----
+
+
+
+.. autoclass:: Trainer
+   :members: 
+
+
+.. autoclass:: SGD
+   :members:
+
+公用
+----
+
+
+
+.. autofunction:: add_to_class
+
+
+.. autofunction:: cpu
+
+
+.. autofunction:: gpu
+
+
+.. autofunction:: num_gpus
+
+
+.. autoclass:: ProgressBoard
+   :members: 
+
+
+.. autoclass:: HyperParameters
+   :members:
